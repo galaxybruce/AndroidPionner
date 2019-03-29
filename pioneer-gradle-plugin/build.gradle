@@ -1,0 +1,61 @@
+apply plugin: "groovy"
+apply plugin: "maven"
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+dependencies {
+    compileOnly gradleApi()
+    compileOnly localGroovy()
+    compileOnly 'com.android.tools.build:gradle:3.2.1'
+}
+
+buildscript {
+    repositories {
+        maven { url "https://maven.aliyun.com/repository/google" }
+        maven { url "https://maven.aliyun.com/repository/central" }
+        maven { url "https://maven.aliyun.com/repository/jcenter" }
+        maven { url "http://maven.aliyun.com/nexus/content/repositories/releases" }
+
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
+}
+
+repositories {
+    maven { url "https://maven.aliyun.com/repository/google" }
+    maven { url "https://maven.aliyun.com/repository/central" }
+    maven { url "https://maven.aliyun.com/repository/jcenter" }
+    maven { url "http://maven.aliyun.com/nexus/content/repositories/releases" }
+
+    jcenter()
+    mavenCentral()
+}
+
+//打包到本地或者远程Maven库
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            //group,artifactId和version
+            pom.groupId = 'com.galaxybruce.gradle'
+            pom.artifactId = "pioneer"
+            pom.version = '1.0.13'
+
+            // 提交到远程服务器：
+//            repository(url: "http://maven.haiziwang.com:8081/nexus/content/repositories/releases") {
+//                authentication(userName: "deployment", password: "123456")
+//            }
+
+            // deploy到本地仓库
+            // 注意：要放在第一行，不然会被线上的覆盖了
+            // 引用方式
+            // maven{ url rootProject.file("repo-local") }
+            // 或者 (注意：settings.gradle必须这样引用)
+//            def projectDir = settings.rootProject.projectDir
+//            def repoFile = new File(projectDir, 'repo-local')
+//            maven{ url repoFile }
+            repository(url: uri(project.rootProject.projectDir.absolutePath + '/repo-local'))
+        }
+    }
+}
