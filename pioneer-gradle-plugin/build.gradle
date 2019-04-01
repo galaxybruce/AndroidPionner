@@ -86,7 +86,7 @@ uploadArchives {
                 repository(url: uri(project.rootProject.projectDir.absolutePath + '/repo-local'))
             } else {
                 // 提交到远程服务器：
-//            repository(url: "http://maven.haiziwang.com:8081/nexus/content/repositories/releases") {
+//            repository(url: "http://maven.xxx.com:8081/nexus/content/repositories/releases") {
 //                authentication(userName: "deployment", password: "123456")
 //            }
             }
@@ -171,8 +171,9 @@ bintray {
     }
 }
 
-
-
+/// 依次输入下面两个命令
+/// ./gradlew install
+/// ./gradlew bintrayUpload
 
 ////// 参考文章： https://blog.csdn.net/linglongxin24/article/details/53415932
 ////// 还有一篇宣传极简文章：https://juejin.im/post/59cef9baf265da066a105f92
