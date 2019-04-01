@@ -49,6 +49,7 @@ galaxybrucepioneer.copyMappingEnabled = true
 
 ### 二、设置library
 在各个module的build.gradle最后添加
+
 apply from: rootProject.ext.mavenScriptPath
 
 ### 三、合并pin工程manifest
@@ -61,6 +62,7 @@ apply plugin: 'galaxybruce-pioneer'
 调用方式：
 
 1.现在build.gradle android节点下调用rootProject.ext.setAARDirs(project)
+
 2.在build.gradle dependencies节点下调用rootProject.ext.addAARLibs(project, depModule
 
 
