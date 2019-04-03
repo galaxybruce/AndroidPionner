@@ -191,3 +191,4 @@ bintray {
 ////// 参考文章： https://blog.csdn.net/linglongxin24/article/details/53415932
 ////// 还有一篇宣传极简文章：https://juejin.im/post/59cef9baf265da066a105f92
 ////// 也可以像arouter那样把install和bintray拆封成两个文件install.gradle和bintray.gradle
+////// butterknife中对android和java包做了区分，值得参考 https://github.com/JakeWharton/butterknife/blob/master/gradle/gradle-mvn-push.gradle
