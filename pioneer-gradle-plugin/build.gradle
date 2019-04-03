@@ -40,19 +40,32 @@ dependencies {
 //}
 
 
+/// 这几个task必须要有，不然没法add to jcenter
 task sourcesJar(type: Jar) {
-    from project.file('src/main/groovy')
+    from project.file('src/main/groovy') // android.sourceSets.main.java.srcDirs
     classifier = 'sources'
 }
 
+// 这个不能要，不然报Cannot add task 'javadoc' as a task with that name already exists.
+//task javadoc(type: Javadoc) {
+//    source = project.file('src/main/groovy') // android.sourceSets.main.java.srcDirs
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+    classifier = 'javadoc'
+}
+
 artifacts {
+    archives javadocJar
     archives sourcesJar
 }
 
 def debug_flag = true //true: 发布到本地maven仓库， false： 发布到maven私服
 def artifact_group = 'com.galaxybruce.android'
 def artifact_id = 'pioneer'
-def artifact_version='0.0.1'
+def artifact_version='0.0.2'
 
 
 // 打包到本地或者Maven私服库
