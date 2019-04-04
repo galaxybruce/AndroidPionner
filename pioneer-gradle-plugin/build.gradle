@@ -3,6 +3,9 @@ apply plugin: "maven"
 
 apply plugin: 'com.jfrog.bintray'
 
+// 这个插件貌似是android library时用到
+//apply plugin: 'com.github.dcendents.android-maven'
+
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
