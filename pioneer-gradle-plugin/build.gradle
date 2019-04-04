@@ -42,8 +42,8 @@ dependencies {
 
 /// 这几个task必须要有，不然没法add to jcenter
 task sourcesJar(type: Jar) {
-    from project.file('src/main/groovy') // android.sourceSets.main.java.srcDirs
     classifier = 'sources'
+    from sourceSets.main.allSource // project.file('src/main/groovy')  android.sourceSets.main.java.srcDirs
 }
 
 // 这个不能要，不然报Cannot add task 'javadoc' as a task with that name already exists.
@@ -53,8 +53,8 @@ task sourcesJar(type: Jar) {
 //}
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    from javadoc.destinationDir
     classifier = 'javadoc'
+    from javadoc.destinationDir
 }
 
 artifacts {
@@ -64,8 +64,8 @@ artifacts {
 
 def debug_flag = true //true: 发布到本地maven仓库， false： 发布到maven私服
 def artifact_group = 'com.galaxybruce.android'
-def artifact_id = 'pioneer'
-def artifact_version='0.0.2'
+def artifact_id = 'pioneer-gradle-plugin' // 这里要和module的名称一样，不然在bintray上会生成两个目录
+def artifact_version='0.0.5'
 
 
 // 打包到本地或者Maven私服库
