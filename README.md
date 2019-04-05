@@ -57,8 +57,8 @@ apply plugin: 'galaxybruce-pioneer'
 ```
 
 ### 设置aar依赖
-调用方式：
-1.现在build.gradle android节点下调用rootProject.ext.setAARDirs(project)
+调用方式：  
+1.现在build.gradle android节点下调用rootProject.ext.setAARDirs(project)  
 2.在build.gradle dependencies节点下调用rootProject.ext.addAARLibs(project, depModule
 
 
