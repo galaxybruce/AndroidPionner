@@ -17,9 +17,8 @@ public class Utils {
      * @return
      */
     public static String getLibraryPathWithKey(final String pathKey, final String jenkinsPath) {
-        if(pathKey == null || ''.equals(pathKey.trim())
-                || jenkinsPath == null || ''.equals(jenkinsPath.trim())) {
-            throw new IllegalStateException('pathKey or jenkinsPath must not be empty')
+        if(pathKey == null || ''.equals(pathKey.trim())) {
+            throw new IllegalStateException('pathKey must not be empty')
         }
 
         def props = new Properties()
@@ -31,11 +30,13 @@ public class Utils {
         def libraryPath = props.getProperty(pathKey)
         if (!libraryPath) {
             libraryPath = System.getenv(pathKey)
-            if (!libraryPath) {
+            if (!libraryPath && jenkinsPath) {
                 libraryPath = jenkinsPath
             }
-            props.put(pathKey, libraryPath)
-            props.store(propFile.newWriter(), null)
+            if(libraryPath) {
+                props.put(pathKey, libraryPath)
+                props.store(propFile.newWriter(), null)
+            }
         }
 
         return libraryPath
