@@ -11,7 +11,7 @@ class PioneerExtension {
     // 是否可以显示日志
     def logEnabled = false
 
-    // 多平台复用，每个平台代码所在目录，如特卖:temai 成长+：growplus
+    // 多平台复用，每个平台代码所在目录
     def platformSourceDir
 
     // mapping文件copy的目录，默认是"项目同级目录/kwmapping/项目根目录名称"
