@@ -35,33 +35,26 @@ public class PioneerPlugin implements Plugin<Project> {
             throw new IllegalStateException('Must apply \'com.android.application\' or \'com.android.library\' first!')
         }
         // 判断是否是application或者libary 参考Arouter
-        def isApp = project.plugins.hasPlugin(AppPlugin)
-//        def isLibrary = project.plugins.hasPlugin(LibraryPlugin)
-
-
+        def isApp = project.plugins.hasPlugin(AppPlugin) // def isLibrary = project.plugins.hasPlugin(LibraryPlugin)
         project.extensions.create(EXT_NAME, PioneerExtension, project)
 
+        if(isApp) {
+            handleAppProject(project)
+        }
+
         // 合并pin工程中的manifest
-//        if (!isApp) {
-            ProjectManifestMerger.mergeManifest(project, true)
-            Task task = project.tasks['preBuild']
-            task.doFirst {
-                ProjectManifestMerger.mergeManifest(project, false)
-            }
-//        }
-
-
-        // copy mapping.txt
-        ProjectCopyOutputManager.copy(project, isApp)
+        mergeManifest(project)
 
         project.afterEvaluate {
             // 测试代码
 //        Test.testApplicationVariants(project, isApp)
+            
+            project.android.defaultConfig.buildConfigField "String", "HOST_APP_NAME", "\"${project.rootProject.galaxybrucepioneer.platformSourceDir}\""
         }
 
     }
 
-    private void handleRootProject(Project project) {
+    private static void handleRootProject(Project project) {
         project.extensions.create(EXT_NAME, PioneerExtension)
         // 必须通过闭包的形式赋值，不然找不到对应的属性错误
         project.ext {
@@ -82,8 +75,21 @@ public class PioneerPlugin implements Plugin<Project> {
 
         project.afterEvaluate {
             project.ext{
-                platformSourceDir = project.kidswantpioneer.platformSourceDir
+                platformSourceDir = project.galaxybrucepioneer.platformSourceDir
             }
+        }
+    }
+
+    private static void handleAppProject(Project project) {
+        // copy mapping.txt
+        ProjectCopyOutputManager.copy(project)
+    }
+
+    private static void mergeManifest(Project project) {
+        ProjectManifestMerger.mergeManifest(project, true)
+        Task task = project.tasks['preBuild']
+        task.doFirst {
+            ProjectManifestMerger.mergeManifest(project, false)
         }
     }
 }

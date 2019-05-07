@@ -35,14 +35,14 @@ class ProjectManifestMerger {
             return
         }
 
-        def platformDir
+        def platformDir = null
         try {
             PioneerExtension extension = Utils.getPioneerExtension(project)
             if(extension.platformSourceDir) {
                 platformDir = extension.platformSourceDir
             }
             if(!platformDir) {
-                platformDir = project.rootProject.kidswantpioneer.platformSourceDir
+                platformDir = project.rootProject.galaxybrucepioneer.platformSourceDir
             }
             if(!platformDir) {
                 platformDir = project.MAVEN_MODULE_APP

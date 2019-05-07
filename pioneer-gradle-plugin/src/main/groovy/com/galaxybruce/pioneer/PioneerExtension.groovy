@@ -2,7 +2,7 @@ package com.galaxybruce.pioneer
 
 import org.gradle.api.Project
 /**
- * aop的配置信息
+ * 属性配置信息
  * @author billy.qi
  * @since 17/3/28 11:48
  */

@@ -1,10 +1,19 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+apply plugin: 'galaxybruce-pioneer'
+
+galaxybrucepioneer {
+    platformSourceDir = 'pionner'
+}
 
 buildscript {
     repositories {
+
+        if(rootProject.hasProperty("LOCAL_MAVEN") && LOCAL_MAVEN.toBoolean()) {
+            maven { url rootProject.file("repo-local") }
+        }
+
         google()
         jcenter()
-        
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.3.2'
@@ -36,3 +45,4 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+

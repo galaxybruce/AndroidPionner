@@ -7,12 +7,12 @@ import org.gradle.api.Project
 public class Utils {
 
     /**
-     * 也可以这样获取属性 project.kidswantpioneer.xxx
+     * 也可以这样获取属性 project.galaxybrucepioneer.xxx
      * 注意：
      * 1. 使用属性之间必须先创建属性 project.extensions.create(EXT_NAME, PioneerExtension)
      * 2. 因为build.gradle中给属性赋值是在apply plugin之后，所以直接在Plugin.apply方法中获取的属性是空的
      * 3. 为了解决2中的为问题，一般是在project.afterEvaluate中获取属性，或者在subproject中可以直接使用
-     *      rootProject中的属性: project.rootProject.kidswantpioneer.xxx
+     *      rootProject中的属性: project.rootProject.galaxybrucepioneer.xxx
      * @param project
      * @return
      */
@@ -21,7 +21,7 @@ public class Utils {
     }
 
     /**
-     * 也可以这样获取属性 project.rootProject.kidswantpioneer.xxx
+     * 也可以这样获取属性 project.rootProject.galaxybrucepioneer.xxx
      * @param project
      * @return
      */

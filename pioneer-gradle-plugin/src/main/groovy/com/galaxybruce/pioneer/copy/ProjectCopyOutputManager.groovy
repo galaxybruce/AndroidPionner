@@ -15,19 +15,17 @@ import org.gradle.api.Task
  */
 public class ProjectCopyOutputManager {
 
-    public static void copy(Project project, boolean isApp) {
-        if(isApp) {
-            // 监听task的创建
-            project.tasks.whenTaskAdded { task ->
+    public static void copy(Project project) {
+        // 监听task的创建
+        project.tasks.whenTaskAdded { task ->
 //                LogUtil.log("task", task.name)
-                if(project.android.productFlavors.size() > 0) {
-                    project.android.productFlavors.all { flavor ->
-                        LogUtil.log(project, "flavor", flavor.name)
-                        copyByTask(project, task, flavor.name, true)
-                    }
-                } else {
-                    copyByTask(project, task, "", false)
+            if(project.android.productFlavors.size() > 0) {
+                project.android.productFlavors.all { flavor ->
+                    LogUtil.log(project, "flavor", flavor.name)
+                    copyByTask(project, task, flavor.name, true)
                 }
+            } else {
+                copyByTask(project, task, "", false)
             }
         }
     }
