@@ -36,7 +36,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.5'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.6'
     }
 }
 ```

@@ -48,7 +48,7 @@ public class PioneerPlugin implements Plugin<Project> {
         project.afterEvaluate {
             // 测试代码
 //        Test.testApplicationVariants(project, isApp)
-            
+
             project.android.defaultConfig.buildConfigField "String", "HOST_APP_NAME", "\"${project.rootProject.galaxybrucepioneer.platformSourceDir}\""
         }
 
