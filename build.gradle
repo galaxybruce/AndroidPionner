@@ -9,7 +9,10 @@ buildscript {
     repositories {
 
         if(rootProject.hasProperty("LOCAL_MAVEN") && LOCAL_MAVEN.toBoolean()) {
-            maven { url rootProject.file("repo-local") }
+            File repoFile = rootProject.file("repo-local")
+            if(repoFile.exists()) {
+                maven { url repoFile }
+            }
         }
 
         google()
