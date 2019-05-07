@@ -27,43 +27,28 @@ public class PioneerPlugin implements Plugin<Project> {
 
         // libraryPath设置
         if(project == project.rootProject) {
-            // 必须通过闭包的形式赋值，不然找不到对应的属性错误
-            project.ext {
-                // 通过这三种方式引用 settings.ext.libraryPath、rootProject.ext.libraryPath、libraryPath
-//                libraryPath = Utils.getLibraryPath()
-//                mavenScriptPath = libraryPath + 'buildsystem/galaxybruce_maven.gradle'
-
-                // Utils.getLibraryPath已废弃，统一用这个方法
-                getLibraryPathWithKey = Utils.&getLibraryPathWithKey
-            }
-
-            // 设置aar库相关依赖方法
-            project.ext{
-                isDepModule = AARDependency.&isDepModule         //是否是module依赖方式
-                setAARDirs = AARDependency.&setAARDirs           //设置aar库的path
-                addAARLibs = AARDependency.&addAARLibs           //添加aar依赖库
-            }
+            handleRootProject(project)
             return
         }
 
-        // 判断是否是application或者libary 参考Arouter
-        def isApp = project.plugins.hasPlugin(AppPlugin)
-//        def isLibrary = project.plugins.hasPlugin(LibraryPlugin)
         if (!project.android) {
             throw new IllegalStateException('Must apply \'com.android.application\' or \'com.android.library\' first!')
         }
+        // 判断是否是application或者libary 参考Arouter
+        def isApp = project.plugins.hasPlugin(AppPlugin)
+//        def isLibrary = project.plugins.hasPlugin(LibraryPlugin)
 
 
         project.extensions.create(EXT_NAME, PioneerExtension, project)
 
         // 合并pin工程中的manifest
-        if (!isApp) {
+//        if (!isApp) {
             ProjectManifestMerger.mergeManifest(project, true)
             Task task = project.tasks['preBuild']
             task.doFirst {
                 ProjectManifestMerger.mergeManifest(project, false)
             }
-        }
+//        }
 
 
         // copy mapping.txt
@@ -76,5 +61,29 @@ public class PioneerPlugin implements Plugin<Project> {
 
     }
 
+    private void handleRootProject(Project project) {
+        project.extensions.create(EXT_NAME, PioneerExtension)
+        // 必须通过闭包的形式赋值，不然找不到对应的属性错误
+        project.ext {
+            // 通过这三种方式引用 settings.ext.libraryPath、rootProject.ext.libraryPath、libraryPath
+//                libraryPath = Utils.getLibraryPath()
+//                mavenScriptPath = libraryPath + 'buildsystem/galaxybruce_maven.gradle'
 
+            // Utils.getLibraryPath已废弃，统一用这个方法
+            getLibraryPathWithKey = Utils.&getLibraryPathWithKey
+        }
+
+        // 设置aar库相关依赖方法
+        project.ext{
+            isDepModule = AARDependency.&isDepModule         //是否是module依赖方式
+            setAARDirs = AARDependency.&setAARDirs           //设置aar库的path
+            addAARLibs = AARDependency.&addAARLibs           //添加aar依赖库
+        }
+
+        project.afterEvaluate {
+            project.ext{
+                platformSourceDir = project.kidswantpioneer.platformSourceDir
+            }
+        }
+    }
 }

@@ -40,7 +40,11 @@ class ProjectManifestMerger {
             PioneerExtension extension = Utils.getPioneerExtension(project)
             if(extension.platformSourceDir) {
                 platformDir = extension.platformSourceDir
-            } else {
+            }
+            if(!platformDir) {
+                platformDir = project.rootProject.kidswantpioneer.platformSourceDir
+            }
+            if(!platformDir) {
                 platformDir = project.MAVEN_MODULE_APP
             }
         } catch (Exception e) {

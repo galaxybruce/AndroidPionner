@@ -14,13 +14,15 @@ class PioneerExtension {
     // 多平台复用，每个平台代码所在目录
     def platformSourceDir
 
-    // mapping文件copy的目录，默认是"项目同级目录/kwmapping/项目根目录名称"
+    // mapping文件copy的目录，默认是"项目同级目录/mapping/项目根目录名称"
     def mappingDir
     // mapping文件在git上的仓库
     def mappingRemoteUrl
 
     // 是否允许在打包完成后复制mapping.txt
     def copyMappingEnabled = false
+
+    PioneerExtension() {}
 
     PioneerExtension(Project project) {}
 
