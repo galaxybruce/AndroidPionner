@@ -1,2 +1,24 @@
-include ':app'
-include ':pioneer-gradle-plugin'
+//include ':app', ':testlibrary'
+//include ':pioneer-gradle-plugin'
+
+includeModule(settings.getRootDir().path)
+
+def includeModule(String libraryPath) {
+    File f = file(libraryPath)
+    if (!f.exists() || !f.isDirectory()) return
+    f.eachDir { dir ->
+        if (!isModule(dir)) return
+        include "${dir.name}"
+        project(":${dir.name}").projectDir = dir
+    }
+}
+
+static boolean isModule(File dir) {
+    File[] files = dir.listFiles(new FilenameFilter() {
+        @Override
+        boolean accept(File file, String name) {
+            return name == 'build.gradle' || name == 'src'
+        }
+    })
+    return files.size() == 2
+}

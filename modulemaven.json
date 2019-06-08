@@ -1,0 +1,7 @@
+{
+  "group": "com.galaxybruce",
+  "modules": [
+    {"name": "testlibrary", "platform": true}
+  ]
+}
+

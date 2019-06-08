@@ -1,0 +1,107 @@
+apply plugin: 'maven'
+
+if (project.hasProperty("android")) { // Android libraries
+    task androidJavadocs(type: Javadoc) {
+        source = android.sourceSets.main.java.srcDirs
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    }
+
+    task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+        classifier = 'javadoc'
+        from androidJavadocs.destinationDir
+    }
+
+    task androidSourcesJar(type: Jar) {
+        classifier = 'sources'
+        from android.sourceSets.main.java.srcDirs
+    }
+
+    artifacts {
+        archives androidSourcesJar
+        //archives androidJavadocsJar 因为代码中的注释不规范
+    }
+
+} else { // Java libraries
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+    
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    artifacts {
+        archives sourcesJar
+        //archives androidJavadocsJar 因为代码中的注释不规范
+    }
+}
+
+Properties properties = new Properties()
+File localPropertiesFile = project.rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    properties.load(localPropertiesFile.newDataInputStream())
+}
+File rootProjectPropertiesFile = project.rootProject.file("project.properties")
+if (rootProjectPropertiesFile.exists()) {
+    properties.load(rootProjectPropertiesFile.newDataInputStream())
+}
+File projectPropertiesFile = project.file("project.properties")
+if (projectPropertiesFile.exists()) {
+    properties.load(projectPropertiesFile.newDataInputStream())
+}
+
+// read properties
+def mavenUrl = properties.getProperty("MAVEN_URL")
+def mavenAccountName = properties.getProperty("MAVEN_ACCOUNT_NAME")
+def mavenPwd = properties.getProperty("MAVEN_ACCOUNT_PWD")
+
+def pomGroupId = properties.getProperty("project.groupId")
+def pomArtifactId = project.hasProperty("MAVEN_MODULE_NAME") && MAVEN_MODULE_NAME ? MAVEN_MODULE_NAME : project.name
+def pomVersion = project.hasProperty("MAVEN_MODULE_VERSION") && MAVEN_MODULE_VERSION ? MAVEN_MODULE_VERSION : android.defaultConfig.versionName
+
+if(project.rootProject.ext.has('pomGroupId') && project.rootProject.ext.pomGroupId) {
+    pomGroupId = project.rootProject.ext.pomGroupId
+}
+
+if(project.ext.has('artifactId') && project.ext.artifactId) {
+    pomArtifactId = project.ext.artifactId
+}
+
+if(project.ext.has('platformSourceDir') && project.ext.platformSourceDir) {
+    pomArtifactId += project.ext.platformSourceDir
+}
+
+if(project.ext.has('version') && project.ext.version) {
+    pomVersion = project.ext.version
+}
+
+group=pomGroupId
+version=pomVersion
+
+println "======maven configuration project: ${project.name} -- mavenUrl: ${mavenUrl} -- mavenName: ${mavenAccountName} -- mavenPwd: ${mavenPwd}"
+println "======maven configuration project: ${project.name} -- groupId: ${pomGroupId}.${pomArtifactId}:${pomVersion}"
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: mavenUrl) {
+                authentication(userName: mavenAccountName, password: mavenPwd)
+            }
+
+            pom.groupId = pomGroupId
+            pom.artifactId = pomArtifactId
+            pom.version = pomVersion
+
+            pom.project {
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+            }
+        }
+    }
+}

@@ -5,6 +5,7 @@ import com.android.manifmerger.MergingReport
 import com.android.manifmerger.XmlDocument
 import com.android.utils.ILogger
 import com.galaxybruce.pioneer.PioneerExtension
+import com.galaxybruce.pioneer.utils.LogUtil
 import com.galaxybruce.pioneer.utils.Utils
 import org.gradle.api.Project
 
@@ -45,12 +46,12 @@ class ProjectManifestMerger {
                 platformDir = project.rootProject.galaxybrucepioneer.platformSourceDir
             }
             if(!platformDir) {
-                platformDir = project.MAVEN_MODULE_APP
+                platformDir = project.rootProject.MAVEN_MODULE_APP
             }
         } catch (Exception e) {
             platformDir = ''
         }
-//        println '======MAVEN_MODULE_APP: ' + "${platformDir}"
+        LogUtil.log(project, "ProjectManifestMerger", "merge manifest platformDir: ${platformDir}")
         project.android.sourceSets.main.jniLibs.srcDir("libs")
 
         pModuleDirs.each {
@@ -102,7 +103,7 @@ class ProjectManifestMerger {
         }
 
         int size = manifestSrcFiles.size()
-        println '======manifestSrcFiles.size: ' + size
+        LogUtil.log(project, "ProjectManifestMerger", "manifestSrcFiles.size: ${size}")
         File mainManifestFile = new File(manifestSrcFiles[size - 1])
 
         ManifestMerger2.MergeType mergeType = ManifestMerger2.MergeType.APPLICATION

@@ -38,22 +38,31 @@ if (project.hasProperty("android")) { // Android libraries
     }
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: MAVEN_URL) {
-                authentication(userName: MAVEN_ACCOUNT_NAME, password: MAVEN_ACCOUNT_PWD)
-            }
+if(project.hasProperty("MAVEN_MODULE_NAME") && MAVEN_MODULE_NAME) {
+    def groupId = 'com.galaxybruce'
+    def artifactId = MAVEN_MODULE_NAME
 
-            pom.groupId = 'com.galaxybruce'
-            pom.artifactId = MAVEN_MODULE_NAME
-            pom.version = MODULE_VERSION
+    if(project.ext.platformSourceDir) {
+        artifactId = MAVEN_MODULE_NAME + project.ext.platformSourceDir
+    }
 
-            pom.project {
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                repository(url: MAVEN_URL) {
+                    authentication(userName: MAVEN_ACCOUNT_NAME, password: MAVEN_ACCOUNT_PWD)
+                }
+
+                pom.groupId = groupId
+                pom.artifactId = artifactId
+                pom.version = MODULE_VERSION
+
+                pom.project {
+                    licenses {
+                        license {
+                            name 'The Apache Software License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
                     }
                 }
             }
