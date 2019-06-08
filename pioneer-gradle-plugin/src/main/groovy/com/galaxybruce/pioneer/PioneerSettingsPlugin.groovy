@@ -1,5 +1,6 @@
 package com.galaxybruce.pioneer
 
+import com.galaxybruce.pioneer.utils.LogUtil
 import com.galaxybruce.pioneer.utils.Utils
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
@@ -15,7 +16,44 @@ class PioneerSettingsPlugin implements Plugin<Settings> {
 //        settings.ext {
 //            getLibraryPathWithKey = Utils.&getLibraryPathWithKey
 //        }
+        // settings.gradle中可以调用这个方法添加module
+        settings.ext.includeModule = this.&includeModule
+        // 默认include根目录中的
+        includeModule(settings, settings.getRootDir().path)
+    }
 
+    def includeModule(Settings settings, String... libraryPaths) {
+        libraryPaths.each {
+            File f = new File(it) // file(it)
+            if (!f.exists() || !f.isDirectory()) {
+                return
+            }
+            if (isModule(f)) {
+                settings.include "${f.name}"
+                settings.project(":${f.name}").projectDir = f
+                LogUtil.log(null, "PioneerSettingsPlugin", "include: " + f.name)
+            } else {
+                f.eachDir { dir ->
+                    if (!isModule(dir)) {
+                        return
+                    }
+                    settings.include "${dir.name}"
+                    settings.project(":${dir.name}").projectDir = dir
+                    LogUtil.log(null, "PioneerSettingsPlugin", "include: " + dir.name)
+                }
+            }
+        }
+
+    }
+
+    static boolean isModule(File dir) {
+        File[] files = dir.listFiles(new FilenameFilter() {
+            @Override
+            boolean accept(File file, String name) {
+                return name == 'build.gradle' || name == 'src'
+            }
+        })
+        return files.size() == 2
     }
 }
 

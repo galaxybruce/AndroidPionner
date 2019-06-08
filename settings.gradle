@@ -1,24 +1,22 @@
 //include ':app', ':testlibrary'
 //include ':pioneer-gradle-plugin'
 
-includeModule(settings.getRootDir().path)
 
-def includeModule(String libraryPath) {
-    File f = file(libraryPath)
-    if (!f.exists() || !f.isDirectory()) return
-    f.eachDir { dir ->
-        if (!isModule(dir)) return
-        include "${dir.name}"
-        project(":${dir.name}").projectDir = dir
+buildscript {
+    repositories {
+        if(settings.hasProperty("LOCAL_MAVEN") && LOCAL_MAVEN.toBoolean()) {
+            def projectDir = settings.rootProject.projectDir
+            def repoFile = new File(projectDir, 'repo-local')
+            maven{ url repoFile }
+        }
+
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.7'
     }
 }
+apply plugin: 'galaxybruce-pioneer-settings'
 
-static boolean isModule(File dir) {
-    File[] files = dir.listFiles(new FilenameFilter() {
-        @Override
-        boolean accept(File file, String name) {
-            return name == 'build.gradle' || name == 'src'
-        }
-    })
-    return files.size() == 2
-}
+//settings.ext.includeModule(settings, settings.getRootDir().path)
