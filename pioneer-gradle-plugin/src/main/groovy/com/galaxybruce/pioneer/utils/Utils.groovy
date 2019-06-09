@@ -60,4 +60,21 @@ public class Utils {
 
         return libraryPath
     }
+
+    /**
+     * 读取properties中的值
+     * @param project
+     * @param key
+     * @return
+     */
+    static String getPropertiesValue(def project, String key) {
+        return project.hasProperty(key) ? project."$key" : null
+        // project.hasProperty("MAVEN_MODULE_NAME") && MAVEN_MODULE_NAME ? MAVEN_MODULE_NAME : null
+        // project.hasProperty("MAVEN_MODULE_NAME") && MAVEN_MODULE_NAME ? project.getProperties().get(key) : null
+    }
+
+    // 读取project.ext中的值
+    static String getExtValue(def project, String key) {
+        return project.ext.has(key) ? project.ext."$key" : null
+    }
 }

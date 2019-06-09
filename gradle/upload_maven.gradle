@@ -52,11 +52,14 @@ if (projectPropertiesFile.exists()) {
     properties.load(projectPropertiesFile.newDataInputStream())
 }
 
-// read properties
+// 私有maven信息一般放在local.properties中
 def mavenUrl = properties.getProperty("MAVEN_URL")
 def mavenAccountName = properties.getProperty("MAVEN_ACCOUNT_NAME")
 def mavenPwd = properties.getProperty("MAVEN_ACCOUNT_PWD")
 
+// groupId从两个获取的地方，优先级 modulemaven.json > gradle.properties(rootProject)
+// artifactId从三个获取的地方，优先级 modulemaven.json > gradle.properties(module) > project.name
+// version从三个获取的地方，优先级 modulemaven.json > gradle.properties(module) > android.defaultConfig.versionName
 def pomGroupId = properties.getProperty("project.groupId")
 def pomArtifactId = project.hasProperty("MAVEN_MODULE_NAME") && MAVEN_MODULE_NAME ? MAVEN_MODULE_NAME : project.name
 def pomVersion = project.hasProperty("MAVEN_MODULE_VERSION") && MAVEN_MODULE_VERSION ? MAVEN_MODULE_VERSION : android.defaultConfig.versionName
