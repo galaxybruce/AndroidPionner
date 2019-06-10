@@ -115,9 +115,12 @@ class PioneerPlugin implements Plugin<Project> {
                             println ""
                             LogUtil.log(rootProject, "PioneerPlugin", "start upload module[$moduleName] ...")
                             def process = ("./gradlew :$moduleName:uploadArchives").execute()
+                            def strErr = new StringBuffer()
+                            process.consumeProcessErrorStream(strErr)
                             def result = process.waitFor()
                             if (result != 0) {
-                                LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven fail !!! ")
+                                LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven fail !!!!!! ")
+                                println strErr.toString()
                             } else {
                                 LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven success !!! ")
                             }
