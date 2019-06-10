@@ -2,11 +2,14 @@
 android常用编译功能插件，旨在把一些自动化的脚本收集在一起。
 
 ## 目前有以下功能：
-* 比如复制mapping.txt文件
-* 合并pin工程的manifest.xml
-* 设置module源码路径
+* 设置settings.gradle中需要include的library源码路径
+* settings.gradle中动态include项目
+* 批量上传library到本地maven或者私有maven服务器
+* 复制mapping.txt文件到指定目录
+* 处理pin工程，pin工程概念建议参考这篇文章[微信Android模块化架构重构实践](https://www.jianshu.com/p/3990724aa7e4)
 
-## settings.gradle中设置module源码路径
+## settings.gradle
+### 1. 设置settings.gradle中需要include的library源码路径
 settings.gradle文件顶部添加
 ```
 buildscript {
@@ -15,19 +18,39 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.5'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.10'
     }
 }
 apply plugin: 'galaxybruce-pioneer-settings'
 
-// LIBRARY_PATH是本地环境变量中配置的library路径，第二个参数是默认的打包路径
+// LIBRARY_PATH是本地环境变量中配置的library路径，
+// 第二个参数是打包机器上的library路径
 def libraryPathWithKey = settings.ext.getLibraryPathWithKey('LIBRARY_PATH',
         '打包机器上的library路径')
 ```
 
-## 项目根目录build.gradle添加
+### 2. settings.gradle中动态include项目
+调用以下方法可以不用手动include library，会自动读取设置的目录下的所有library
+```
+// 读取工程根目录下的所有library并include进来，参数是不需要include的目录名称
+settings.ext.includeDefaultModule(['lib1', 'lib2'])
+// 读取libraryPathWithKey目录下的所有library并include进来，
+// 参数是不需要include的目录名称
+// 该方法可以多次调用或者第一个参数传多个目录
+settings.ext.includeModule([libraryPathWithKey], ['aopstati','plugin'])
+```
+
+## build.gradle 
+### 1. 批量上传library到本地maven或者私有maven服务器
+rootproject中的build.gradle中添加如下代码
 ```
 apply plugin: 'galaxybruce-pioneer'
+
+galaxybrucepioneer {
+    mavenScriptPath = 'maven上传脚本文件路径'
+    // 需要批量上传到maven的library配置，具体格式可参考demo中的文件
+    moduleDataPath = "${project.rootDir.path}/modulemaven.json"
+}
 
 buildscript {
     repositories {
@@ -36,30 +59,30 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.6'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.10'
     }
 }
 ```
 
-### 复制mapping.txt文件
+### 2. 复制mapping.txt文件到指定目录
 在app中的build.gradle添加
+
 ```
 apply plugin: 'galaxybruce-pioneer'
 
 // 是否开启copy mapping.txt功能
-galaxybrucepioneer.copyMappingEnabled = true
+galaxybrucepioneer {
+    copyMappingEnabled = true
+    mappingDir = '目标copy目录'
+}
 ```
 
-### 合并pin工程manifest
-在需要的pin工程module的build.gradle中添加
+### 3. 处理pin工程
+在需要的pin工程module的build.gradle中添加即可
 ```
 apply plugin: 'galaxybruce-pioneer'
 ```
 
-### 设置aar依赖
-调用方式：  
-1.现在build.gradle android节点下调用rootProject.ext.setAARDirs(project)  
-2.在build.gradle dependencies节点下调用rootProject.ext.addAARLibs(project, depModule
 
 
 
