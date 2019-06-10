@@ -14,7 +14,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.7'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.9'
     }
 }
 apply plugin: 'galaxybruce-pioneer-settings'

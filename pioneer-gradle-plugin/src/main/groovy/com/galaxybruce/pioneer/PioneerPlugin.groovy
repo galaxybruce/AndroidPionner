@@ -103,29 +103,31 @@ class PioneerPlugin implements Plugin<Project> {
             }
 
             // 创建批量上传maven task
-            rootProject.tasks.create(name: "uploadMaven") << {
-                LogUtil.log(rootProject, "PioneerPlugin", "start upload library to maven...")
+            rootProject.tasks.create(name: "uploadMaven") {
+                doLast {
+                    LogUtil.log(rootProject, "PioneerPlugin", "start upload library to maven...")
 
-                final MavenInfo mavenInfo = project.rootProject.ext.mavenInfo
-                if(mavenInfo != null && mavenInfo.modules != null && !mavenInfo.modules.isEmpty()) {
-                    mavenInfo.modules.forEach(new Consumer<ModuleInfo>() {
-                        @Override
-                        void accept(ModuleInfo moduleInfo) {
-                            def moduleName = moduleInfo.name
-                            println ""
-                            LogUtil.log(rootProject, "PioneerPlugin", "start upload module[$moduleName] ...")
-                            def process = ("./gradlew :$moduleName:uploadArchives").execute()
-                            def strErr = new StringBuffer()
-                            process.consumeProcessErrorStream(strErr)
-                            def result = process.waitFor()
-                            if (result != 0) {
-                                LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven fail !!!!!! ")
-                                println strErr.toString()
-                            } else {
-                                LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven success !!! ")
+                    final MavenInfo mavenInfo = Utils.getExtValue(project.rootProject, "mavenInfo")
+                    if(mavenInfo != null && mavenInfo.modules != null && !mavenInfo.modules.isEmpty()) {
+                        mavenInfo.modules.forEach(new Consumer<ModuleInfo>() {
+                            @Override
+                            void accept(ModuleInfo moduleInfo) {
+                                def moduleName = moduleInfo.name
+                                println ""
+                                LogUtil.log(rootProject, "PioneerPlugin", "start upload module[$moduleName] ...")
+                                def process = ("./gradlew :$moduleName:uploadArchives").execute()
+                                def strErr = new StringBuffer()
+                                process.consumeProcessErrorStream(strErr)
+                                def result = process.waitFor()
+                                if (result != 0) {
+                                    LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven fail !!!!!! ")
+                                    println strErr.toString()
+                                } else {
+                                    LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven success !!! ")
+                                }
                             }
-                        }
-                    })
+                        })
+                    }
                 }
             }
         }

@@ -74,7 +74,7 @@ public class Utils {
     }
 
     // 读取project.ext中的值
-    static String getExtValue(def project, String key) {
+    static Object getExtValue(def project, String key) {
         return project.ext.has(key) ? project.ext."$key" : null
     }
 }
