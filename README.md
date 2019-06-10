@@ -78,6 +78,7 @@ platform: 是否支持多平台的
 
 ```
 
+配置好以后，输入命令./gradlew uploadMaven即可
 
 ### 2. 复制mapping.txt文件到指定目录
 在app中的build.gradle添加
