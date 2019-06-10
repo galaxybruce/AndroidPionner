@@ -24,24 +24,41 @@ class PioneerSettingsPlugin implements Plugin<Settings> {
         settings.ext.includeDefaultModule = this.&includeDefaultModule
     }
 
-    def includeDefaultModule() {
-        // 默认include根目录中的
-        includeModule(settings.getRootDir().path)
+    /**
+     * 默认include根目录中的
+     * @param excludeDirs
+     * @return
+     */
+    def includeDefaultModule(List<String> excludeDirs) {
+        includeModule([settings.getRootDir().path], excludeDirs)
     }
 
-    def includeModule(String... libraryPaths) {
+    /**
+     * 加载指定目录中的module
+     * 调用方式： settings.ext.includeModule([libraryPath], ['aopstat','plugin'])
+     * @param libraryPaths
+     * @param excludeDirs
+     * @return
+     */
+    def includeModule(List<String> libraryPaths, List<String> excludeDirs) {
         libraryPaths.each {
             File f = new File(it) // file(it)
             if (!f.exists() || !f.isDirectory()) {
                 return
             }
             if (isModule(f)) {
+                if(excludeDirs != null && excludeDirs.contains(f.name)) {
+                    return
+                }
                 settings.include "${f.name}"
                 settings.project(":${f.name}").projectDir = f
                 LogUtil.log(null, "PioneerSettingsPlugin", "include: " + f.name)
             } else {
                 f.eachDir { dir ->
                     if (!isModule(dir)) {
+                        return
+                    }
+                    if(excludeDirs != null && excludeDirs.contains(dir.name)) {
                         return
                     }
                     settings.include "${dir.name}"

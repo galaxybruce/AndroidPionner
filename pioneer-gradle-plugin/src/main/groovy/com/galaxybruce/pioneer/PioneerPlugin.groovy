@@ -112,7 +112,8 @@ class PioneerPlugin implements Plugin<Project> {
                         @Override
                         void accept(ModuleInfo moduleInfo) {
                             def moduleName = moduleInfo.name
-                            LogUtil.log(rootProject, "PioneerPlugin", "start upload module[$moduleName] to maven...")
+                            println ""
+                            LogUtil.log(rootProject, "PioneerPlugin", "start upload module[$moduleName] ...")
                             def process = ("./gradlew :$moduleName:uploadArchives").execute()
                             def result = process.waitFor()
                             if (result != 0) {
