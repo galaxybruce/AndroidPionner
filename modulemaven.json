@@ -1,7 +1,7 @@
 {
   "group": "com.galaxybruce",
   "modules": [
-    {"name": "testlibrary", "platform": true}
+    {"name": "testlibrary", "platform": true, "artifactId": "testlibrary", "ver": "0.0.1"}
   ]
 }
 

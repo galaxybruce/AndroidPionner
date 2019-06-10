@@ -63,6 +63,20 @@ buildscript {
     }
 }
 ```
+PS: 每个library支持配置四个字段
+name: 是需要上传到maven的library名称
+artifactId: 如果不设置，默认是project.name
+ver: 如果不设置，默认是android.defaultConfig.versionName
+```
+{
+  "group": "com.galaxybruce",
+  "modules": [
+    {"name": "testlibrary", "platform": true, "artifactId": "testlibrary", "ver": "0.0.1"}
+  ]
+}
+
+```
+
 
 ### 2. 复制mapping.txt文件到指定目录
 在app中的build.gradle添加

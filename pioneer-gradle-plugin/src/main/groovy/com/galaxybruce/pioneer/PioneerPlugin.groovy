@@ -159,6 +159,9 @@ class PioneerPlugin implements Plugin<Project> {
     }
 
     private static void applyUpload2MavenScript(Project project) {
+        if(!project.rootProject.galaxybrucepioneer.mavenScriptPath) {
+            return
+        }
         Task uploadArchives = project.tasks.findByName("uploadArchives")
 //        Task st = project.tasks.findByName("sourcesJar")
         // 如果原来的library中有上传脚本就不添加了
@@ -166,7 +169,7 @@ class PioneerPlugin implements Plugin<Project> {
             return
         }
 
-        final MavenInfo mavenInfo = project.rootProject.ext.mavenInfo
+        final MavenInfo mavenInfo = Utils.getExtValue(project.rootProject, "mavenInfo")
         final ModuleInfo moduleInfo = mavenInfo.getModuleInfo(project.name)
         if(moduleInfo != null) {
             // 给需要多平台打包的module设置平台目录，在mavenScriptPath上传maven脚本中设置
