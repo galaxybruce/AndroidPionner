@@ -7,7 +7,10 @@ import org.gradle.api.initialization.Settings
 
 class PioneerSettingsPlugin implements Plugin<Settings> {
 
+    Settings settings
+
     void apply(Settings settings) {
+        this.settings = settings
         // 通过这两种方式引用 settings.ext.getLibraryPathWithKey  或者 getLibraryPathWithKey
         // 如：def libraryPathWithKey = settings.ext.getLibraryPathWithKey('RETAIL_LIBRARY_PATH',
         //        '/Users/galaxybruce/.jenkins/workspace/retailLib/printer')
@@ -18,11 +21,15 @@ class PioneerSettingsPlugin implements Plugin<Settings> {
 //        }
         // settings.gradle中可以调用这个方法添加module
         settings.ext.includeModule = this.&includeModule
-        // 默认include根目录中的
-        includeModule(settings, settings.getRootDir().path)
+        settings.ext.includeDefaultModule = this.&includeDefaultModule
     }
 
-    def includeModule(Settings settings, String... libraryPaths) {
+    def includeDefaultModule() {
+        // 默认include根目录中的
+        includeModule(settings.getRootDir().path)
+    }
+
+    def includeModule(String... libraryPaths) {
         libraryPaths.each {
             File f = new File(it) // file(it)
             if (!f.exists() || !f.isDirectory()) {

@@ -19,4 +19,5 @@ buildscript {
 }
 apply plugin: 'galaxybruce-pioneer-settings'
 
-//settings.ext.includeModule(settings, settings.getRootDir().path)
+settings.ext.includeDefaultModule()
+// settings.ext.includeModule(settings.getRootDir().path)

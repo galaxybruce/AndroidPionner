@@ -43,11 +43,11 @@ File localPropertiesFile = project.rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
     properties.load(localPropertiesFile.newDataInputStream())
 }
-File rootProjectPropertiesFile = project.rootProject.file("project.properties")
+File rootProjectPropertiesFile = project.rootProject.file("gradle.properties")
 if (rootProjectPropertiesFile.exists()) {
     properties.load(rootProjectPropertiesFile.newDataInputStream())
 }
-File projectPropertiesFile = project.file("project.properties")
+File projectPropertiesFile = project.file("gradle.properties")
 if (projectPropertiesFile.exists()) {
     properties.load(projectPropertiesFile.newDataInputStream())
 }
