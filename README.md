@@ -67,6 +67,7 @@ PS: 每个library支持配置四个字段
 name: 是需要上传到maven的library名称
 artifactId: 如果不设置，默认是project.name
 ver: 如果不设置，默认是android.defaultConfig.versionName
+platform: 是否支持多平台的
 ```
 {
   "group": "com.galaxybruce",
