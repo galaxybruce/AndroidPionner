@@ -73,7 +73,7 @@ class PioneerPlugin implements Plugin<Project> {
 
         // 设置aar库相关依赖方法，这几个方法目前基本上没什么作用
         rootProject.ext{
-            isDepModule = AARDependency.&isDepModule         //是否是module依赖方式
+            depModuleSource = AARDependency.&depModuleSource         //是否是module依赖方式
             setAARDirs = AARDependency.&setAARDirs           //设置aar库的path
             addAARLibs = AARDependency.&addAARLibs           //添加aar依赖库
         }

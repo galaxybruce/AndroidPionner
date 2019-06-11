@@ -7,7 +7,7 @@
  * 是否是module依赖方式
  * @return
  */
-def isDepModule()
+def depModuleSource()
 {
     return  "1".equals(DEPENDENCIES_MODULE);
 }
@@ -42,23 +42,23 @@ def setAARDirs(Project project)
  * 添加aar依赖库
  * @param dh
  * @param ft
- * @param isDepModule
+ * @param depModuleSource
  * @return
  *
  * 调用方式：
  * dependencies {
  *  ...
- *  boolean depModule = rootProject.ext.isDepModule();
+ *  boolean depModule = rootProject.ext.depModuleSource();
  *  rootProject.ext.addAARLibs(project, depModule);
  * }
  */
-def addAARLibs(Project project, boolean isDepModule = false)
+def addAARLibs(Project project, boolean depModuleSource = false)
 {
     DependencyHandler dh = project.dependencies;
     ConfigurableFileTree ft = project.fileTree(dir: 'libs', include: '**/*.aar');
     ft.each { File f ->
         //default目录下的aar是一直要依赖的，aars目录下的aar是替代module的
-        if(f.parentFile.name.equals('default') || !isDepModule && f.parentFile.name.equals('aars'))
+        if(f.parentFile.name.equals('default') || !depModuleSource && f.parentFile.name.equals('aars'))
         {
             dh.add("api", [name: f.name.lastIndexOf('.').with { it != -1 ? f.name[0..<it] : f.name }, ext: 'aar'])
         }
@@ -66,7 +66,7 @@ def addAARLibs(Project project, boolean isDepModule = false)
 }
 
 ext{
-    isDepModule = this.&isDepModule         //是否是module依赖方式
+    depModuleSource = this.&depModuleSource         //是否是module依赖方式
     setAARDirs = this.&setAARDirs           //设置aar库的path
     addAARLibs = this.&addAARLibs           //添加aar依赖库
 }
