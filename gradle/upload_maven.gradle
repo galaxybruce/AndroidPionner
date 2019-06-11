@@ -54,6 +54,7 @@ if (projectPropertiesFile.exists()) {
 
 // 私有maven信息一般放在local.properties中
 def mavenUrl = properties.getProperty("MAVEN_URL")
+def mavenUrlOfSnapShot = properties.getProperty("MAVEN_URL_SNAPSHOT")
 def mavenAccountName = properties.getProperty("MAVEN_ACCOUNT_NAME")
 def mavenPwd = properties.getProperty("MAVEN_ACCOUNT_PWD")
 
@@ -90,6 +91,10 @@ uploadArchives {
     repositories {
         mavenDeployer {
             repository(url: mavenUrl) {
+                authentication(userName: mavenAccountName, password: mavenPwd)
+            }
+
+            snapshotRepository(url: mavenUrlOfSnapShot) {
                 authentication(userName: mavenAccountName, password: mavenPwd)
             }
 

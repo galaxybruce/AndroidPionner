@@ -115,7 +115,9 @@ class PioneerPlugin implements Plugin<Project> {
                                 def moduleName = moduleInfo.name
                                 println ""
                                 LogUtil.log(rootProject, "PioneerPlugin", "start upload module[$moduleName] ...")
-                                def process = ("./gradlew :$moduleName:uploadArchives").execute()
+                                // ./gradlew :module1:uploadArchives :module2:uploadArchives :module3:uploadArchives
+                                def cmd = org.gradle.internal.os.OperatingSystem.current().isWindows() ? "gradlew.bat" : "./gradlew"
+                                def process = ("$cmd :$moduleName:uploadArchives").execute()
                                 def strErr = new StringBuffer()
                                 process.consumeProcessErrorStream(strErr)
                                 def result = process.waitFor()
