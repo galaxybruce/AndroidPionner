@@ -116,16 +116,38 @@ class PioneerPlugin implements Plugin<Project> {
                                 println ""
                                 LogUtil.log(rootProject, "PioneerPlugin", "start upload module[$moduleName] ...")
                                 // ./gradlew :module1:uploadArchives :module2:uploadArchives :module3:uploadArchives
-                                def cmd = org.gradle.internal.os.OperatingSystem.current().isWindows() ? "gradlew.bat" : "./gradlew"
-                                def process = ("$cmd :$moduleName:uploadArchives").execute()
-                                def strErr = new StringBuffer()
-                                process.consumeProcessErrorStream(strErr)
-                                def result = process.waitFor()
-                                if (result != 0) {
-                                    LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven fail !!!!!! ")
-                                    println strErr.toString()
+                                // rootProject.project(":$moduleName").tasks['uploadArchives'].execute()
+
+                                if(org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+                                    // window下用process.waitFor会出现死锁
+                                    def eo = new ByteArrayOutputStream()
+                                    def so = new ByteArrayOutputStream()
+                                    def result = rootProject.exec {
+                                        commandLine 'gradlew.bat', ":$moduleName:uploadArchives"
+                                        standardOutput  so
+                                        errorOutput eo
+                                        // Gradle will by default throw an exception and terminate when receiving non-zero result codes from commands
+                                        ignoreExitValue true
+                                    }
+                                    // https://stackoverflow.com/questions/45396268/gradle-exec-how-to-print-error-output
+                                    if(result.exitValue != 0) {
+                                        LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven fail !!!!!! ")
+                                        println eo.toString()
+                                    } else {
+                                        LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven success !!! ")
+                                    }
                                 } else {
-                                    LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven success !!! ")
+                                    def cmd = "./gradlew"
+                                    def process = ("$cmd :$moduleName:uploadArchives").execute()
+                                    def strErr = new StringBuffer()
+                                    process.consumeProcessErrorStream(strErr)
+                                    def result = process.waitFor()
+                                    if (result != 0) {
+                                        LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven fail !!!!!! ")
+                                        println strErr.toString()
+                                    } else {
+                                        LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven success !!! ")
+                                    }
                                 }
                             }
                         })
