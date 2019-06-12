@@ -18,7 +18,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.10'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.13'
     }
 }
 apply plugin: 'galaxybruce-pioneer-settings'
@@ -34,8 +34,9 @@ def libraryPathWithKey = settings.ext.getLibraryPathWithKey('LIBRARY_PATH',
 ```
 // 读取工程根目录下的所有library并include进来，参数是不需要include的目录名称
 settings.ext.includeDefaultModule(['lib1', 'lib2'])
+
 // 读取libraryPathWithKey目录下的所有library并include进来，
-// 参数是不需要include的目录名称
+// 第二个参数是不需要include的目录名称
 // 该方法可以多次调用或者第一个参数传多个目录
 settings.ext.includeModule([libraryPathWithKey], ['aopstati','plugin'])
 ```
@@ -59,15 +60,16 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.10'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.13'
     }
 }
 ```
-PS: 每个library支持配置四个字段
-name: 是需要上传到maven的library名称
-artifactId: 如果不设置，默认是project.name
-ver: 如果不设置，默认是android.defaultConfig.versionName
+PS: 每个library支持配置四个字段  
+name: 是需要上传到maven的library名称  
+artifactId: 如果不设置，默认是project.name  
+ver: 如果不设置，默认是android.defaultConfig.versionName  
 platform: 是否支持多平台的
+
 ```
 {
   "group": "com.galaxybruce",
