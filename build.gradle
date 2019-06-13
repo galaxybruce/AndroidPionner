@@ -2,7 +2,7 @@
 apply plugin: 'galaxybruce-pioneer'
 
 galaxybrucepioneer {
-    platformSourceDir = 'pionner'
+    platformSourceDir = 'app2'
     mavenScriptPath = "${project.rootDir.path}/gradle/upload_maven.gradle"
     moduleDataPath = "${project.rootDir.path}/modulemaven.json"
 }

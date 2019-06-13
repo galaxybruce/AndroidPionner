@@ -61,21 +61,24 @@ class ProjectManifestMerger {
                 // 遍历main和对应平台的目录
                 dirs.each { dir ->
                     if(dir != null && !(''.equals(dir))) {
-                        // manifest
-                        def manifestPath = it.absolutePath + "/$dir/AndroidManifest.xml"
-                        def manifestSrcFile = new File(manifestPath)
-                        if (manifestSrcFile.exists() && !manifestSrcFiles.contains(manifestPath)) {
-//                        println '======manifestPath: ' + manifestPath
-                            manifestSrcFiles << manifestPath
-                        }
+                        if(project.file("${it.absolutePath}/$dir").exists()) {
+                            LogUtil.log(project, "ProjectManifestMerger", "valid resource dir: ${it.absolutePath}/$dir")
+                            // manifest
+                            def manifestPath = it.absolutePath + "/$dir/AndroidManifest.xml"
+                            def manifestSrcFile = new File(manifestPath)
+                            if (manifestSrcFile.exists() && !manifestSrcFiles.contains(manifestPath)) {
+//                              println '======manifestPath: ' + manifestPath
+                                manifestSrcFiles << manifestPath
+                            }
 
-                        // 其他资源
-                        project.android.sourceSets.main.jniLibs.srcDir("src/$it.name/$dir/libs")
-                        project.android.sourceSets.main.java.srcDir("src/$it.name/$dir/java")
-                        project.android.sourceSets.main.resources.srcDir("src/$it.name/$dir/resources")
-                        project.android.sourceSets.main.res.srcDir("src/$it.name/$dir/res")
-                        project.android.sourceSets.main.assets.srcDir("src/$it.name/$dir/assets")
-                        project.android.sourceSets.main.jniLibs.srcDir("src/$it.name/$dir/libs")
+                            // 其他资源
+                            project.android.sourceSets.main.jniLibs.srcDir("src/$it.name/$dir/libs")
+                            project.android.sourceSets.main.java.srcDir("src/$it.name/$dir/java")
+                            project.android.sourceSets.main.resources.srcDir("src/$it.name/$dir/resources")
+                            project.android.sourceSets.main.res.srcDir("src/$it.name/$dir/res")
+                            project.android.sourceSets.main.assets.srcDir("src/$it.name/$dir/assets")
+                            project.android.sourceSets.main.jniLibs.srcDir("src/$it.name/$dir/libs")
+                        }
                     }
                 }
             } else if (it.isDirectory() && (it.name == "main" || it.name == "${platformDir}")) {
