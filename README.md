@@ -116,7 +116,7 @@ galaxybrucepioneer {
 }
 ```
 多平台项目结构：
-![多平台项目结构](./image/mutil_platform.png)
+![多平台项目结构](./images/mutil_platform.png)
 
 
 
