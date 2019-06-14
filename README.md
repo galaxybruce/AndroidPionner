@@ -7,6 +7,7 @@ android常用编译功能插件，旨在把一些自动化的脚本收集在一�
 * 批量上传library到本地maven或者私有maven服务器
 * 复制mapping.txt文件到指定目录
 * 处理pin工程，pin工程概念建议参考这篇文章[微信Android模块化架构重构实践](https://www.jianshu.com/p/3990724aa7e4)
+* 多平台复用
 
 ## settings.gradle
 ### 1. 设置settings.gradle中需要include的library源码路径
@@ -96,11 +97,26 @@ galaxybrucepioneer {
 ```
 
 ### 3. 处理pin工程
-在需要的pin工程module的build.gradle中添加即可
+插件默认开启pin工程支持，在需要的pin工程module的build.gradle中添加即可，pin工程约定都已p_开头。
 ```
 apply plugin: 'galaxybruce-pioneer'
 ```
 
+### 4. 多平台复用
+插件默认支持多平台复用，在需要开启多平台复用的module的build.gradle中添加即可。
+```
+apply plugin: 'galaxybruce-pioneer'
+```
+同时需要再项目根目录下的build.gradle指定当前平台资源所在目录
+```
+apply plugin: 'galaxybruce-pioneer'
+
+galaxybrucepioneer {
+    platformSourceDir = 'app2'
+}
+```
+多平台项目结构：
+![多平台项目结构](./image/mutil_platform.png)
 
 
 
