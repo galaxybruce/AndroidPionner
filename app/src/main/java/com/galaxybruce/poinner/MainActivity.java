@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.galaxybruce.pionner.R;
+import com.galaxybruce.poinner.R;
 import com.galaxybruce.pionner.demo.AppActivity_1;
 import com.galaxybruce.testlibrary.Lib1Activity_1;
 
