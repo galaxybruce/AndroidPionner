@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject
 import com.android.build.gradle.AppPlugin
 import com.galaxybruce.pioneer.aar.AARDependency
 import com.galaxybruce.pioneer.copy.ProjectCopyOutputManager
+import com.galaxybruce.pioneer.flutter.FlutterHandler
 import com.galaxybruce.pioneer.manifest.ProjectManifestMerger
 import com.galaxybruce.pioneer.maven.MavenInfo
 import com.galaxybruce.pioneer.maven.ModuleInfo
@@ -156,6 +157,8 @@ class PioneerPlugin implements Plugin<Project> {
             }
         }
 
+        FlutterHandler.handleRootProject(rootProject)
+
         rootProject.subprojects {
             project.afterEvaluate {
                 project.plugins.withId('com.android.library') {
@@ -192,6 +195,8 @@ class PioneerPlugin implements Plugin<Project> {
         if(uploadArchives.repositories.size() > 0) {
             return
         }
+
+        // todo 这里是否要排除flutter中的module
 
         final MavenInfo mavenInfo = Utils.getExtValue(project.rootProject, "mavenInfo")
         final ModuleInfo moduleInfo = mavenInfo.getModuleInfo(project.name)

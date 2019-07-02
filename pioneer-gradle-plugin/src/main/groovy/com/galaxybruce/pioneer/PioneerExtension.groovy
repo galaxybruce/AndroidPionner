@@ -28,6 +28,17 @@ class PioneerExtension {
     def moduleDataPath
 
 
+
+    /*******************flutter start************************/
+    def mavenUrl
+    def mavenUrlSnapShot
+    def mavenAccount
+    def mavenPwd
+    def localMaven
+    /*******************flutter end  ************************/
+
+
+
     PioneerExtension() {}
 
     PioneerExtension(Project project) {}
