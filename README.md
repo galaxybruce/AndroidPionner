@@ -8,6 +8,7 @@ android常用编译功能插件，旨在把一些自动化的脚本收集在一�
 * 复制mapping.txt文件到指定目录
 * 处理pin工程，pin工程概念建议参考这篇文章[微信Android模块化架构重构实践](https://www.jianshu.com/p/3990724aa7e4)
 * 多平台复用
+* flutter module以及依赖的插件上传到maven
 
 ## settings.gradle
 ### 1. 设置settings.gradle中需要include的library源码路径
@@ -118,7 +119,43 @@ galaxybrucepioneer {
 多平台项目结构：
 ![多平台项目结构](./images/mutil_platform.png)
 
+### 5. flutter module以及依赖的插件上传到maven
+在flutter module根目录下的gradle目录下添加文件root_build.gradle，文件内容如下
+```
+apply plugin: 'galaxybruce-pioneer'
+galaxybrucepioneer {
+    mavenUrl = 'http://172.172.177.240:8081/nexus/content/repositories/releases'
+    mavenUrlSnapShot = 'http://172.172.177.240:8081/nexus/content/repositories/snapshots'
+    mavenAccount = 'deployment'
+    mavenPwd = '666666'
+    localMaven = false
+}
 
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.14'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+```
+&emsp;
+配合这篇文章[Flutter混编一键打包并上传maven](https://github.com/galaxybruce/galaxybruce.github.io/blob/master/flutter/Flutter%E6%B7%B7%E7%BC%96%E4%B8%80%E9%94%AE%E6%89%93%E5%8C%85%E5%B9%B6%E4%B8%8A%E4%BC%A0maven.md)中讲的AndroidFlutter.sh脚本，即可实现Flutter混编一键打包并上传maven
 
 
 
