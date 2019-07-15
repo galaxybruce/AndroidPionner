@@ -124,10 +124,15 @@ galaxybrucepioneer {
 ```
 apply plugin: 'galaxybruce-pioneer'
 galaxybrucepioneer {
+    // 公司maven私服
     mavenUrl = 'http://172.172.177.240:8081/nexus/content/repositories/releases'
+    // 公司maven私服SnapShot
     mavenUrlSnapShot = 'http://172.172.177.240:8081/nexus/content/repositories/snapshots'
+    // maven账号
     mavenAccount = 'deployment'
+    // maven密码
     mavenPwd = '666666'
+    // true: 发布到本地仓库，false：发布到公司私服
     localMaven = false
 }
 
