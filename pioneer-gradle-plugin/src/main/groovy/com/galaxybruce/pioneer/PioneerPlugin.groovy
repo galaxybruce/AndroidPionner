@@ -199,7 +199,7 @@ class PioneerPlugin implements Plugin<Project> {
         // todo 这里是否要排除flutter中的module
 
         final MavenInfo mavenInfo = Utils.getExtValue(project.rootProject, "mavenInfo")
-        final ModuleInfo moduleInfo = mavenInfo.getModuleInfo(project.name)
+        final ModuleInfo moduleInfo = mavenInfo?.getModuleInfo(project.name)
         if(moduleInfo != null) {
             // 给需要多平台打包的module设置平台目录，在mavenScriptPath上传maven脚本中设置
             // pom.artifactId时用到project.ext.platformSourceDir
