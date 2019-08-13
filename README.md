@@ -117,10 +117,11 @@ galaxybrucepioneer {
 }
 ```
 多平台项目结构：
-![多平台项目结构](./images/mutil_platform.png)
+![多平台项目结构](images/mutil_platform.png)
 
 ### 5. flutter module以及依赖的插件上传到maven
 在flutter module根目录下的gradle目录下添加文件root_build.gradle，文件内容如下
+/gradle/root_build.gradle
 ```
 apply plugin: 'galaxybruce-pioneer'
 galaxybrucepioneer {
