@@ -120,9 +120,10 @@ galaxybrucepioneer {
 多平台项目结构
 ![多平台项目结构](./images/mutilplatform.png)
 
-### 5. flutter module以及依赖的插件上传到maven
-在flutter module根目录下的gradle目录下添加文件root_build.gradle，文件内容如下
-/gradle/root_build.gradle
+### 5. flutter module以及依赖的plugin上传到maven
+1. 在flutter module根目录下的gradle目录下(/gradle/root_build.gradle)添加文件root_build.gradle，文件内容如下。
+注意： 使用时需修改成需要的值
+
 ```
 apply plugin: 'galaxybruce-pioneer'
 galaxybrucepioneer {
@@ -139,6 +140,7 @@ galaxybrucepioneer {
 }
 
 buildscript {
+    ext.library_version = [kotlinVersion    : "1.3.31",]
     repositories {
         google()
         jcenter()
@@ -162,7 +164,12 @@ task clean(type: Delete) {
 }
 ```
 &emsp;
-配合这篇文章[Flutter混编一键打包并上传maven](https://github.com/galaxybruce/galaxybruce.github.io/blob/master/flutter/Flutter%E6%B7%B7%E7%BC%96%E4%B8%80%E9%94%AE%E6%89%93%E5%8C%85%E5%B9%B6%E4%B8%8A%E4%BC%A0maven.md)中讲的AndroidFlutter.sh脚本，即可实现Flutter混编一键打包并上传maven
+2. 将[Flutter module上传maven shell脚本](https://galaxybruce.github.io/flutter/Flutter%20module%E4%B8%8A%E4%BC%A0maven%20shell%E8%84%9A%E6%9C%AC.html)放到flutter module根目录下，执行如下命令即可实现Flutter混编一键打包并上传maven
+
+```
+// version artifactId groupId根据实际情况设定
+./androidFlutter version artifactId groupId
+```
 
 
 
