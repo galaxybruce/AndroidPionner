@@ -116,7 +116,8 @@ galaxybrucepioneer {
     platformSourceDir = 'app2'
 }
 ```
-多平台项目结构：
+
+多平台项目结构
 ![多平台项目结构](./images/mutilplatform.png)
 
 ### 5. flutter module以及依赖的插件上传到maven
