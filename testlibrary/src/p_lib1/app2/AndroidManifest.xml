@@ -10,6 +10,16 @@
             android:name=".Lib1Activity_2"
             android:screenOrientation="portrait" />
 
+        <provider
+            android:name="com.galaxybruce.testlibrary.GFileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            android:multiprocess="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/galaxybruce_provider_paths" />
+        </provider>
     </application>
 
 
