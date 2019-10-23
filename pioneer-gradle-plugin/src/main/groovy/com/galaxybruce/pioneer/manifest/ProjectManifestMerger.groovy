@@ -125,8 +125,14 @@ class ProjectManifestMerger {
         if(size == 1) {
             project.android.sourceSets.main.manifest.srcFile "${manifestSrcFiles[0]}"
         } else {
-            File mainManifestFile = new File(manifestSrcFiles[size - 1])
+            def intermediateManifestFile = new File("$project.buildDir/AndroidManifest.xml")
+            if(intermediateManifestFile.exists()) {
+                project.android.sourceSets.main.manifest.srcFile intermediateManifestFile.absolutePath
+                LogUtil.log(project, "ProjectManifestMerger", "merged manifest exists!!!: ${intermediateManifestFile.absolutePath}")
+                return
+            }
 
+            File mainManifestFile = new File(manifestSrcFiles[size - 1])
             ManifestMerger2.MergeType mergeType = ManifestMerger2.MergeType.LIBRARY
             ManifestMerger2.Invoker invoker = ManifestMerger2.newMerger(mainManifestFile, logger, mergeType)
             invoker.asType(XmlDocument.Type.LIBRARY)
@@ -155,11 +161,11 @@ class ProjectManifestMerger {
 
 //        println '======buildDir: ' + project.buildDir
             new File("$project.buildDir").mkdirs()
-            def file = new File("$project.buildDir/AndroidManifest.xml")
+            def file = intermediateManifestFile // new File("$project.buildDir/AndroidManifest.xml")
             file.createNewFile()
             file.write(moduleAndroidManifest, "UTF-8")
 
-            project.android.sourceSets.main.manifest.srcFile "$project.buildDir/AndroidManifest.xml"
+            project.android.sourceSets.main.manifest.srcFile file.absolutePath
         }
     }
 

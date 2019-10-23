@@ -183,6 +183,7 @@ class PioneerPlugin implements Plugin<Project> {
         ProjectManifestMerger.mergeManifest(project, true)
         Task task = project.tasks['preBuild']
         task.doFirst {
+            // 这里重新执行一遍，是因为如果命令中带有clean命令，会清除掉之前生成的manifest
             ProjectManifestMerger.mergeManifest(project, false)
         }
     }
