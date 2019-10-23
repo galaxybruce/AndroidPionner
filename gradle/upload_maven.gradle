@@ -74,7 +74,7 @@ if(project.ext.has('artifactId') && project.ext.artifactId) {
 }
 
 if(project.ext.has('platformSourceDir') && project.ext.platformSourceDir) {
-    pomArtifactId += project.ext.platformSourceDir
+    pomArtifactId += '-' + project.ext.platformSourceDir
 }
 
 if(project.ext.has('version') && project.ext.version) {

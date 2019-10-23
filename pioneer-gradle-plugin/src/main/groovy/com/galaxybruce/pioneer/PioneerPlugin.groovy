@@ -13,6 +13,7 @@ import com.galaxybruce.pioneer.utils.Utils
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.internal.os.OperatingSystem
 
 import java.util.function.Consumer
 
@@ -29,10 +30,11 @@ class PioneerPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        LogUtil.log(project, "PioneerPlugin", "project[${project.name}] apply ${PLUGIN_NAME} plugin")
+        boolean isRootProject = project == project.rootProject
+        LogUtil.log(project, "PioneerPlugin", "${isRootProject ? "root " : ""}project[${project.name}] apply `${PLUGIN_NAME}` plugin")
 
         // libraryPath设置
-        if(project == project.rootProject) {
+        if(isRootProject) {
             handleRootProject(project)
             return
         }
@@ -119,7 +121,7 @@ class PioneerPlugin implements Plugin<Project> {
                                 // ./gradlew :module1:uploadArchives :module2:uploadArchives :module3:uploadArchives
                                 // rootProject.project(":$moduleName").tasks['uploadArchives'].execute()
 
-                                if(org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+                                if(OperatingSystem.current().isWindows()) {
                                     // window下用process.waitFor会出现死锁
                                     def eo = new ByteArrayOutputStream()
                                     def so = new ByteArrayOutputStream()

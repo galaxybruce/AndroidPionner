@@ -55,7 +55,9 @@ class ProjectManifestMerger {
         } catch (Exception e) {
             platformDir = ''
         }
-        LogUtil.log(project, "ProjectManifestMerger", "merge manifest platformDir: ${platformDir}")
+        if(platformDir != null && !platformDir.isEmpty()) {
+            LogUtil.log(project, "ProjectManifestMerger", "app platform source Dir: ${platformDir}")
+        }
         project.android.sourceSets.main.jniLibs.srcDir("libs")
 
         pModuleDirs.each {
