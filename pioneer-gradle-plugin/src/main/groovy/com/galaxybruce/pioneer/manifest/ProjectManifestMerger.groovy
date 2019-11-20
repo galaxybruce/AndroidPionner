@@ -18,20 +18,18 @@ import java.lang.reflect.Field
  */
 class ProjectManifestMerger {
 
-    static boolean mergeManifest(Project project, boolean addDependencies) {
-        if(addDependencies) {
-            project.buildscript.repositories {
-                google()
-                jcenter()
-            }
-            //history version: 25.3.0
-            project.buildscript.dependencies.add("classpath", "com.android.tools.build:manifest-merger:26.4.1")
+    static boolean mergeManifest(Project project) {
+        project.buildscript.repositories {
+            google()
+            jcenter()
         }
+        //history version: 25.3.0
+        project.buildscript.dependencies.add("classpath", "com.android.tools.build:manifest-merger:26.4.1")
 
-        manifestMergeHandler(project)
+        mergeManifest(project, true)
     }
 
-    private static void manifestMergeHandler(Project project) {
+    static void mergeManifest(Project project, boolean needMerge) {
         def manifestSrcFiles = []
 
         File moduleDir = new File("$project.projectDir/src")
@@ -126,7 +124,7 @@ class ProjectManifestMerger {
             project.android.sourceSets.main.manifest.srcFile "${manifestSrcFiles[0]}"
         } else {
             def intermediateManifestFile = new File("$project.buildDir/AndroidManifest.xml")
-            if(intermediateManifestFile.exists()) {
+            if(intermediateManifestFile.exists() && !needMerge) {
                 project.android.sourceSets.main.manifest.srcFile intermediateManifestFile.absolutePath
                 LogUtil.log(project, "ProjectManifestMerger", "merged manifest exists!!!: ${intermediateManifestFile.absolutePath}")
                 return
@@ -166,6 +164,7 @@ class ProjectManifestMerger {
             file.write(moduleAndroidManifest, "UTF-8")
 
             project.android.sourceSets.main.manifest.srcFile file.absolutePath
+            LogUtil.log(project, "ProjectManifestMerger", "merged manifest success!!!: ${intermediateManifestFile.absolutePath}")
         }
     }
 

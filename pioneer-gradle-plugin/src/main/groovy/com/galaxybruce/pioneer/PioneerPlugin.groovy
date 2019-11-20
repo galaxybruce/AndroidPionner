@@ -180,11 +180,13 @@ class PioneerPlugin implements Plugin<Project> {
     }
 
     private static void mergeManifest(Project project) {
-        ProjectManifestMerger.mergeManifest(project, true)
+        ProjectManifestMerger.mergeManifest(project)
         Task task = project.tasks['preBuild']
         task.doFirst {
             // 这里重新执行一遍，是因为如果命令中带有clean命令，会清除掉之前生成的manifest
-            ProjectManifestMerger.mergeManifest(project, false)
+            def taskNames = project.gradle.startParameter.taskNames
+            def isCleanTask = taskNames.toString().toLowerCase().contains("clean")
+            ProjectManifestMerger.mergeManifest(project, isCleanTask)
         }
     }
 

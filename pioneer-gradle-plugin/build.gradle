@@ -68,7 +68,7 @@ artifacts {
 def debug_flag = rootProject.hasProperty("LOCAL_MAVEN") && LOCAL_MAVEN.toBoolean() //true: 发布到本地maven仓库， false： 发布到maven私服
 def artifact_group = 'com.galaxybruce.android'
 def artifact_id = 'pioneer-gradle-plugin' // 这里要和module的名称一样，不然在bintray上会生成两个目录
-def artifact_version='0.0.20'
+def artifact_version='0.0.21'
 
 
 // 打包到本地或者Maven私服库
