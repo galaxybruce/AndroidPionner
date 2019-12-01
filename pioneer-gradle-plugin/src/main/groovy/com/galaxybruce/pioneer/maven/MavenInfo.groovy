@@ -12,6 +12,7 @@ import java.util.function.Consumer
 class MavenInfo {
 
     String group
+    String version
 
     List<ModuleInfo> modules
 

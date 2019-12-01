@@ -1,3 +1,7 @@
+// 注意：app中不能设置多渠道，否则上传maven中没有aar!!!
+// 注意：app中不能设置多渠道，否则上传maven中没有aar!!!
+// 注意：app中不能设置多渠道，否则上传maven中没有aar!!!
+
 apply plugin: 'maven'
 
 if (project.hasProperty("android")) { // Android libraries

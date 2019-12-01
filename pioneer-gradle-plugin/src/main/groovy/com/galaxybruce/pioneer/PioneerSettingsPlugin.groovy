@@ -15,6 +15,8 @@ class PioneerSettingsPlugin implements Plugin<Settings> {
         // 如：def libraryPathWithKey = settings.ext.getLibraryPathWithKey('RETAIL_LIBRARY_PATH',
         //        '/Users/galaxybruce/.jenkins/workspace/retailLib/printer')
         settings.ext.getLibraryPathWithKey = Utils.&getLibraryPathWithKey
+        settings.ext.getLocalValue = Utils.&getLocalValue            // 读取local.properties
+        settings.ext.equalLocalValue = Utils.&equalLocalValue           // 比较local.properties中的值
         // 也可以用这种方式
 //        settings.ext {
 //            getLibraryPathWithKey = Utils.&getLibraryPathWithKey

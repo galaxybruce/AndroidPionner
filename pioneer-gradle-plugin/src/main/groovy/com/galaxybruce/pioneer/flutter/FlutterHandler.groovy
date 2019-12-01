@@ -6,7 +6,7 @@ import org.gradle.api.Project
 /**
  * @author bruce.zhang
  * @date 2019/1/16 09:41
- * @description
+ * @description 上传flutter module以及依赖的插件module到maven
  *
  * <p>
  * modification history:
@@ -110,7 +110,7 @@ class FlutterHandler {
                     LogUtil.log(project, "PioneerPlugin", "==maven url: ${artGroupId}:${artifactId}:${artVersion}")
 
                     if(localMaven && localMaven == true) {
-                        repository(url: uri(project.rootProject.projectDir.absolutePath + '/repo-local'))
+                        repository(url: project.uri(project.rootProject.projectDir.absolutePath + '/repo-local'))
                     } else {
                         repository(url: mavenUrl) {
                             authentication(userName: mavenAccount, password: mavenPwd)

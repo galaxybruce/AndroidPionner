@@ -20,7 +20,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.13'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.22'
     }
 }
 apply plugin: 'galaxybruce-pioneer-settings'
@@ -50,7 +50,22 @@ rootproject中的build.gradle中添加如下代码
 apply plugin: 'galaxybruce-pioneer'
 
 galaxybrucepioneer {
+    // 这个字段可选，内部有默认的上传脚本
     mavenScriptPath = 'maven上传脚本文件路径'
+    // 如果mavenScriptPath字段不填的话，需要填一下maven账号信息
+    // =================start==================
+    // 公司maven私服
+    mavenUrl = 'http://172.172.177.240:8081/nexus/content/repositories/releases'
+    // 公司maven私服SnapShot
+    mavenUrlSnapShot = 'http://172.172.177.240:8081/nexus/content/repositories/snapshots'
+    // maven账号
+    mavenAccount = 'deployment'
+    // maven密码
+    mavenPwd = '666666'
+    // true: 发布到本地仓库，false：发布到公司私服
+    localMaven = false
+    // =================end==================
+
     // 需要批量上传到maven的library配置，具体格式可参考demo中的文件
     moduleDataPath = "${project.rootDir.path}/modulemaven.json"
 }
@@ -62,7 +77,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.13'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.22'
     }
 }
 ```
@@ -75,6 +90,7 @@ platform: 是否支持多平台的
 ```
 {
   "group": "com.galaxybruce",
+  "version": "1.0.0",// 如果所有的library版本号相同，可以这里统一设置
   "modules": [
     {"name": "testlibrary", "platform": true, "artifactId": "testlibrary", "ver": "0.0.1"}
   ]
@@ -98,10 +114,11 @@ galaxybrucepioneer {
 ```
 
 ### 3. 处理pin工程
-插件默认开启pin工程支持，在需要的pin工程module的build.gradle中添加即可，pin工程约定都已p_开头。
+插件默认开启pin工程支持，在需要的pin工程module的build.gradle中添加即可，pin工程约定都已p_开头。`建议多食用pin工程，少使用module`。
 ```
 apply plugin: 'galaxybruce-pioneer'
 ```
+具体使用方式参考demo。
 
 ### 4. 多平台复用
 插件默认支持多平台复用，在需要开启多平台复用的module的build.gradle中添加即可。

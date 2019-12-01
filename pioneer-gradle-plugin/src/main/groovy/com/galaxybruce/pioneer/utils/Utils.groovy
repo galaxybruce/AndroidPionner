@@ -77,4 +77,23 @@ public class Utils {
     static Object getExtValue(def project, String key) {
         return project.ext.has(key) ? project.ext."$key" : null
     }
+
+    static String getLocalValue(Project project, String key) {
+        Properties localProperties = new Properties()
+        def localPropertiesFile = new File(project.rootDir, 'local.properties')
+        if (localPropertiesFile.exists()) {
+            localPropertiesFile.withReader('UTF-8') { reader ->
+                localProperties.load(reader)
+            }
+        }
+
+        if(localProperties != null) {
+            return localProperties.getProperty(key)
+        }
+        return null
+    }
+
+    static String equalLocalValue(Project project, String key, String value) {
+        return value == getLocalValue(project, key)
+    }
 }

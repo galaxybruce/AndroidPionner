@@ -3,7 +3,7 @@ apply plugin: 'galaxybruce-pioneer'
 
 galaxybrucepioneer {
     platformSourceDir = 'app2'
-    mavenScriptPath = "${project.rootDir.path}/gradle/upload_maven.gradle"
+//    mavenScriptPath = "${project.rootDir.path}/gradle/upload_maven.gradle"
     moduleDataPath = "${project.rootDir.path}/modulemaven.json"
 }
 
@@ -27,7 +27,7 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
 
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.19'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.22'
     }
 }
 

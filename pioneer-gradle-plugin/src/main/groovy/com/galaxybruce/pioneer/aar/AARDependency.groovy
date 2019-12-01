@@ -65,8 +65,7 @@ public class AARDependency {
      *  rootProject.ext.addAARLibs(project, depModule);
      * }
      */
-    static void addAARLibs(Project project, boolean depModuleSource = false)
-    {
+    static void addAARLibs(Project project, boolean depModuleSource = false) {
         DependencyHandler dh = project.dependencies;
         ConfigurableFileTree ft = project.fileTree(dir: 'libs', include: '**/*.aar');
         ft.each { File f ->
