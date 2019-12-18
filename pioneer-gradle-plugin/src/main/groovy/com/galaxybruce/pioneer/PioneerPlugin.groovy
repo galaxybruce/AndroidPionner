@@ -315,7 +315,7 @@ class PioneerPlugin implements Plugin<Project> {
         def mavenPwd = project.rootProject.galaxybrucepioneer.mavenPwd
         if(!mavenUrl) {
             // read properties
-            localMaven = properties.getProperty("LOCAL_MAVEN")
+//            localMaven = properties.getProperty("LOCAL_MAVEN")
             mavenUrl = properties.getProperty("MAVEN_URL")
             mavenUrlSnapShot = properties.getProperty("MAVEN_URL_SNAPSHOT")
             mavenAccount = properties.getProperty("MAVEN_ACCOUNT_NAME")
