@@ -3,8 +3,12 @@
 
 
 buildscript {
+    apply from: './gradle/util.gradle'
+    def isLocalMaven = equalLocalValue(settings, 'LOCAL_MAVEN', 'true')
+
     repositories {
-        if(settings.hasProperty("LOCAL_MAVEN") && LOCAL_MAVEN.toBoolean()) {
+        // LOCAL_MAVEN放在gradle.properties中写法，settings.hasProperty("LOCAL_MAVEN") && LOCAL_MAVEN.toBoolean()
+        if(isLocalMaven) {
             def projectDir = settings.rootProject.projectDir
             def repoFile = new File(projectDir, 'repo-local')
             maven{ url repoFile }

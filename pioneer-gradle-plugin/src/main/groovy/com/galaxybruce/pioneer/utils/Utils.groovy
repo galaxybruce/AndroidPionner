@@ -78,7 +78,13 @@ public class Utils {
         return project.ext.has(key) ? project.ext."$key" : null
     }
 
-    static String getLocalValue(Project project, String key) {
+    /**
+     * 第一个参数可能是settings和project
+     * @param project
+     * @param key
+     * @return
+     */
+    static String getLocalValue(Object project, String key) {
         Properties localProperties = new Properties()
         def localPropertiesFile = new File(project.rootDir, 'local.properties')
         if (localPropertiesFile.exists()) {
@@ -93,7 +99,7 @@ public class Utils {
         return null
     }
 
-    static String equalLocalValue(Project project, String key, String value) {
+    static String equalLocalValue(Object project, String key, String value) {
         return value == getLocalValue(project, key)
     }
 }

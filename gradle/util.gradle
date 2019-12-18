@@ -1,0 +1,30 @@
+/**
+ * 第一个参数可能是settings和project
+ * @param project
+ * @param key
+ * @return
+ */
+static String getLocalValue(Object project, String key) {
+    Properties localProperties = new Properties()
+    def localPropertiesFile = new File(project.rootDir, 'local.properties')
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.withReader('UTF-8') { reader ->
+            localProperties.load(reader)
+        }
+    }
+
+    if(localProperties != null) {
+        return localProperties.getProperty(key)
+    }
+    return null
+}
+
+static String equalLocalValue(Object project, String key, String value) {
+    return value == getLocalValue(project, key)
+}
+
+
+ext{
+    equalLocalValue = this.&equalLocalValue
+    getLocalValue = this.&getLocalValue
+}
