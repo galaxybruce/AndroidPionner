@@ -78,6 +78,24 @@ public class Utils {
         return project.ext.has(key) ? project.ext."$key" : null
     }
 
+    static Properties LOCAL_PROPERTIES
+
+    /**
+     * 初始化local.properties，避免后面每次都读取
+     * @param project
+     */
+    static void initLocalProperties(Object project) {
+        Properties localProperties = new Properties()
+        def localPropertiesFile = new File(project.rootDir, 'local.properties')
+        if (localPropertiesFile.exists()) {
+            localPropertiesFile.withReader('UTF-8') { reader ->
+                localProperties.load(reader)
+                LOCAL_PROPERTIES = localProperties
+            }
+        }
+        LogUtil.log(null, "PioneerPlugin", "initLocalProperties in $project : ${LOCAL_PROPERTIES}")
+    }
+
     /**
      * 第一个参数可能是settings和project
      * @param project
@@ -85,16 +103,11 @@ public class Utils {
      * @return
      */
     static String getLocalValue(Object project, String key) {
-        Properties localProperties = new Properties()
-        def localPropertiesFile = new File(project.rootDir, 'local.properties')
-        if (localPropertiesFile.exists()) {
-            localPropertiesFile.withReader('UTF-8') { reader ->
-                localProperties.load(reader)
-            }
+        if(LOCAL_PROPERTIES == null) {
+            initLocalProperties(project)
         }
-
-        if(localProperties != null) {
-            return localProperties.getProperty(key)
+        if(LOCAL_PROPERTIES != null) {
+            return LOCAL_PROPERTIES.getProperty(key)
         }
         return null
     }

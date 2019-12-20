@@ -34,6 +34,7 @@ class PioneerPlugin implements Plugin<Project> {
         LogUtil.log(project, "PioneerPlugin", "${isRootProject ? "root " : ""}project[${project.name}] apply `${PLUGIN_NAME}` plugin")
 
         if(isRootProject) {
+            Utils.initLocalProperties(project)
             handleRootProject(project)
             return
         }
