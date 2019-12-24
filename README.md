@@ -20,7 +20,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.22'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.24'
     }
 }
 apply plugin: 'galaxybruce-pioneer-settings'
@@ -77,7 +77,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.22'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.24'
     }
 }
 ```
@@ -114,7 +114,7 @@ galaxybrucepioneer {
 ```
 
 ### 3. 处理pin工程
-插件默认开启pin工程支持，在需要的pin工程module的build.gradle中添加即可，pin工程约定都已p_开头。`建议多食用pin工程，少使用module`。
+插件默认开启pin工程支持，在需要的pin工程module的build.gradle中添加即可，pin工程约定都已p_开头。`建议多使用pin工程，少使用module`。
 ```
 apply plugin: 'galaxybruce-pioneer'
 ```
