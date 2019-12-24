@@ -1,5 +1,6 @@
 package com.galaxybruce.pioneer.manifest
 
+import com.android.build.gradle.AppPlugin
 import com.android.manifmerger.ManifestMerger2
 import com.android.manifmerger.MergingReport
 import com.android.manifmerger.XmlDocument
@@ -85,7 +86,8 @@ class ProjectManifestMerger {
                         }
                     }
                 }
-            } else if (it.isDirectory() && (it.name == "main" || it.name == "${platformDir}")) {
+            } else if (it.isDirectory() && (it.name == "main" || it.name == "${platformDir}"
+                || (it.name == "debug_test" && project.plugins.hasPlugin(AppPlugin)))) { // debug_test目录在module当做独立模块运行时生效
                 LogUtil.log(project, "ProjectManifestMerger", "valid resource dir2: ${it.absolutePath}")
                 // pin工程以外的的情况，只处理main和platformDir两个目录
                 // manifest
