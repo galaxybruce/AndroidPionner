@@ -1,18 +1,15 @@
-# 概述
-android常用编译功能插件，旨在把一些自动化的脚本收集在一起。
-
+## bintray-release  [![Download](https://img.shields.io/badge/version-0.0.24-blue.svg)](https://bintray.com/galaxybruce/maven/pioneer-gradle-plugin/_latestVersion)[![](./assets/btn_apache_lisence.png)](LICENSE)
 ## 目前有以下功能：
-* 设置settings.gradle中需要include的library源码路径
-* settings.gradle中动态include项目
+* settings.gradle中从本地环境变量或者local.propertie中读取需要include的library源码路径
+* settings.gradle中智能识别android moduel并include进来
+* settings.gradle或者build.gradle中读取local.properties中的值
 * 批量上传library到本地maven或者私有maven服务器
 * 复制mapping.txt文件到指定目录
-* 处理pin工程，pin工程概念建议参考这篇文章[微信Android模块化架构重构实践](https://www.jianshu.com/p/3990724aa7e4)
+* 处理pin工程(核心功能时合并manifest)，pin工程概念建议参考这篇文章[微信Android模块化架构重构实践](https://www.jianshu.com/p/3990724aa7e4)
 * 多平台复用
 * flutter module以及依赖的插件上传到maven
 
-## settings.gradle
-### 1. 设置settings.gradle中需要include的library源码路径
-settings.gradle文件顶部添加
+### 一、settings.gradle中引用插件
 ```
 buildscript {
     repositories {
@@ -20,30 +17,48 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.24'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:latestversion'
     }
 }
 apply plugin: 'galaxybruce-pioneer-settings'
+```
 
-// LIBRARY_PATH是本地环境变量中配置的library路径，
+### 1. settings.gradle中从本地环境变量或者local.propertie中读取需要include的library源码路径
+路径设置在本地环境变量或者local.propertie中是为了不加入版本库。
+```
+// LIBRARY_PATH是本地环境变量或者local.properties中配置的library路径，
 // 第二个参数是打包机器上的library路径
 def libraryPathWithKey = settings.ext.getLibraryPathWithKey('LIBRARY_PATH',
         '打包机器上的library路径')
 ```
 
-### 2. settings.gradle中动态include项目
-调用以下方法可以不用手动include library，会自动读取设置的目录下的所有library
+### 2. settings.gradle中智能识别android moduel并include进来
+调用以下方法可以不用手动include module，会自动识别设置的目录下的所有library
 ```
-// 读取工程根目录下的所有library并include进来，参数是不需要include的目录名称
+// 识别project根目录下的module并include进来, 参数是不需要include的目录列表
 settings.ext.includeDefaultModule(['lib1', 'lib2'])
-
-// 读取libraryPathWithKey目录下的所有library并include进来，
-// 第二个参数是不需要include的目录名称
+```
+或者指定其他目录
+```
+// 识别libraryPathWithKey目录下的module并include进来，
+// 参数是不需要include的目录列表
 // 该方法可以多次调用或者第一个参数传多个目录
-settings.ext.includeModule([libraryPathWithKey], ['aopstati','plugin'])
+settings.ext.includeModule([libraryPathWithKey], 'lib1', 'lib2'])
 ```
 
-## build.gradle 
+### 3. 读取local.properties中的值
+判断local.properties中的值是否等于某个值
+```
+if(equalLocalValue(settings, 'FLUTTER_SOURCE', '1').toBoolean()) {
+        setBinding(new Binding([gradle: this]))
+        evaluate(new File(flutterPath + '.android/include_flutter.groovy'))
+    }
+```
+读取local.properteis中的值
+```
+def value = getLocalValue(settings, 'FLUTTER_SOURCE')
+```
+## 二、build.gradle中引用插件
 ### 1. 批量上传library到本地maven或者私有maven服务器
 rootproject中的build.gradle中添加如下代码
 ```
@@ -77,7 +92,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.24'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:latestversion'
     }
 }
 ```
@@ -113,7 +128,7 @@ galaxybrucepioneer {
 }
 ```
 
-### 3. 处理pin工程
+### 3. 处理pin工程(核心功能时合并manifest)
 插件默认开启pin工程支持，在需要的pin工程module的build.gradle中添加即可，pin工程约定都已p_开头。`建议多使用pin工程，少使用module`。
 ```
 apply plugin: 'galaxybruce-pioneer'
@@ -125,7 +140,7 @@ apply plugin: 'galaxybruce-pioneer'
 ```
 apply plugin: 'galaxybruce-pioneer'
 ```
-同时需要再项目根目录下的build.gradle指定当前平台资源所在目录
+同时需要在rootproject的build.gradle指定当前平台资源所在目录
 ```
 apply plugin: 'galaxybruce-pioneer'
 
@@ -165,7 +180,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.14'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:latestversion'
     }
 }
 
