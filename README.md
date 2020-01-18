@@ -1,4 +1,4 @@
-## bintray-release  [![Download](https://img.shields.io/badge/version-0.0.24-blue.svg)](https://bintray.com/galaxybruce/maven/pioneer-gradle-plugin/_latestVersion)[![](./assets/btn_apache_lisence.png)](LICENSE)
+## bintray-release  [![Download](https://img.shields.io/badge/version-0.0.24-blue.svg)](https://bintray.com/galaxybruce/maven/pioneer-gradle-plugin/_latestVersion) [![](./assets/btn_apache_lisence.png)](LICENSE)
 ## 目前有以下功能：
 * settings.gradle中从本地环境变量或者local.propertie中读取需要include的library源码路径
 * settings.gradle中智能识别android moduel并include进来
