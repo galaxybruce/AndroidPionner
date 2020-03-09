@@ -10,6 +10,8 @@ import com.galaxybruce.pioneer.maven.MavenInfo
 import com.galaxybruce.pioneer.maven.ModuleInfo
 import com.galaxybruce.pioneer.utils.LogUtil
 import com.galaxybruce.pioneer.utils.Utils
+import com.galaxybruce.pioneer.utils.runtime.ExecuteResult
+import com.galaxybruce.pioneer.utils.runtime.RunTimeTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -108,14 +110,17 @@ class PioneerPlugin implements Plugin<Project> {
                                         LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven success !!! ")
                                     }
                                 } else {
-                                    def cmd = "./gradlew"
-                                    def process = ("$cmd :$moduleName:uploadArchives").execute()
-                                    def strErr = new StringBuffer()
-                                    process.consumeProcessErrorStream(strErr)
-                                    def result = process.waitFor()
-                                    if (result != 0) {
+//                                    def cmd = "./gradlew"
+//                                    def process = ("$cmd :$moduleName:uploadArchives").execute()
+//                                    def strErr = new StringBuffer()
+//                                    process.consumeProcessErrorStream(strErr)
+//                                    def result = process.waitFor() // 这里会出现死锁
+
+                                    String command = String.format("./gradlew clean :%s:uploadArchives", moduleName)
+                                    ExecuteResult executeResult = RunTimeTask.executeCommand(command, Integer.MAX_VALUE)
+                                    if (executeResult.exitCode != 0) {
                                         LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven fail !!!!!! ")
-                                        println strErr.toString()
+                                        println executeResult.toString()
                                     } else {
                                         LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven success !!! ")
                                     }
