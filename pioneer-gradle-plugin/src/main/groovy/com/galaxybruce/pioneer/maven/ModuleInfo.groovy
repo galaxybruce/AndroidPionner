@@ -16,7 +16,7 @@ class ModuleInfo {
     String artifactId
 
     // 版本号
-    String ver
+    String version
 
     // 是否支持多平台
     boolean platform

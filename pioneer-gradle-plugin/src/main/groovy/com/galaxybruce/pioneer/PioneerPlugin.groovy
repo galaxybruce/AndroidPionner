@@ -248,8 +248,8 @@ class PioneerPlugin implements Plugin<Project> {
                 project.ext.artifactId = moduleInfo.artifactId
             }
             project.ext.version = mavenInfo.version
-            if(moduleInfo.ver){
-                project.ext.version = moduleInfo.ver
+            if(moduleInfo.version){
+                project.ext.version = moduleInfo.version
             }
 
 
