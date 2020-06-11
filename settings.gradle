@@ -18,10 +18,10 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.23'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.26'
     }
 }
 apply plugin: 'galaxybruce-pioneer-settings'
 
 settings.ext.includeDefaultModule()
-// settings.ext.includeModule(settings.getRootDir().path)
+// settings.ext.includeModule([settings.getRootDir().path], ['testlibrary'])

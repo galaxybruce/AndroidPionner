@@ -28,8 +28,8 @@ buildscript {
 dependencies {
     compileOnly gradleApi()
     compileOnly localGroovy()
-    compileOnly 'com.android.tools.build:gradle:3.4.1'
-    compile "com.alibaba:fastjson:1.2.46"
+    implementation 'com.android.tools.build:gradle:4.0.0'
+    implementation "com.alibaba:fastjson:1.2.46"
 }
 
 //repositories {
@@ -45,7 +45,7 @@ dependencies {
 
 /// 这几个task必须要有，不然没法add to jcenter
 task sourcesJar(type: Jar) {
-    classifier = 'sources'
+    getArchiveClassifier().set('sources') // classifier = 'javadoc'
     from sourceSets.main.allSource // project.file('src/main/groovy')  android.sourceSets.main.java.srcDirs
 }
 
@@ -56,7 +56,7 @@ task sourcesJar(type: Jar) {
 //}
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+    getArchiveClassifier().set('javadoc') // classifier = 'javadoc'
     from javadoc.destinationDir
 }
 
@@ -76,7 +76,7 @@ def isLocalMaven = localProperties.getProperty('LOCAL_MAVEN')
 def debug_flag = isLocalMaven && isLocalMaven.toBoolean() //true: 发布到本地maven仓库， false： 发布到maven私服
 def artifact_group = 'com.galaxybruce.android'
 def artifact_id = 'pioneer-gradle-plugin' // 这里要和module的名称一样，不然在bintray上会生成两个目录
-def artifact_version='0.0.25'
+def artifact_version='0.0.26'
 
 // 打包到本地或者Maven私服库
 uploadArchives {

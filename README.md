@@ -1,4 +1,4 @@
-## bintray-release  [![Download](https://img.shields.io/badge/version-0.0.24-blue.svg)](https://bintray.com/galaxybruce/maven/pioneer-gradle-plugin/_latestVersion) [![](./assets/btn_apache_lisence.png)](LICENSE)
+## bintray-release  [![Download](https://img.shields.io/badge/version-0.0.26-blue.svg)](https://bintray.com/galaxybruce/maven/pioneer-gradle-plugin/_latestVersion) [![](./assets/btn_apache_lisence.png)](LICENSE)
 ## 目前有以下功能：
 * settings.gradle中从本地环境变量或者local.propertie中读取需要include的library源码路径
 * settings.gradle中智能识别android moduel并include进来
@@ -107,7 +107,7 @@ platform: 是否支持多平台的
   "group": "com.galaxybruce",
   "version": "1.0.0",// 如果所有的library版本号相同，可以这里统一设置
   "modules": [
-    {"name": "testlibrary", "platform": true, "artifactId": "testlibrary", "ver": "0.0.1"}
+    {"name": "testlibrary", "platform": true, "artifactId": "testlibrary", "verison": "0.0.1"}
   ]
 }
 
