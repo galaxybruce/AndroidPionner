@@ -42,6 +42,9 @@ public class Utils {
 
         def props = new Properties()
         def propFile = new File("local.properties")
+        if(!propFile.exists()) {
+            return null
+        }
         propFile.withInputStream {
             stream -> props.load(stream)
         }
