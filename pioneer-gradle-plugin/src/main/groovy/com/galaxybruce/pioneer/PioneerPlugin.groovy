@@ -156,6 +156,7 @@ class PioneerPlugin implements Plugin<Project> {
             getLibraryPathWithKey = Utils.&getLibraryPathWithKey
             getLocalValue = Utils.&getLocalValue            // 读取local.properties
             equalLocalValue = Utils.&equalLocalValue           // 比较local.properties中的值
+            getParameterAnyWhere = Utils.&getParameterAnyWhere            // 读取参数
         }
 
         // 设置aar库相关依赖方法，这几个方法目前基本上没什么作用

@@ -118,4 +118,25 @@ public class Utils {
     static String equalLocalValue(Object project, String key, String value) {
         return value == getLocalValue(project, key)
     }
+
+
+    /**
+     * 获取参数，参数可能在local.proerties、gradle.properties、系统环境变量中
+     * @param project
+     * @param key
+     * @return
+     */
+    static String getParameterAnyWhere(Object project, String key) {
+        def value = getLocalValue(project, key)
+        if(!value) {
+            value = System.getenv(key)
+        }
+        if(!value) {
+            value = System.properties[key]
+        }
+        if(!value) {
+            value = project.getProperties().get(key)
+        }
+        return value
+    }
 }

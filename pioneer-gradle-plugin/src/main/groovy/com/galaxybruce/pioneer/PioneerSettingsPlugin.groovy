@@ -20,6 +20,7 @@ class PioneerSettingsPlugin implements Plugin<Settings> {
         settings.ext.getLibraryPathWithKey = Utils.&getLibraryPathWithKey
         settings.ext.getLocalValue = Utils.&getLocalValue            // 读取local.properties
         settings.ext.equalLocalValue = Utils.&equalLocalValue           // 比较local.properties中的值
+        settings.ext.getParameterAnyWhere = Utils.&getParameterAnyWhere
         // 也可以用这种方式
 //        settings.ext {
 //            getLibraryPathWithKey = Utils.&getLibraryPathWithKey
