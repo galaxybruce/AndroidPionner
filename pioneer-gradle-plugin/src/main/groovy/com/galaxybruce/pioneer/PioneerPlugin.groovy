@@ -352,7 +352,7 @@ class PioneerPlugin implements Plugin<Project> {
         project.version = pomVersion
 
         LogUtil.log(project, "PioneerPlugin", "======maven configuration project: ${project.name} -- mavenUrl: ${mavenUrl} -- mavenName: ${mavenAccount} -- mavenPwd: ${mavenPwd}")
-        LogUtil.log(project, "PioneerPlugin", "======maven configuration project: ${project.name} -- groupId: ${pomGroupId}.${pomArtifactId}:${pomVersion}")
+        LogUtil.log(project, "PioneerPlugin", "======maven configuration project: ${project.name} -- groupId: ${pomGroupId}:${pomArtifactId}:${pomVersion}")
 
         project.uploadArchives {
             repositories {

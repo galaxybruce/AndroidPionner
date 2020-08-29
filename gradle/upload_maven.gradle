@@ -89,7 +89,7 @@ group=pomGroupId
 version=pomVersion
 
 println "======maven configuration project: ${project.name} -- mavenUrl: ${mavenUrl} -- mavenName: ${mavenAccountName} -- mavenPwd: ${mavenPwd}"
-println "======maven configuration project: ${project.name} -- groupId: ${pomGroupId}.${pomArtifactId}:${pomVersion}"
+println "======maven configuration project: ${project.name} -- groupId: ${pomGroupId}:${pomArtifactId}:${pomVersion}"
 
 uploadArchives {
     repositories {
