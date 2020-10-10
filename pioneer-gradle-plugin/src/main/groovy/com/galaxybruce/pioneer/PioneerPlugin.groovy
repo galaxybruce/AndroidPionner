@@ -46,7 +46,7 @@ class PioneerPlugin implements Plugin<Project> {
         }
 
         project.extensions.create(EXT_NAME, PioneerExtension, project)
-        // 判断是否是application或者libary 参考Arouter
+        // 判断是否是application或者library 参考Arouter
         def isApp = project.plugins.hasPlugin(AppPlugin) // def isLibrary = project.plugins.hasPlugin(LibraryPlugin)
         if(isApp) {
             handleAppProject(project)

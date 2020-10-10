@@ -70,11 +70,11 @@ public class ProjectCopyOutputManager {
 
         String renamePath
         PioneerExtension extension = Utils.getPioneerExtension(project)
-        if(extension.mappingDir) {
-            renamePath = extension.mappingDir + '/' + project.rootProject.name.toLowerCase()
-        } else {
-            renamePath = project.rootProject.projectDir.parent + '/kwmapping/' + project.rootProject.name.toLowerCase()
-        }
+//        if(extension.mappingDir) {
+//            renamePath = extension.mappingDir + '/' + project.rootProject.name.toLowerCase()
+//        } else {
+            renamePath = project.rootProject.projectDir.parent + '/AndroidMapping/' + project.rootProject.name.toLowerCase()
+//        }
         String renameName = ("mapping_${hasFlavor ? flavorName + '_' : ''}${project.android.defaultConfig.versionName}.txt")
 
         File renameDir = new File(renamePath)
