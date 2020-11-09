@@ -76,7 +76,7 @@ def isLocalMaven = localProperties.getProperty('LOCAL_MAVEN')
 def debug_flag = isLocalMaven && isLocalMaven.toBoolean() //true: 发布到本地maven仓库， false： 发布到maven私服
 def artifact_group = 'com.galaxybruce.android'
 def artifact_id = 'pioneer-gradle-plugin' // 这里要和module的名称一样，不然在bintray上会生成两个目录
-def artifact_version='0.0.29'
+def artifact_version='0.0.30'
 
 // 打包到本地或者Maven私服库
 uploadArchives {
@@ -198,12 +198,14 @@ bintray {
     }
 }
 
-/// 1. 发布到本次仓库或者私有仓库，执行命令 ./gradlew :pioneer-gradle-plugin:uploadArchives
+/// 1. 发布到本次仓库或者私有仓库:
+// 1.1 local.properties中的LOCAL_MAVEN改成true,
+// 1.2 执行命令 ./gradlew :pioneer-gradle-plugin:uploadArchives
 
 /// 2. 发布到jcenter
 /// 在项目根目录依次输入下面两个命令
-/// ./gradlew install
-/// ./gradlew bintrayUpload
+/// 2.1 ./gradlew install
+/// 2.2 ./gradlew bintrayUpload
 
 ////// 参考文章： https://blog.csdn.net/linglongxin24/article/details/53415932
 ////// 还有一篇宣传极简文章：https://juejin.im/post/59cef9baf265da066a105f92

@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject
 import com.android.build.gradle.AppPlugin
 import com.galaxybruce.pioneer.aar.AARDependency
 import com.galaxybruce.pioneer.copy.ProjectCopyOutputManager
-import com.galaxybruce.pioneer.flutter.FlutterHandler
 import com.galaxybruce.pioneer.manifest.ProjectManifestMerger
 import com.galaxybruce.pioneer.maven.MavenInfo
 import com.galaxybruce.pioneer.maven.ModuleInfo
@@ -66,7 +65,7 @@ class PioneerPlugin implements Plugin<Project> {
 
         setModuleUploadMaven(rootProject)
 
-        FlutterHandler.handleRootProject(rootProject)
+//        FlutterHandler.handleRootProject(rootProject)
     }
 
     /**
