@@ -14,14 +14,14 @@
   </licenses>
   <dependencies>
     <dependency>
-      <groupId>com.android.support</groupId>
-      <artifactId>appcompat-v7</artifactId>
-      <version>28.0.0</version>
+      <groupId>androidx.appcompat</groupId>
+      <artifactId>appcompat</artifactId>
+      <version>1.0.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>com.android.support.constraint</groupId>
-      <artifactId>constraint-layout</artifactId>
+      <groupId>androidx.constraintlayout</groupId>
+      <artifactId>constraintlayout</artifactId>
       <version>1.1.3</version>
       <scope>compile</scope>
     </dependency>

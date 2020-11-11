@@ -11,6 +11,7 @@ import org.gradle.api.Project
  * <p>
  * modification history:
  */
+@Deprecated
 class FlutterHandler {
 
 
