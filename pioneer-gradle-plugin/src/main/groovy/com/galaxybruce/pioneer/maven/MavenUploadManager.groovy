@@ -25,12 +25,6 @@ class MavenUploadManager {
      * @param rootProject
      */
     static void setModuleUploadMaven(Project rootProject) {
-        // 只有上传maven命令才添加对应的任务
-        def taskNames = rootProject.gradle.startParameter.taskNames
-        if(taskNames == null || !taskNames.contains("uploadMaven")) {
-            return
-        }
-
         rootProject.afterEvaluate {
             // 创建批量上传maven task
             rootProject.tasks.create(name: "uploadMaven") {
