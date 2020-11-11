@@ -6,9 +6,7 @@ import com.android.manifmerger.MergingReport
 import com.android.manifmerger.XmlDocument
 import com.android.utils.ILogger
 import com.android.utils.Pair
-import com.galaxybruce.pioneer.PioneerExtension
 import com.galaxybruce.pioneer.utils.LogUtil
-import com.galaxybruce.pioneer.utils.Utils
 import com.google.common.collect.ImmutableList
 import org.gradle.api.Project
 
@@ -39,35 +37,19 @@ class ProjectManifestMerger {
             return
         }
 
-        def platformDir = null
-        try {
-            PioneerExtension extension = Utils.getPioneerExtension(project)
-            if(extension.platformSourceDir) {
-                platformDir = extension.platformSourceDir
-            }
-            if(!platformDir) {
-                platformDir = project.rootProject.galaxybrucepioneer.platformSourceDir
-            }
-            if(!platformDir) {
-                platformDir = project.rootProject.MAVEN_MODULE_APP
-            }
-        } catch (Exception e) {
-            platformDir = ''
-        }
-        if(platformDir != null && !platformDir.isEmpty()) {
-            LogUtil.log(project, "ProjectManifestMerger", "app platform source Dir: ${platformDir}")
-        }
+        def platformDir = PlatformSourceUtil.getPlatformFlag(project)
+        LogUtil.log(project, "ProjectManifestMerger", "app platform source Dir: ${platformDir}")
         project.android.sourceSets.main.jniLibs.srcDir("libs")
 
         pModuleDirs.each {
             if (it.isDirectory() && it.name.startsWith("p_")) {
-//                def dirs = ["main", "${project.MAVEN_MODULE_APP}"]
-                def dirs = ["main", "${platformDir}"]
+//                def dirs = ["main", "${project.PLATFORM_FLAG}"]
+                def dirs = platformDir != null && platformDir.trim().length() > 0 ? ["main", "${platformDir}"] : ["main"]
                 // 遍历main和对应平台的目录
                 dirs.each { dir ->
                     if(dir != null && !dir.isEmpty()) {
                         if(project.file("${it.absolutePath}/$dir").exists()) {
-                            LogUtil.log(project, "ProjectManifestMerger", "valid resource dir1: ${it.absolutePath}/$dir")
+                            LogUtil.log(project, "ProjectManifestMerger", "valid pin project resource dir: ${it.absolutePath}/$dir")
                             // manifest
                             def manifestPath = it.absolutePath + "/$dir/AndroidManifest.xml"
                             def manifestSrcFile = new File(manifestPath)
@@ -82,13 +64,13 @@ class ProjectManifestMerger {
                             project.android.sourceSets.main.res.srcDir("src/$it.name/$dir/res")
                             project.android.sourceSets.main.assets.srcDir("src/$it.name/$dir/assets")
                             project.android.sourceSets.main.jniLibs.srcDir("src/$it.name/$dir/libs")
-                            project.dependencies.add("api", project.fileTree(include: ['*.jar'], dir: "src/$it.name/$dir/libs"))
+//                            project.dependencies.add("api", project.fileTree(include: ['*.jar'], dir: "src/$it.name/$dir/libs"))
                         }
                     }
                 }
             } else if (it.isDirectory() && (it.name == "main" || it.name == "${platformDir}"
                 || (it.name == "debug_test" && project.plugins.hasPlugin(AppPlugin)))) { // debug_test目录在module当做独立模块运行时生效
-                LogUtil.log(project, "ProjectManifestMerger", "valid resource dir2: ${it.absolutePath}")
+                LogUtil.log(project, "ProjectManifestMerger", "valid resource dir: ${it.absolutePath}")
                 // pin工程以外的的情况，只处理main和platformDir两个目录
                 // manifest
                 def manifestPath = it.absolutePath + "/AndroidManifest.xml"
@@ -104,7 +86,7 @@ class ProjectManifestMerger {
                 project.android.sourceSets.main.res.srcDir("src/$it.name/res")
                 project.android.sourceSets.main.assets.srcDir("src/$it.name/assets")
                 project.android.sourceSets.main.jniLibs.srcDir("src/$it.name/libs")
-                project.dependencies.add("api", project.fileTree(include: ['*.jar'], dir: "src/$it.name/libs"))
+//                project.dependencies.add("api", project.fileTree(include: ['*.jar'], dir: "src/$it.name/libs"))
             }
         }
 

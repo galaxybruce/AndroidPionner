@@ -48,7 +48,7 @@ def manifestMergeHandler = { ->
 
     pModuleDirs.each {
         if (it.isDirectory() && it.name.startsWith("p_")) {
-            def dirs = ["main", "${MAVEN_MODULE_APP}"]
+            def dirs = ["main", "${PLATFORM_FLAG}"]
             // 遍历main和对应平台的目录
             dirs.each { dir ->
                 def manifestPath = it.absolutePath + "/$dir/AndroidManifest.xml";

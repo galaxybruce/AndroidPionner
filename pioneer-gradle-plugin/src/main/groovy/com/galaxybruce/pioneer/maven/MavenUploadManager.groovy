@@ -1,5 +1,6 @@
 package com.galaxybruce.pioneer.maven
 
+import com.galaxybruce.pioneer.manifest.PlatformSourceUtil
 import com.galaxybruce.pioneer.utils.LogUtil
 import com.galaxybruce.pioneer.utils.Utils
 import com.galaxybruce.pioneer.utils.runtime.ExecuteResult
@@ -24,6 +25,12 @@ class MavenUploadManager {
      * @param rootProject
      */
     static void setModuleUploadMaven(Project rootProject) {
+        // 只有上传maven命令才添加对应的任务
+        def taskNames = rootProject.gradle.startParameter.taskNames
+        if(taskNames == null || !taskNames.contains("uploadMaven")) {
+            return
+        }
+
         rootProject.afterEvaluate {
             // 创建批量上传maven task
             rootProject.tasks.create(name: "uploadMaven") {
@@ -31,8 +38,9 @@ class MavenUploadManager {
                     LogUtil.log(rootProject, "PioneerPlugin", "start upload library to maven...")
 
                     final MavenInfo mavenInfo = Utils.getExtValue(project.rootProject, "mavenInfo")
-                    if (mavenInfo != null && mavenInfo.modules != null && !mavenInfo.modules.isEmpty()) {
-                        mavenInfo.modules.forEach(new Consumer<ModuleInfo>() {
+                    final List<ModuleInfo> allModules = mavenInfo?.getAllModules()
+                    if (allModules != null && !allModules.isEmpty()) {
+                        allModules.forEach(new Consumer<ModuleInfo>() {
                             @Override
                             void accept(ModuleInfo moduleInfo) {
                                 def moduleName = moduleInfo.name
@@ -118,10 +126,10 @@ class MavenUploadManager {
         final ModuleInfo moduleInfo = mavenInfo?.getModuleInfo(project.name)
         if(moduleInfo != null) {
             // 给需要多平台打包的module设置平台目录，在mavenScriptPath上传maven脚本中设置
-            // pom.artifactId时用到project.ext.platformSourceDir
+            // pom.artifactId时用到project.ext.platformFlag
             boolean supportPlatform = moduleInfo != null ? moduleInfo.platform : false
             if(supportPlatform){
-                project.ext.platformSourceDir = project.rootProject.ext.platformSourceDir
+                project.ext.platformFlag = PlatformSourceUtil.getPlatformFlag(project)
             }
 
             // 在这里也可以改变pom.artifactId
@@ -221,8 +229,8 @@ class MavenUploadManager {
             pomArtifactId = project.ext.artifactId
         }
 
-        if(project.ext.has('platformSourceDir') && project.ext.platformSourceDir) {
-            pomArtifactId += '-' + project.ext.platformSourceDir
+        if(project.ext.has('platformFlag') && project.ext.platformFlag) {
+            pomArtifactId += '-' + project.ext.platformFlag
         }
 
         if(project.ext.has('version') && project.ext.version) {

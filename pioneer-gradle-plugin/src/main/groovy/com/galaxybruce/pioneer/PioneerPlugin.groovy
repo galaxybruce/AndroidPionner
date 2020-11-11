@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject
 import com.android.build.gradle.AppPlugin
 import com.galaxybruce.pioneer.aar.AARDependency
 import com.galaxybruce.pioneer.copy.ProjectCopyOutputManager
+import com.galaxybruce.pioneer.manifest.PlatformSourceUtil
 import com.galaxybruce.pioneer.manifest.ProjectManifestMerger
 import com.galaxybruce.pioneer.maven.MavenInfo
 import com.galaxybruce.pioneer.maven.MavenUploadManager
@@ -35,11 +36,27 @@ class PioneerPlugin implements Plugin<Project> {
             if (!project.android) {
                 throw new IllegalStateException('Must apply \'com.android.application\' or \'com.android.library\' first!')
             }
-            handleSubProject()
+
+            project.extensions.create(EXT_NAME, PioneerExtension, project)
+
+            // 判断是否是application或者library 参考Arouter
+            def isApp = project.plugins.hasPlugin(AppPlugin) // def isLibrary = project.plugins.hasPlugin(LibraryPlugin)
+            if(isApp) {
+                handleAppProject(project)
+            }
+
+            // 合并pin工程中的manifest
+            mergeManifest(project)
+
+            // 给BuildConfig.java中设置字段
+            setBuildConfigField(project)
         }
     }
 
     private static void handleRootProject(Project rootProject) {
+        // 初始化多平台打包flag
+        PlatformSourceUtil.gradleParamPlatformFlag = rootProject.getProperties()?.get("platformFlag")
+
         Utils.initLocalProperties(rootProject)
 
         rootProject.extensions.create(EXT_NAME, PioneerExtension)
@@ -49,21 +66,6 @@ class PioneerPlugin implements Plugin<Project> {
         MavenUploadManager.setModuleUploadMaven(rootProject)
 
 //        FlutterHandler.handleRootProject(rootProject)
-    }
-
-    private static void handleSubProject(Project project) {
-        project.extensions.create(EXT_NAME, PioneerExtension, project)
-        // 判断是否是application或者library 参考Arouter
-        def isApp = project.plugins.hasPlugin(AppPlugin) // def isLibrary = project.plugins.hasPlugin(LibraryPlugin)
-        if(isApp) {
-            handleAppProject(project)
-        }
-
-        // 合并pin工程中的manifest
-        mergeManifest(project)
-
-        // 给BuildConfig.java中设置字段
-        setBuildConfigField(project)
     }
 
     private static void setRootProjectExtValues(Project rootProject) {
@@ -89,12 +91,6 @@ class PioneerPlugin implements Plugin<Project> {
 
         rootProject.afterEvaluate {
             rootProject.ext {
-                // 设置多平台打包时当前平台目录
-                platformSourceDir = rootProject.galaxybrucepioneer.platformSourceDir
-                if (!platformSourceDir && rootProject.hasProperty("MAVEN_MODULE_APP") && rootProject.MAVEN_MODULE_APP) {
-                    platformSourceDir = rootProject.MAVEN_MODULE_APP
-                }
-
                 // 读取module maven配置
                 if (rootProject.galaxybrucepioneer.moduleDataPath) {
                     File file = new File(rootProject.galaxybrucepioneer.moduleDataPath)
@@ -102,8 +98,10 @@ class PioneerPlugin implements Plugin<Project> {
                         String fileContents = file.getText('UTF-8')
                         try {
                             mavenInfo = JSONObject.parseObject(fileContents, MavenInfo.class)
+                            mavenInfo?.initModuleInfo(PlatformSourceUtil.getPlatformFlag(rootProject))
                             pomGroupId = mavenInfo.group
                         } catch (Exception e) {
+                            e.printStackTrace()
                         }
 
                         // todo 如果mavenInfo是空，可以考虑把所有的module都上传到maven
@@ -133,7 +131,7 @@ class PioneerPlugin implements Plugin<Project> {
         project.afterEvaluate {
             // 测试代码
 //            Test.testApplicationVariants(project, isApp)
-            project.android.defaultConfig.buildConfigField "String", "HOST_APP_NAME", "\"${project.rootProject.galaxybrucepioneer.platformSourceDir}\""
+            project.android.defaultConfig.buildConfigField "String", "HOST_APP_NAME", "\"${PlatformSourceUtil.getPlatformFlag(project)}\""
         }
     }
 
