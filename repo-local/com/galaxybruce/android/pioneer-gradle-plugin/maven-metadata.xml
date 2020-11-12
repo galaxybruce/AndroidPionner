@@ -3,7 +3,7 @@
   <groupId>com.galaxybruce.android</groupId>
   <artifactId>pioneer-gradle-plugin</artifactId>
   <versioning>
-    <release>0.0.31</release>
+    <release>0.0.32</release>
     <versions>
       <version>0.0.21</version>
       <version>0.0.22</version>
@@ -13,7 +13,8 @@
       <version>0.0.29</version>
       <version>0.0.30</version>
       <version>0.0.31</version>
+      <version>0.0.32</version>
     </versions>
-    <lastUpdated>20201111151844</lastUpdated>
+    <lastUpdated>20201112054836</lastUpdated>
   </versioning>
 </metadata>

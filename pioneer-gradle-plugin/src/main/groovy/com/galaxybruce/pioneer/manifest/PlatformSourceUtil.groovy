@@ -20,7 +20,7 @@ class PlatformSourceUtil {
 
     static String getPlatformFlag(Project project) {
         String platformFlag
-        if(gradleParamPlatformFlag && gradleParamPlatformFlag.trim().length() > 0) {
+        if(isGradleParamPlatformFlagValid()) {
             platformFlag = gradleParamPlatformFlag
         } else {
             PioneerExtension extension = Utils.getPioneerExtension(project)
@@ -42,5 +42,9 @@ class PlatformSourceUtil {
             platformFlag = ''
         }
         return platformFlag
+    }
+
+    static boolean isGradleParamPlatformFlagValid() {
+        return gradleParamPlatformFlag && gradleParamPlatformFlag.trim().length() > 0
     }
 }

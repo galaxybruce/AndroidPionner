@@ -43,12 +43,14 @@ class MavenUploadManager {
                                 // ./gradlew :module1:uploadArchives :module2:uploadArchives :module3:uploadArchives
                                 // rootProject.project(":$moduleName").tasks['uploadArchives'].execute()
 
+                                // command命令是再另一个进程中，需要把参数透传过去
+                                String param = PlatformSourceUtil.isGradleParamPlatformFlagValid() ? "-PplatformFlag=" + PlatformSourceUtil.gradleParamPlatformFlag : ""
                                 if (OperatingSystem.current().isWindows()) {
                                     // window下用process.waitFor会出现死锁
                                     def eo = new ByteArrayOutputStream()
                                     def so = new ByteArrayOutputStream()
                                     def result = rootProject.exec {
-                                        commandLine 'gradlew.bat', ":$moduleName:uploadArchives"
+                                        commandLine 'gradlew.bat', ":$moduleName:uploadArchives ${param}"
                                         standardOutput so
                                         errorOutput eo
                                         // Gradle will by default throw an exception and terminate when receiving non-zero result codes from commands
@@ -68,7 +70,7 @@ class MavenUploadManager {
 //                                    process.consumeProcessErrorStream(strErr)
 //                                    def result = process.waitFor() // 这里会出现死锁
 
-                                    String command = String.format("./gradlew clean :%s:uploadArchives", moduleName)
+                                    String command = String.format("./gradlew clean :%s:uploadArchives %s", moduleName, param)
                                     ExecuteResult executeResult = RunTimeTask.executeCommand(command, Integer.MAX_VALUE)
                                     if (executeResult.exitCode != 0) {
                                         LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven fail !!!!!! ")
