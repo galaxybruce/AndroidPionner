@@ -96,24 +96,42 @@ buildscript {
     }
 }
 ```
-PS: 每个library支持配置四个字段  
+PS: 每个library支持配置三个字段，只有name是必填字段
 name: 是需要上传到maven的library名称  
 artifactId: 如果不设置，默认是project.name  
-ver: 如果不设置，默认是android.defaultConfig.versionName  
-platform: 是否支持多平台的
+version: 如果不设置，默认是android.defaultConfig.versionName
 
 ```
 {
   "group": "com.galaxybruce",
-  "version": "1.0.0",// 如果所有的library版本号相同，可以这里统一设置
+  "version": "1.0.1",
   "modules": [
-    {"name": "testlibrary", "platform": true, "artifactId": "testlibrary", "verison": "0.0.1"}
-  ]
+    {"name": "testlibrary", "artifactId": "testlibrary", "version": ""}
+  ],
+  "platform_modules": {
+    "app1": [
+      {"name": "testlibrary"}
+    ],
+    "app2": [
+      {"name": "testlibrary"}
+    ]
+  }
 }
 
 ```
 
-配置好以后，输入命令./gradlew uploadMaven即可
+简易脚本封装：
+assembleMaven.sh
+```
+./gradlew uploadMaven
+./gradlew uploadMaven -PplatformFlag=app1
+./gradlew uploadMaven -PplatformFlag=app2
+```
+
+配置好以后，输入命令以下即可
+```
+$: assembleMaven
+```
 
 ### 2. 复制mapping.txt文件到指定目录
 在app中的build.gradle添加

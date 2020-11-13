@@ -27,7 +27,6 @@ class MavenInfo {
      * 初始化后所有module的缓存，key是project.name
      */
     Map<String, ModuleInfo> moduleMap = new HashMap<>()
-    List<ModuleInfo> allModules = new ArrayList<>()
 
     /**
      * 检查module是不是支持多平台
@@ -43,8 +42,6 @@ class MavenInfo {
         LogUtil.log(null, "MavenUploadManager", "app platform flag: ${platformFlag}")
 
         if(modules != null) {
-            allModules.addAll(modules)
-
             modules.forEach(new Consumer<ModuleInfo>() {
                 @Override
                 void accept(ModuleInfo moduleInfo) {
@@ -56,8 +53,6 @@ class MavenInfo {
         if(platform_modules != null && platform_modules.size() > 0) {
             List<ModuleInfo> platformModules = platform_modules.get(platformFlag)
             if(platformModules != null) {
-                allModules.addAll(platformModules)
-
                 platformModules.forEach(new Consumer<ModuleInfo>() {
                     @Override
                     void accept(ModuleInfo moduleInfo) {
@@ -69,8 +64,12 @@ class MavenInfo {
         }
     }
 
-    List<ModuleInfo> getAllModules() {
-        return allModules
+    List<ModuleInfo> getModules(String platformFlag) {
+        if(platformFlag != null && platformFlag.trim().length() > 0) {
+            return platform_modules.get(platformFlag)
+        } else {
+            return modules
+        }
     }
 
 }

@@ -32,19 +32,27 @@ class MavenUploadManager {
                     LogUtil.log(rootProject, "PioneerPlugin", "start upload library to maven...")
 
                     final MavenInfo mavenInfo = Utils.getExtValue(project.rootProject, "mavenInfo")
-                    final List<ModuleInfo> allModules = mavenInfo?.getAllModules()
-                    if (allModules != null && !allModules.isEmpty()) {
-                        allModules.forEach(new Consumer<ModuleInfo>() {
+                    final List<ModuleInfo> modules = mavenInfo?.getModules(PlatformSourceUtil.gradleParamPlatformFlag)
+                    if (modules != null && !modules.isEmpty()) {
+                        modules.forEach(new Consumer<ModuleInfo>() {
                             @Override
                             void accept(ModuleInfo moduleInfo) {
                                 def moduleName = moduleInfo.name
                                 println ""
+
+                                Project subProject = rootProject.findProject(moduleName)
+                                if(subProject == null) {
+                                    LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] not found, please check json config file !!! ")
+                                    return
+                                }
+
                                 LogUtil.log(rootProject, "PioneerPlugin", "start upload module[$moduleName] ...")
                                 // ./gradlew :module1:uploadArchives :module2:uploadArchives :module3:uploadArchives
                                 // rootProject.project(":$moduleName").tasks['uploadArchives'].execute()
 
-                                // command命令是再另一个进程中，需要把参数透传过去
-                                String param = PlatformSourceUtil.isGradleParamPlatformFlagValid() ? "-PplatformFlag=" + PlatformSourceUtil.gradleParamPlatformFlag : ""
+                                // command命令是在另一个进程中，需要把参数透传过去
+                                final String param = PlatformSourceUtil.isGradleParamPlatformFlagValid() ?
+                                        "-PplatformFlag=" + PlatformSourceUtil.gradleParamPlatformFlag : ""
                                 if (OperatingSystem.current().isWindows()) {
                                     // window下用process.waitFor会出现死锁
                                     def eo = new ByteArrayOutputStream()
@@ -81,6 +89,8 @@ class MavenUploadManager {
                                 }
                             }
                         })
+                    } else {
+                        LogUtil.log(rootProject, "PioneerPlugin", "no corresponding modules founded, please check json config file !!! ")
                     }
                 }
             }
