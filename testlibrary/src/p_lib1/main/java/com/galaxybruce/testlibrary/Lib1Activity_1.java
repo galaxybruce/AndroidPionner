@@ -5,6 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+/**
+ * @date 2020/11/15 17:42
+ * @author bruce.zhang
+ * @description (亲，我是做什么的)
+ * <p>
+ * modification history:
+ */
 public class Lib1Activity_1 extends AppCompatActivity {
 
     @Override

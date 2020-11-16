@@ -7,6 +7,8 @@ import com.galaxybruce.pioneer.utils.runtime.ExecuteResult
 import com.galaxybruce.pioneer.utils.runtime.RunTimeTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.internal.os.OperatingSystem
 
 import java.util.function.Consumer;
@@ -165,35 +167,35 @@ class MavenUploadManager {
 
         project.apply plugin: 'maven'
 
-//        if (project.hasProperty("android")) { // Android libraries
+        if (project.hasProperty("android")) { // Android libraries
 //            task androidJavadocs(type: Javadoc) {
 //                source = android.sourceSets.main.java.srcDirs
 //                classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
 //            }
 //
 //            task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
-//                classifier = 'javadoc'
+//                archiveClassifier = 'javadoc'
 //                from androidJavadocs.destinationDir
 //            }
-//
-//            task androidSourcesJar(type: Jar) {
-//                classifier = 'sources'
-//                from android.sourceSets.main.java.srcDirs
-//            }
-//
-//            artifacts {
-//                archives androidSourcesJar
-//                //archives androidJavadocsJar 因为代码中的注释不规范
-//            }
-//
-//        } else { // Java libraries
+
+            project.task('androidSourcesJar', type: Jar) {
+                archiveClassifier = 'sources'
+                from project.android.sourceSets.main.java.srcDirs
+            }
+
+            project.artifacts {
+                archives project.tasks.androidSourcesJar
+                //archives androidJavadocsJar 因为代码中的注释不规范
+            }
+
+        } else { // Java libraries
 //            task sourcesJar(type: Jar, dependsOn: classes) {
-//                classifier = 'sources'
+//                archiveClassifier = 'sources'
 //                from sourceSets.main.allSource
 //            }
 //
 //            task javadocJar(type: Jar, dependsOn: javadoc) {
-//                classifier = 'javadoc'
+//                archiveClassifier = 'javadoc'
 //                from javadoc.destinationDir
 //            }
 //
@@ -201,7 +203,7 @@ class MavenUploadManager {
 //                archives sourcesJar
 //                //archives androidJavadocsJar 因为代码中的注释不规范
 //            }
-//        }
+        }
 
         Properties properties = new Properties()
         File rootProjectPropertiesFile = project.rootProject.file("gradle.properties")
