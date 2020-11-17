@@ -60,7 +60,7 @@ class MavenUploadManager {
                                     def eo = new ByteArrayOutputStream()
                                     def so = new ByteArrayOutputStream()
                                     def result = rootProject.exec {
-                                        commandLine 'gradlew.bat', ":$moduleName:uploadArchives ${param}"
+                                        commandLine 'gradlew.bat', ":$moduleName:clean", ":$moduleName:uploadArchives", "${param}"
                                         standardOutput so
                                         errorOutput eo
                                         // Gradle will by default throw an exception and terminate when receiving non-zero result codes from commands
@@ -80,7 +80,7 @@ class MavenUploadManager {
 //                                    process.consumeProcessErrorStream(strErr)
 //                                    def result = process.waitFor() // 这里会出现死锁
 
-                                    String command = String.format("./gradlew clean :%s:uploadArchives %s", moduleName, param)
+                                    String command = String.format("./gradlew :%s:clean :%s:uploadArchives %s", moduleName, moduleName, param)
                                     ExecuteResult executeResult = RunTimeTask.executeCommand(command, Integer.MAX_VALUE)
                                     if (executeResult.exitCode != 0) {
                                         LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven fail !!!!!! ")

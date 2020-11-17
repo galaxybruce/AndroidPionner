@@ -1,5 +1,6 @@
 #!/bin/bash +x
 
+#./gradlew clean
 ./gradlew uploadMaven
 ./gradlew uploadMaven -PplatformFlag=app1
 ./gradlew uploadMaven -PplatformFlag=app2
