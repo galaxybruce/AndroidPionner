@@ -124,15 +124,13 @@ class MavenUploadManager {
 
         // project.group和version先设置默认的
         final MavenInfo mavenInfo = Utils.getExtValue(project.rootProject, "mavenInfo")
-        if(mavenInfo != null) {
+        final ModuleInfo moduleInfo = mavenInfo?.getModuleInfo(project.name)
+        if(moduleInfo != null) {
             project.group = mavenInfo.group
             if(mavenInfo.version) {
                 project.version = mavenInfo.version
             }
-        }
 
-        final ModuleInfo moduleInfo = mavenInfo?.getModuleInfo(project.name)
-        if(moduleInfo != null) {
             // 给需要多平台打包的module设置平台目录，在mavenScriptPath上传maven脚本中设置
             // pom.artifactId时用到project.ext.platformFlag
             boolean supportPlatform = moduleInfo != null ? moduleInfo.platform : false
