@@ -165,6 +165,8 @@ class MavenUploadManager {
 
         project.apply plugin: 'maven'
 
+        def localMaven = project.rootProject.galaxybrucepioneer.localMaven
+
         if (project.hasProperty("android")) { // Android libraries
 //            task androidJavadocs(type: Javadoc) {
 //                source = android.sourceSets.main.java.srcDirs
@@ -176,16 +178,18 @@ class MavenUploadManager {
 //                from androidJavadocs.destinationDir
 //            }
 
-            project.task('androidSourcesJar', type: Jar) {
-                archiveClassifier = 'sources'
-                from project.android.sourceSets.main.java.srcDirs
-            }
+            // 本地maven不生成，原因：相同的代码每次生成的sources.jar不一样，导致gitlab-ci每次都出发打包
+            if(!localMaven) {
+                project.task('androidSourcesJar', type: Jar) {
+                    archiveClassifier = 'sources'
+                    from project.android.sourceSets.main.java.srcDirs
+                }
 
-            project.artifacts {
-                archives project.tasks.androidSourcesJar
-                //archives androidJavadocsJar 因为代码中的注释不规范
+                project.artifacts {
+                    archives project.tasks.androidSourcesJar
+                    //archives androidJavadocsJar 因为代码中的注释不规范
+                }
             }
-
         } else { // Java libraries
 //            task sourcesJar(type: Jar, dependsOn: classes) {
 //                archiveClassifier = 'sources'
@@ -209,7 +213,6 @@ class MavenUploadManager {
             properties.load(rootProjectPropertiesFile.newDataInputStream())
         }
 
-        def localMaven = project.rootProject.galaxybrucepioneer.localMaven
         def mavenUrl = project.rootProject.galaxybrucepioneer.mavenUrl
         def mavenUrlSnapShot = project.rootProject.galaxybrucepioneer.mavenUrlSnapShot
         def mavenAccount = project.rootProject.galaxybrucepioneer.mavenAccount
