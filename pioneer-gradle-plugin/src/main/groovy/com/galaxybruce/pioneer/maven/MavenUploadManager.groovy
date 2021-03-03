@@ -68,10 +68,10 @@ class MavenUploadManager {
                                     }
                                     // https://stackoverflow.com/questions/45396268/gradle-exec-how-to-print-error-output
                                     if (result.exitValue != 0) {
-                                        LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven fail !!!!!! ")
+                                        LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName-${subProject.version}] upload maven fail !!!!!! ")
                                         println eo.toString()
                                     } else {
-                                        LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven success !!! ")
+                                        LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName-${subProject.version}] upload maven success !!! ")
                                     }
                                 } else {
 //                                    def cmd = "./gradlew"
@@ -83,10 +83,10 @@ class MavenUploadManager {
                                     String command = String.format("./gradlew :%s:clean :%s:uploadArchives %s", moduleName, moduleName, param)
                                     ExecuteResult executeResult = RunTimeTask.executeCommand(command, Integer.MAX_VALUE)
                                     if (executeResult.exitCode != 0) {
-                                        LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven fail !!!!!! ")
+                                        LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName-${subProject.version}] upload maven fail !!!!!! ")
                                         println executeResult.toString()
                                     } else {
-                                        LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName] upload maven success !!! ")
+                                        LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName-${subProject.version}] upload maven success !!! ")
                                     }
                                 }
                             }
@@ -153,6 +153,8 @@ class MavenUploadManager {
             } else {
                 project.apply from: project.rootProject.galaxybrucepioneer.mavenScriptPath
             }
+        } else {
+            // todo 其他没在json配置文件中配置过的project是否要设置group和version
         }
     }
 
@@ -178,7 +180,7 @@ class MavenUploadManager {
 //                from androidJavadocs.destinationDir
 //            }
 
-            // 本地maven不生成，原因：相同的代码每次生成的sources.jar不一样，导致gitlab-ci每次都出发打包
+            // 本地maven不生成，原因：相同的代码每次生成的sources.jar不一样，导致gitlab-ci每次都触发打包
             if(!localMaven) {
                 project.task('androidSourcesJar', type: Jar) {
                     archiveClassifier = 'sources'
