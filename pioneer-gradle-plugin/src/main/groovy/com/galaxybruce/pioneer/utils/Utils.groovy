@@ -115,7 +115,7 @@ public class Utils {
         return null
     }
 
-    static String equalLocalValue(Object project, String key, String value) {
+    static boolean equalLocalValue(Object project, String key, String value) {
         return value == getLocalValue(project, key)
     }
 

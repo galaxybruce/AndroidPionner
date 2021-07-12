@@ -49,7 +49,7 @@ settings.ext.includeModule([libraryPathWithKey], 'lib1', 'lib2'])
 ### 3. 读取local.properties中的值
 判断local.properties中的值是否等于某个值
 ```
-if(equalLocalValue(settings, 'FLUTTER_SOURCE', '1').toBoolean()) {
+if(equalLocalValue(settings, 'FLUTTER_SOURCE', '1')) {
         setBinding(new Binding([gradle: this]))
         evaluate(new File(flutterPath + '.android/include_flutter.groovy'))
     }
