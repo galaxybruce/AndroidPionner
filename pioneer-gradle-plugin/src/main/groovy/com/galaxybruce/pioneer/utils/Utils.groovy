@@ -35,27 +35,20 @@ public class Utils {
      * @param jenkinsPath   打包机器上的库路径
      * @return
      */
-    public static String getLibraryPathWithKey(final String pathKey, final String jenkinsPath) {
-        if(pathKey == null || ''.equals(pathKey.trim())) {
+    public static String getLibraryPathWithKey(Object project, final String pathKey, final String jenkinsPath) {
+        if(pathKey == null || '' == pathKey.trim()) {
             throw new IllegalStateException('pathKey must not be empty')
         }
 
-        def props = new Properties()
-        def propFile = new File("local.properties")
-        if(!propFile.exists()) {
-            return null
-        }
-        propFile.withInputStream {
-            stream -> props.load(stream)
-        }
-
-        def libraryPath = props.getProperty(pathKey)
+        def libraryPath = getLocalValue(project, pathKey)
         if (!libraryPath) {
             libraryPath = System.getenv(pathKey)
             if (!libraryPath && jenkinsPath) {
                 libraryPath = jenkinsPath
             }
             if(libraryPath) {
+                def props = new Properties()
+                def propFile = new File(project.rootDir, 'local.properties')
                 props.put(pathKey, libraryPath)
                 props.store(propFile.newWriter(), null)
             }
@@ -106,6 +99,9 @@ public class Utils {
      * @return
      */
     static String getLocalValue(Object project, String key) {
+        if(key == null || '' == key.trim()) {
+            throw new IllegalStateException('key must not be empty')
+        }
         if(LOCAL_PROPERTIES == null) {
             initLocalProperties(project)
         }
