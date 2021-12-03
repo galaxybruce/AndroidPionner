@@ -3,22 +3,15 @@ apply plugin: "maven"
 
 apply plugin: 'com.jfrog.bintray'
 
-// 这个插件貌似是android library时用到
-//apply plugin: 'com.github.dcendents.android-maven'
-
-
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 buildscript {
     repositories {
+        // 阿里仓库地址 https://maven.aliyun.com/mvn/guide
+        maven { url 'https://maven.aliyun.com/repository/public'}
         maven { url "https://maven.aliyun.com/repository/google" }
-        maven { url "https://maven.aliyun.com/repository/central" }
-        maven { url "https://maven.aliyun.com/repository/jcenter" }
-        maven { url "http://maven.aliyun.com/nexus/content/repositories/releases" }
-
-        jcenter()
-        mavenCentral()
+        maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
     }
     dependencies {
 //        classpath 'com.novoda:bintray-release:0.3.4'
@@ -29,19 +22,8 @@ dependencies {
     compileOnly gradleApi()
     compileOnly localGroovy()
     implementation 'com.android.tools.build:gradle:4.0.0'
-    implementation "com.alibaba:fastjson:1.2.46"
+    implementation "com.alibaba:fastjson:1.2.51"
 }
-
-//repositories {
-//    maven { url "https://maven.aliyun.com/repository/google" }
-//    maven { url "https://maven.aliyun.com/repository/central" }
-//    maven { url "https://maven.aliyun.com/repository/jcenter" }
-//    maven { url "http://maven.aliyun.com/nexus/content/repositories/releases" }
-//
-//    jcenter()
-//    mavenCentral()
-//}
-
 
 /// 这几个task必须要有，不然没法add to jcenter
 task sourcesJar(type: Jar) {
