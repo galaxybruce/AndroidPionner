@@ -7,6 +7,7 @@ import com.galaxybruce.pioneer.utils.runtime.ExecuteResult
 import com.galaxybruce.pioneer.utils.runtime.RunTimeTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.internal.os.OperatingSystem
@@ -113,14 +114,13 @@ class MavenUploadManager {
     }
 
     private static void applyUpload2MavenScript(Project project) {
-        Task uploadArchives = project.tasks.findByName("uploadArchives")
-//        Task st = project.tasks.findByName("sourcesJar")
         // 如果原来的library中有上传脚本就不添加了
-        if(uploadArchives.repositories.size() > 0) {
+        var repositories = project.extensions.getByName('publishing').repositories // project.tasks.findByName("uploadArchives").repositories
+        if(repositories.size() > 0) {
             return
         }
 
-        // todo 这里是否要排除flutter中的module
+        // todo 这里是否要排除flutter中依赖的插件module
 
         // project.group和version先设置默认的
         final MavenInfo mavenInfo = Utils.getExtValue(project.rootProject, "mavenInfo")
@@ -160,53 +160,46 @@ class MavenUploadManager {
 
     private static void applyUploadDefaultMavenScript(Project project) {
         // 参考./gradle/upload_maven.gradle
-
         // 注意：app中不能设置多渠道，否则上传maven中没有aar!!!
-        // 注意：app中不能设置多渠道，否则上传maven中没有aar!!!
-        // 注意：app中不能设置多渠道，否则上传maven中没有aar!!!
+        project.apply plugin: 'maven-publish'
 
-        project.apply plugin: 'maven'
-
-        def localMaven = project.rootProject.galaxybrucepioneer.localMaven
-
-        if (project.hasProperty("android")) { // Android libraries
-//            task androidJavadocs(type: Javadoc) {
+        if (project.hasProperty("android") ||
+                project.getPlugins().hasPlugin('com.android.application') ||
+                project.getPlugins().hasPlugin('com.android.library')) { // Android libraries
+//            task javadocs(type: Javadoc) {
 //                source = android.sourceSets.main.java.srcDirs
 //                classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
 //            }
-//
-//            task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
-//                archiveClassifier = 'javadoc'
-//                from androidJavadocs.destinationDir
-//            }
 
-            // 本地maven不生成，原因：相同的代码每次生成的sources.jar不一样，导致gitlab-ci每次都触发打包
-            if(!localMaven) {
-                project.task('androidSourcesJar', type: Jar) {
-                    archiveClassifier = 'sources'
-                    from project.android.sourceSets.main.java.srcDirs
-                }
+            project.task('javadocJar', type: Jar, dependsOn: project.javadoc) {
+                getArchiveClassifier().set('javadoc')
+                from project.javadoc.destinationDir
+            }
 
-                project.artifacts {
-                    archives project.tasks.androidSourcesJar
-                    //archives androidJavadocsJar 因为代码中的注释不规范
-                }
+            project.task('sourceJar', type: Jar) {
+                getArchiveClassifier().set('sources')
+                from project.android.sourceSets.main.java.srcDirs
+            }
+
+            project.artifacts {
+                archives project.tasks.sourceJar
+                archives project.tasks.javadocJar
             }
         } else { // Java libraries
-//            task sourcesJar(type: Jar, dependsOn: classes) {
-//                archiveClassifier = 'sources'
-//                from sourceSets.main.allSource
-//            }
-//
-//            task javadocJar(type: Jar, dependsOn: javadoc) {
-//                archiveClassifier = 'javadoc'
-//                from javadoc.destinationDir
-//            }
-//
-//            artifacts {
-//                archives sourcesJar
-//                //archives androidJavadocsJar 因为代码中的注释不规范
-//            }
+            project.task('javadocJar', type: Jar, dependsOn: project.javadoc) {
+                getArchiveClassifier().set('javadoc')
+                from project.javadoc.destinationDir
+            }
+
+            project.task('sourceJar', type: Jar, dependsOn: project.classes) {
+                getArchiveClassifier().set('sources')
+                from project.android.sourceSets.main.allSource
+            }
+
+            project.artifacts {
+                archives project.tasks.sourceJar
+                archives project.tasks.javadocJar
+            }
         }
 
         Properties properties = new Properties()
@@ -251,45 +244,41 @@ class MavenUploadManager {
         project.group = pomGroupId
         project.version = pomVersion
 
-        LogUtil.log(project, "PioneerPlugin", "======maven configuration project: ${project.name} -- mavenUrl: ${mavenUrl} -- mavenName: ${mavenAccount} -- mavenPwd: ${mavenPwd}")
-        LogUtil.log(project, "PioneerPlugin", "======maven configuration project: ${project.name} -- groupId: ${pomGroupId}:${pomArtifactId}:${pomVersion}")
+        LogUtil.log(project, "PioneerPlugin",
+                "======maven configuration project: ${project.name} -- mavenUrl: ${mavenUrl} -- mavenName: ${mavenAccount} -- mavenPwd: ${mavenPwd}")
+        LogUtil.log(project, "PioneerPlugin",
+                "======maven configuration project: ${project.name} -- groupId: ${pomGroupId}:${pomArtifactId}:${pomVersion}")
 
-        project.uploadArchives {
-            repositories {
-                mavenDeployer {
-                    pom.groupId = pomGroupId
-                    pom.artifactId = pomArtifactId
-                    pom.version = pomVersion
+        project.publishing {
+            publications {
+                mavenProduction(MavenPublication) {
+                    //group,artifactId和version
+                    groupId = pomGroupId
+                    artifactId = pomArtifactId
+                    version = pomVersion
 
-                    pom.project {
+                    from components.release
+
+                    artifact project.tasks.sourceJar
+                    artifact project.tasks.javadocJar
+
+                    pom {
                         licenses {
                             license {
-                                name 'The Apache Software License, Version 2.0'
-                                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                                name = 'The Apache License, Version 2.0'
+                                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                             }
                         }
                     }
+                }
+            }
 
-                    if (localMaven) {
-                        // deploy到本地仓库
-                        // 注意：要放在第一行，不然会被线上的覆盖了
-                        // 引用方式
-                        // maven{ url rootProject.file("repo-local") }
-
-                        // 或者 (注意：settings.gradle必须这样引用)
-                        // def projectDir = settings.rootProject.projectDir
-                        // def repoFile = new File(projectDir, 'repo-local')
-                        // maven{ url repoFile }
-                        repository(url: project.uri(project.rootProject.projectDir.absolutePath + '/repo-local'))
-                    } else {
-                        // 提交到远程服务器：
-                        repository(url: mavenUrl) {
-                            authentication(userName: mavenAccount, password: mavenPwd)
-                        }
-
-                        snapshotRepository(url: mavenUrlSnapShot) {
-                            authentication(userName: mavenAccount, password: mavenPwd)
-                        }
+            repositories {
+                maven {
+                    url = artifact_version.endsWith('SNAPSHOT') ? mavenUrlSnapShot : mavenUrl
+                    credentials {
+                        username = mavenAccount
+                        password = mavenPwd
                     }
                 }
             }

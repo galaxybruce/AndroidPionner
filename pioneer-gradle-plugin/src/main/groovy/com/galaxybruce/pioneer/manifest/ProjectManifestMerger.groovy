@@ -23,7 +23,7 @@ class ProjectManifestMerger {
             jcenter()
         }
         //history version: 25.3.0
-        project.buildscript.dependencies.add("classpath", "com.android.tools.build:manifest-merger:26.4.2")
+        project.buildscript.dependencies.add("classpath", "com.android.tools.build:manifest-merger:30.0.3")
 
         mergeManifest(project, true)
     }

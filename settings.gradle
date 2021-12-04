@@ -11,11 +11,13 @@ buildscript {
         if(isLocalMaven) {
             def projectDir = settings.rootProject.projectDir
             def repoFile = new File(projectDir, 'repo-local')
-            maven{ url repoFile }
+            maven { url repoFile }
+            mavenLocal()
         }
-
-        google()
-        jcenter()
+        // 阿里仓库地址 https://maven.aliyun.com/mvn/guide
+        maven { url 'https://maven.aliyun.com/repository/public'}
+        maven { url "https://maven.aliyun.com/repository/google" }
+        maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
     }
     dependencies {
         classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.36'
@@ -23,5 +25,5 @@ buildscript {
 }
 apply plugin: 'galaxybruce-pioneer-settings'
 
-settings.ext.includeDefaultModule()
+settings.ext.includeDefaultModule(['testlibrary'])
 // settings.ext.includeModule([settings.getRootDir().path], ['testlibrary'])
