@@ -1,7 +1,3 @@
-//include ':app', ':testlibrary'
-//include ':pioneer-gradle-plugin'
-
-
 buildscript {
     apply from: './gradle/util.gradle'
     def isLocalMaven = equalLocalValue(settings, 'LOCAL_MAVEN', 'true')
@@ -20,10 +16,9 @@ buildscript {
         maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
     }
     dependencies {
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.36'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.43-SNAPSHOT'
     }
 }
 apply plugin: 'galaxybruce-pioneer-settings'
 
-settings.ext.includeDefaultModule(['testlibrary'])
-// settings.ext.includeModule([settings.getRootDir().path], ['testlibrary'])
+settings.ext.includeDefaultModule()

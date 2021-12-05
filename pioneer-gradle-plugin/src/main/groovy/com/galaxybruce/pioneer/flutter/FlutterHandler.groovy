@@ -10,6 +10,8 @@ import org.gradle.api.Project
  *
  * <p>
  * modification history:
+ *
+ * @deprecated 该类已废弃，flutter依赖的插件module通过dart写的脚本依赖mvn命令批量上传
  */
 @Deprecated
 class FlutterHandler {

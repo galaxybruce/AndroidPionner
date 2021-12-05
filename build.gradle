@@ -1,12 +1,14 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-//apply plugin: 'galaxybruce-pioneer'
-
-//galaxybrucepioneer {
-//    platformSourceDir = 'app2'
-////    mavenScriptPath = "${project.rootDir.path}/gradle/upload_maven.gradle"
-//    moduleDataPath = "${project.rootDir.path}/modulemaven.json"
-//    localMaven = true
-//}
+apply plugin: 'galaxybruce-pioneer'
+galaxybrucepioneer {
+    platformSourceDir = 'app2'
+//    mavenScriptPath = "${project.rootDir.path}/gradle/upload_maven.gradle"
+    moduleDataPath = "${project.rootDir.path}/modulemaven.json"
+    localMaven = true
+    mavenUrl = getLocalValue(project, 'MAVEN_URL_RELEASE')
+    mavenUrlSnapShot = getLocalValue(project, 'MAVEN_URL_SNAPSHOT')
+    mavenAccount = getLocalValue(project, 'MAVEN_ACCOUNT_NAME')
+    mavenPwd = getLocalValue(project, 'MAVEN_ACCOUNT_PWD')
+}
 
 buildscript {
     apply from: './gradle/util.gradle'
@@ -29,7 +31,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.3'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.36'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.43-SNAPSHOT'
     }
 }
 

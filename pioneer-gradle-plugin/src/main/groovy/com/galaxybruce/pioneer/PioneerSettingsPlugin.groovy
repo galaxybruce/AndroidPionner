@@ -41,7 +41,7 @@ class PioneerSettingsPlugin implements Plugin<Settings> {
 
     /**
      * 加载指定目录中的module
-     * 调用方式： settings.ext.includeModule([libraryPath], ['aopstat','plugin'])
+     * 调用方式： settings.ext.includeModule([settings.getRootDir().path], ['aopstat','plugin'])
      * @param libraryPaths
      * @param excludeDirs
      * @return

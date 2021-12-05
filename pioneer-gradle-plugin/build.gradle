@@ -38,7 +38,7 @@ def repoUrlAccountPwd = localProperties.getProperty('MAVEN_ACCOUNT_PWD')
 
 def artifact_group = 'com.galaxybruce.android'
 def artifact_id = 'pioneer-gradle-plugin' // 这里要和module的名称一样，不然在bintray上会生成两个目录
-def artifact_version='0.0.42-SNAPSHOT'
+def artifact_version='0.0.43-SNAPSHOT'
 
 // 发布到组织名称名字，必须填写
 group = artifact_group
@@ -99,24 +99,8 @@ afterEvaluate {
                     username = repoUrlAccountName
                     password = repoUrlAccountPwd
                 }
+                allowInsecureProtocol = true
             }
         }
     }
 }
-
-
-
-
-/// 1. 发布到本次仓库或者私有仓库:
-// 1.1 local.properties中的LOCAL_MAVEN改成true,
-// 1.2 执行命令 ./gradlew :pioneer-gradle-plugin:uploadArchives
-
-/// 2. 发布到jcenter
-/// 在项目根目录依次输入下面两个命令
-/// 2.1 ./gradlew install
-/// 2.2 ./gradlew bintrayUpload
-
-////// 参考文章： https://blog.csdn.net/linglongxin24/article/details/53415932
-////// 还有一篇宣传极简文章：https://juejin.im/post/59cef9baf265da066a105f92
-////// 也可以像arouter那样把install和bintray拆封成两个文件install.gradle和bintray.gradle
-////// butterknife中对android和java包做了区分，值得参考 https://github.com/JakeWharton/butterknife/blob/master/gradle/gradle-mvn-push.gradle

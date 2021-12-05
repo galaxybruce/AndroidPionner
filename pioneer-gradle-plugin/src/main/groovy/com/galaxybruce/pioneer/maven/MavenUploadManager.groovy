@@ -6,18 +6,18 @@ import com.galaxybruce.pioneer.utils.Utils
 import com.galaxybruce.pioneer.utils.runtime.ExecuteResult
 import com.galaxybruce.pioneer.utils.runtime.RunTimeTask
 import org.gradle.api.Project
-import org.gradle.api.Task
+import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.internal.os.OperatingSystem
 
-import java.util.function.Consumer;
+import java.util.function.Consumer
 
 /**
  * @author bruce.zhang
  * @date 2020/11/11 11:34
- * @description (亲 ， 我是做什么的)
+ * @description android module 批量上传到maven仓库
  * <p>
  * modification history:
  */
@@ -50,8 +50,8 @@ class MavenUploadManager {
                                 }
 
                                 LogUtil.log(rootProject, "PioneerPlugin", "start upload module[$moduleName] ...")
-                                // ./gradlew :module1:uploadArchives :module2:uploadArchives :module3:uploadArchives
-                                // rootProject.project(":$moduleName").tasks['uploadArchives'].execute()
+                                // ./gradlew :module1:publish :module2:publish :module3:publish
+                                // rootProject.project(":$moduleName").tasks['publish'].execute()
 
                                 // command命令是在另一个进程中，需要把参数透传过去
                                 final String param = PlatformSourceUtil.isGradleParamPlatformFlagValid() ?
@@ -61,7 +61,7 @@ class MavenUploadManager {
                                     def eo = new ByteArrayOutputStream()
                                     def so = new ByteArrayOutputStream()
                                     def result = rootProject.exec {
-                                        commandLine 'gradlew.bat', ":$moduleName:clean", ":$moduleName:uploadArchives", "${param}"
+                                        commandLine 'gradlew.bat', ":$moduleName:clean", ":$moduleName:publish", "${param}"
                                         standardOutput so
                                         errorOutput eo
                                         // Gradle will by default throw an exception and terminate when receiving non-zero result codes from commands
@@ -76,12 +76,12 @@ class MavenUploadManager {
                                     }
                                 } else {
 //                                    def cmd = "./gradlew"
-//                                    def process = ("$cmd :$moduleName:uploadArchives").execute()
+//                                    def process = ("$cmd :$moduleName:publish").execute()
 //                                    def strErr = new StringBuffer()
 //                                    process.consumeProcessErrorStream(strErr)
 //                                    def result = process.waitFor() // 这里会出现死锁
 
-                                    String command = String.format("./gradlew :%s:clean :%s:uploadArchives %s", moduleName, moduleName, param)
+                                    String command = String.format("./gradlew :%s:clean :%s:publish %s", moduleName, moduleName, param)
                                     ExecuteResult executeResult = RunTimeTask.executeCommand(command, Integer.MAX_VALUE)
                                     if (executeResult.exitCode != 0) {
                                         LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName-${subProject.version}] upload maven fail !!!!!! ")
@@ -99,7 +99,7 @@ class MavenUploadManager {
             }
         }
 
-        // 为每个project添加uploadArchives任务
+        // 为每个project添加publish任务
         rootProject.subprojects {
             project.afterEvaluate {
                 project.plugins.withId('com.android.library') {
@@ -115,8 +115,8 @@ class MavenUploadManager {
 
     private static void applyUpload2MavenScript(Project project) {
         // 如果原来的library中有上传脚本就不添加了
-        var repositories = project.extensions.getByName('publishing').repositories // project.tasks.findByName("uploadArchives").repositories
-        if(repositories.size() > 0) {
+        var publishingExt = project.extensions.findByName('publishing') // project.tasks.findByName("publish").repositories
+        if(publishingExt != null && publishingExt.repositories.size() > 0) {
             return
         }
 
@@ -159,21 +159,21 @@ class MavenUploadManager {
     }
 
     private static void applyUploadDefaultMavenScript(Project project) {
-        // 参考./gradle/upload_maven.gradle
+        // 参考 https://github.com/alibaba/ARouter/blob/develop/gradle/publish.gradle
         // 注意：app中不能设置多渠道，否则上传maven中没有aar!!!
         project.apply plugin: 'maven-publish'
-
         if (project.hasProperty("android") ||
                 project.getPlugins().hasPlugin('com.android.application') ||
                 project.getPlugins().hasPlugin('com.android.library')) { // Android libraries
-//            task javadocs(type: Javadoc) {
-//                source = android.sourceSets.main.java.srcDirs
-//                classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-//            }
 
-            project.task('javadocJar', type: Jar, dependsOn: project.javadoc) {
+            project.task('javadocs', type: Javadoc) {
+                source = project.android.sourceSets.main.java.srcDirs
+                classpath += project.files(project.android.getBootClasspath().join(File.pathSeparator))
+            }
+
+            project.task('javadocJar', type: Jar, dependsOn: project.javadocs) {
                 getArchiveClassifier().set('javadoc')
-                from project.javadoc.destinationDir
+                from project.javadocs.destinationDir
             }
 
             project.task('sourceJar', type: Jar) {
@@ -249,38 +249,39 @@ class MavenUploadManager {
         LogUtil.log(project, "PioneerPlugin",
                 "======maven configuration project: ${project.name} -- groupId: ${pomGroupId}:${pomArtifactId}:${pomVersion}")
 
-        project.publishing {
-            publications {
-                mavenProduction(MavenPublication) {
-                    //group,artifactId和version
-                    groupId = pomGroupId
-                    artifactId = pomArtifactId
-                    version = pomVersion
+        var publishingExt = (PublishingExtension)project.extensions.findByName('publishing')
+        publishingExt.publications() {
+            mavenProduction(MavenPublication) {
+                //group,artifactId和version
+                groupId = pomGroupId
+                artifactId = pomArtifactId
+                version = pomVersion
 
-                    from components.release
+                project.afterEvaluate {
+                    from project.components.release
+                }
 
-                    artifact project.tasks.sourceJar
-                    artifact project.tasks.javadocJar
+                artifact project.tasks.sourceJar
+                artifact project.tasks.javadocJar
 
-                    pom {
-                        licenses {
-                            license {
-                                name = 'The Apache License, Version 2.0'
-                                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                            }
+                pom {
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                         }
                     }
                 }
             }
-
-            repositories {
-                maven {
-                    url = artifact_version.endsWith('SNAPSHOT') ? mavenUrlSnapShot : mavenUrl
-                    credentials {
-                        username = mavenAccount
-                        password = mavenPwd
-                    }
+        }
+        publishingExt.repositories() {
+            maven {
+                url = pomVersion.endsWith('SNAPSHOT') ? mavenUrlSnapShot : mavenUrl
+                credentials {
+                    username = mavenAccount
+                    password = mavenPwd
                 }
+                allowInsecureProtocol = true
             }
         }
     }

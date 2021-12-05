@@ -2,7 +2,7 @@ package com.galaxybruce.pioneer
 
 import org.gradle.api.Project
 /**
- * 属性配置信息
+ * 插件属性配置信息
  * @author bruce.zhang
  * @since 17/3/28 11:48
  */
@@ -26,13 +26,13 @@ class PioneerExtension {
 
 
 
-    /*******************flutter start************************/
+    /*******************maven start************************/
     def mavenUrl
     def mavenUrlSnapShot
     def mavenAccount
     def mavenPwd
     def localMaven
-    /*******************flutter end  ************************/
+    /*******************maven end  ************************/
 
 
 

@@ -13,8 +13,7 @@ import org.gradle.api.file.ConfigurableFileTree
  * 1.现在build.gradle android节点下调用rootProject.ext.setAARDirs(project)
  * 2.在build.gradle dependencies节点下调用rootProject.ext.addAARLibs(project, depModule)
  *
- * <p>
- * modification history:
+ *
  */
 public class AARDependency {
 

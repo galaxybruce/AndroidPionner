@@ -7,12 +7,6 @@ import com.galaxybruce.pioneer.utils.Utils
 import org.gradle.api.Project
 import org.gradle.api.Task
 
-/**
- * 调用UI界面工具
- * Android/sdk/tools/proguard/bin/proguardgui.sh
- * 采用命令
- * retrace.bat -verbose mapping.txt stacktrace.txt > out.txt
- */
 public class ProjectCopyOutputManager {
 
     public static void copy(Project project) {
