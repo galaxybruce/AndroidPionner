@@ -1,7 +1,6 @@
 1. 发布
-1.1 发布到local maven，local.properties中的LOCAL_MAVEN改成true
-1.2 发布到local maven: ./gradlew :pioneer-gradle-plugin:publishToMavenLocal
-1.3 发布到remote maven: ./gradlew :pioneer-gradle-plugin:publish
+1.1 发布到local maven: ./gradlew :pioneer-gradle-plugin:publishToMavenLocal
+1.2 发布到remote maven: ./gradlew :pioneer-gradle-plugin:publish
 
 
 2. 发布到jcenter，在项目根目录依次输入下面两个命令
