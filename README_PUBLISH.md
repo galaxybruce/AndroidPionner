@@ -1,4 +1,4 @@
-1. 发布
+1. 发布，参考文章：https://juejin.cn/post/6844904185754812423
 1.1 发布到local maven: ./gradlew :pioneer-gradle-plugin:publishToMavenLocal
 1.2 发布到remote maven: ./gradlew :pioneer-gradle-plugin:publish
 
