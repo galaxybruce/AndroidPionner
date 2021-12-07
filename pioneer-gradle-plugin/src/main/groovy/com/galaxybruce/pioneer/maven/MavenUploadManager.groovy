@@ -166,15 +166,15 @@ class MavenUploadManager {
                 project.getPlugins().hasPlugin('com.android.application') ||
                 project.getPlugins().hasPlugin('com.android.library')) { // Android libraries
 
-            project.task('javadocs', type: Javadoc) {
-                source = project.android.sourceSets.main.java.srcDirs
-                classpath += project.files(project.android.getBootClasspath().join(File.pathSeparator))
-            }
-
-            project.task('javadocJar', type: Jar, dependsOn: project.javadocs) {
-                getArchiveClassifier().set('javadoc')
-                from project.javadocs.destinationDir
-            }
+//            project.task('javadocs', type: Javadoc) {
+//                source = project.android.sourceSets.main.java.srcDirs
+//                classpath += project.files(project.android.getBootClasspath().join(File.pathSeparator))
+//            }
+//
+//            project.task('javadocJar', type: Jar, dependsOn: project.javadocs) {
+//                getArchiveClassifier().set('javadoc')
+//                from project.javadocs.destinationDir
+//            }
 
             project.task('sourceJar', type: Jar) {
                 getArchiveClassifier().set('sources')
@@ -183,22 +183,22 @@ class MavenUploadManager {
 
             project.artifacts {
                 archives project.tasks.sourceJar
-                archives project.tasks.javadocJar
+//                archives project.tasks.javadocJar
             }
         } else { // Java libraries
-            project.task('javadocJar', type: Jar, dependsOn: project.javadoc) {
-                getArchiveClassifier().set('javadoc')
-                from project.javadoc.destinationDir
-            }
-
-            project.task('sourceJar', type: Jar, dependsOn: project.classes) {
-                getArchiveClassifier().set('sources')
-                from project.android.sourceSets.main.allSource
-            }
+//            project.task('javadocJar', type: Jar, dependsOn: project.javadoc) {
+//                getArchiveClassifier().set('javadoc')
+//                from project.javadoc.destinationDir
+//            }
+//
+//            project.task('sourceJar', type: Jar, dependsOn: project.classes) {
+//                getArchiveClassifier().set('sources')
+//                from project.android.sourceSets.main.allSource
+//            }
 
             project.artifacts {
                 archives project.tasks.sourceJar
-                archives project.tasks.javadocJar
+//                archives project.tasks.javadocJar
             }
         }
 
@@ -262,7 +262,7 @@ class MavenUploadManager {
                 }
 
                 artifact project.tasks.sourceJar
-                artifact project.tasks.javadocJar
+//                artifact project.tasks.javadocJar
 
                 pom {
                     licenses {
