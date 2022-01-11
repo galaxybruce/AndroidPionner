@@ -272,6 +272,16 @@ class MavenUploadManager {
                         }
                     }
                 }
+
+                withXml {
+                    asNode().dependencies.'*'.findAll() {
+                        it.scope.text() == 'runtime' && project.configurations.implementation.allDependencies.find { dep ->
+                            dep.name == it.artifactId.text()
+                        }
+                    }.each {
+                        it.scope*.value = 'compile'
+                    }
+                }
             }
         }
         publishingExt.repositories() {
