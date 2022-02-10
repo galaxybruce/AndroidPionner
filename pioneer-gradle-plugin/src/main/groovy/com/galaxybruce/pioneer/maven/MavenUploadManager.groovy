@@ -103,23 +103,19 @@ class MavenUploadManager {
         rootProject.subprojects {
             project.afterEvaluate {
                 project.plugins.withId('com.android.library') {
-                    applyUpload2MavenScript(project)
+                    configProjectInfo(project)
+                    applyUploadMavenScript(project)
                 }
 
                 project.plugins.withId('java') {
-                    applyUpload2MavenScript(project)
+                    configProjectInfo(project)
+                    applyUploadMavenScript(project)
                 }
             }
         }
     }
 
-    private static void applyUpload2MavenScript(Project project) {
-        // 如果原来的library中有上传脚本就不添加了
-        var publishingExt = project.extensions.findByName('publishing') // project.tasks.findByName("publish").repositories
-        if(publishingExt != null && publishingExt.repositories.size() > 0) {
-            return
-        }
-
+    private static void configProjectInfo(Project project) {
         // todo 这里是否要排除flutter中依赖的插件module
 
         // project.group和version先设置默认的
@@ -146,19 +142,26 @@ class MavenUploadManager {
             if(moduleInfo.version){
                 project.ext.version = moduleInfo.version
             }
-
-
-            if(!project.rootProject.galaxybrucepioneer.mavenScriptPath) {
-                applyUploadDefaultMavenScript(project)
-            } else {
-                project.apply from: project.rootProject.galaxybrucepioneer.mavenScriptPath
-            }
         } else {
             // todo 其他没在json配置文件中配置过的project是否要设置group和version
         }
     }
 
+    private static void applyUploadMavenScript(Project project) {
+        if(!project.rootProject.galaxybrucepioneer.mavenScriptPath) {
+            applyUploadDefaultMavenScript(project)
+        } else {
+            project.apply from: project.rootProject.galaxybrucepioneer.mavenScriptPath
+        }
+    }
+
     private static void applyUploadDefaultMavenScript(Project project) {
+        // 如果原来的library中有上传脚本就不添加了
+        var publishingExt = project.extensions.findByName('publishing') // project.tasks.findByName("publish").repositories
+        if(publishingExt != null && publishingExt.repositories.size() > 0) {
+            return
+        }
+
         // 参考 https://github.com/alibaba/ARouter/blob/develop/gradle/publish.gradle
         // 注意：app中不能设置多渠道，否则上传maven中没有aar!!!
         project.apply plugin: 'maven-publish'
@@ -212,7 +215,7 @@ class MavenUploadManager {
         def mavenUrlSnapShot = project.rootProject.galaxybrucepioneer.mavenUrlSnapShot
         def mavenAccount = project.rootProject.galaxybrucepioneer.mavenAccount
         def mavenPwd = project.rootProject.galaxybrucepioneer.mavenPwd
-        if(!mavenUrl) {
+        if (!mavenUrl) {
             // read properties
 //            localMaven = properties.getProperty("LOCAL_MAVEN")
             mavenUrl = properties.getProperty("MAVEN_URL")
@@ -225,19 +228,17 @@ class MavenUploadManager {
         def pomArtifactId = project.name
         def pomVersion = project.version
 
-        if(project.rootProject.ext.has('pomGroupId') && project.rootProject.ext.pomGroupId) {
+        // json配置文件优先级最高，这些数据在galaxybruce-pioneer插件中读取
+        if (project.rootProject.ext.has('pomGroupId') && project.rootProject.ext.pomGroupId) {
             pomGroupId = project.rootProject.ext.pomGroupId
         }
-
-        if(project.ext.has('artifactId') && project.ext.artifactId) {
+        if (project.ext.has('artifactId') && project.ext.artifactId) {
             pomArtifactId = project.ext.artifactId
         }
-
-        if(project.ext.has('platformFlag') && project.ext.platformFlag) {
+        if (project.ext.has('platformFlag') && project.ext.platformFlag) {
             pomArtifactId += '-' + project.ext.platformFlag
         }
-
-        if(project.ext.has('version') && project.ext.version) {
+        if (project.ext.has('version') && project.ext.version) {
             pomVersion = project.ext.version
         }
 
@@ -249,49 +250,51 @@ class MavenUploadManager {
         LogUtil.log(project, "PioneerPlugin",
                 "======maven configuration project: ${project.name} -- groupId: ${pomGroupId}:${pomArtifactId}:${pomVersion}")
 
-        var publishingExt = (PublishingExtension)project.extensions.findByName('publishing')
-        publishingExt.publications() {
-            mavenProduction(MavenPublication) {
-                //group,artifactId和version
-                groupId = pomGroupId
-                artifactId = pomArtifactId
-                version = pomVersion
+        project.afterEvaluate {
+            publishingExt = (PublishingExtension) project.extensions.findByName('publishing')
+            publishingExt.publications() {
+                mavenProduction(MavenPublication) {
+                    //group,artifactId和version
+                    groupId = pomGroupId
+                    artifactId = pomArtifactId
+                    version = pomVersion
 
-                project.afterEvaluate {
-                    from project.components.release
-                }
+                    project.afterEvaluate {
+                        from project.components.release
+                    }
 
-                artifact project.tasks.sourceJar
+                    artifact project.tasks.sourceJar
 //                artifact project.tasks.javadocJar
 
-                pom {
-                    licenses {
-                        license {
-                            name = 'The Apache License, Version 2.0'
-                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    pom {
+                        licenses {
+                            license {
+                                name = 'The Apache License, Version 2.0'
+                                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            }
                         }
-                    }
-                }
 
-                withXml {
-                    asNode().dependencies.'*'.findAll() {
-                        it.scope.text() == 'runtime' && project.configurations.implementation.allDependencies.find { dep ->
-                            dep.name == it.artifactId.text()
+                        withXml {
+                            asNode().dependencies.'*'.findAll() {
+                                it.scope.text() == 'runtime' && project.configurations.implementation.allDependencies.find { dep ->
+                                    dep.name == it.artifactId.text()
+                                }
+                            }.each {
+                                it.scope*.value = 'compile'
+                            }
                         }
-                    }.each {
-                        it.scope*.value = 'compile'
                     }
                 }
             }
-        }
-        publishingExt.repositories() {
-            maven {
-                url = pomVersion.endsWith('SNAPSHOT') ? mavenUrlSnapShot : mavenUrl
-                credentials {
-                    username = mavenAccount
-                    password = mavenPwd
+            publishingExt.repositories() {
+                maven {
+                    url = pomVersion.endsWith('SNAPSHOT') ? mavenUrlSnapShot : mavenUrl
+                    credentials {
+                        username = mavenAccount
+                        password = mavenPwd
+                    }
+                    allowInsecureProtocol = true
                 }
-                allowInsecureProtocol = true
             }
         }
     }

@@ -1,118 +1,126 @@
-// 注意：app中不能设置多渠道，否则上传maven中没有aar!!!
-// 注意：app中不能设置多渠道，否则上传maven中没有aar!!!
-// 注意：app中不能设置多渠道，否则上传maven中没有aar!!!
+apply plugin: "maven-publish"
 
-apply plugin: 'maven'
+if (project.hasProperty("android") ||
+        project.getPlugins().hasPlugin('com.android.application') ||
+        project.getPlugins().hasPlugin('com.android.library')) { // Android libraries
 
-if (project.hasProperty("android")) { // Android libraries
-    task androidJavadocs(type: Javadoc) {
-        source = android.sourceSets.main.java.srcDirs
-        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//            project.task('javadocs', type: Javadoc) {
+//                source = project.android.sourceSets.main.java.srcDirs
+//                classpath += project.files(project.android.getBootClasspath().join(File.pathSeparator))
+//            }
+//
+//            project.task('javadocJar', type: Jar, dependsOn: project.javadocs) {
+//                getArchiveClassifier().set('javadoc')
+//                from project.javadocs.destinationDir
+//            }
+
+    project.task('sourceJar', type: Jar) {
+        getArchiveClassifier().set('sources')
+        from project.android.sourceSets.main.java.srcDirs
     }
 
-    task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
-        classifier = 'javadoc'
-        from androidJavadocs.destinationDir
+    project.artifacts {
+        archives project.tasks.sourceJar
+//                archives project.tasks.javadocJar
     }
-
-    task androidSourcesJar(type: Jar) {
-        classifier = 'sources'
-        from android.sourceSets.main.java.srcDirs
-    }
-
-    artifacts {
-        archives androidSourcesJar
-        //archives androidJavadocsJar 因为代码中的注释不规范
-    }
-
 } else { // Java libraries
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
-    }
-    
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier = 'javadoc'
-        from javadoc.destinationDir
-    }
+//            project.task('javadocJar', type: Jar, dependsOn: project.javadoc) {
+//                getArchiveClassifier().set('javadoc')
+//                from project.javadoc.destinationDir
+//            }
+//
+//            project.task('sourceJar', type: Jar, dependsOn: project.classes) {
+//                getArchiveClassifier().set('sources')
+//                from project.android.sourceSets.main.allSource
+//            }
 
-    artifacts {
-        archives sourcesJar
-        //archives androidJavadocsJar 因为代码中的注释不规范
+    project.artifacts {
+        archives project.tasks.sourceJar
+//                archives project.tasks.javadocJar
     }
 }
+
 
 Properties properties = new Properties()
-File localPropertiesFile = project.rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    properties.load(localPropertiesFile.newDataInputStream())
-}
 File rootProjectPropertiesFile = project.rootProject.file("gradle.properties")
 if (rootProjectPropertiesFile.exists()) {
     properties.load(rootProjectPropertiesFile.newDataInputStream())
 }
-File projectPropertiesFile = project.file("gradle.properties")
-if (projectPropertiesFile.exists()) {
-    properties.load(projectPropertiesFile.newDataInputStream())
-}
 
-// 私有maven信息一般放在local.properties中
 def mavenUrl = properties.getProperty("MAVEN_URL")
-def mavenUrlOfSnapShot = properties.getProperty("MAVEN_URL_SNAPSHOT")
-def mavenAccountName = properties.getProperty("MAVEN_ACCOUNT_NAME")
+def mavenUrlSnapShot = properties.getProperty("MAVEN_URL_SNAPSHOT")
+def mavenAccount = properties.getProperty("MAVEN_ACCOUNT_NAME")
 def mavenPwd = properties.getProperty("MAVEN_ACCOUNT_PWD")
 
-// groupId从两个获取的地方，优先级 modulemaven.json > gradle.properties(rootProject)
-// artifactId从三个获取的地方，优先级 modulemaven.json > gradle.properties(module) > project.name
-// version从三个获取的地方，优先级 modulemaven.json > gradle.properties(module) > android.defaultConfig.versionName
 def pomGroupId = properties.getProperty("project.groupId")
-def pomArtifactId = project.hasProperty("MAVEN_MODULE_NAME") && MAVEN_MODULE_NAME ? MAVEN_MODULE_NAME : project.name
-def pomVersion = project.hasProperty("MAVEN_MODULE_VERSION") && MAVEN_MODULE_VERSION ? MAVEN_MODULE_VERSION : android.defaultConfig.versionName
+def pomArtifactId = project.name
+def pomVersion = project.version
 
+// json配置文件优先级最高，这些数据在galaxybruce-pioneer插件中读取
 if(project.rootProject.ext.has('pomGroupId') && project.rootProject.ext.pomGroupId) {
     pomGroupId = project.rootProject.ext.pomGroupId
 }
-
 if(project.ext.has('artifactId') && project.ext.artifactId) {
     pomArtifactId = project.ext.artifactId
 }
-
 if(project.ext.has('platformFlag') && project.ext.platformFlag) {
     pomArtifactId += '-' + project.ext.platformFlag
 }
-
 if(project.ext.has('version') && project.ext.version) {
     pomVersion = project.ext.version
 }
 
-group=pomGroupId
-version=pomVersion
+project.group = pomGroupId
+project.version = pomVersion
+println("======maven configuration project: ${project.name} -- mavenUrl: ${mavenUrl} -- mavenName: ${mavenAccount} -- mavenPwd: ${mavenPwd}")
+println("======maven configuration project: ${project.name} -- groupId: ${pomGroupId}:${pomArtifactId}:${pomVersion}")
 
-println "======maven configuration project: ${project.name} -- mavenUrl: ${mavenUrl} -- mavenName: ${mavenAccountName} -- mavenPwd: ${mavenPwd}"
-println "======maven configuration project: ${project.name} -- groupId: ${pomGroupId}:${pomArtifactId}:${pomVersion}"
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: mavenUrl) {
-                authentication(userName: mavenAccountName, password: mavenPwd)
-            }
+// 打包到本地或者Maven私服库
+afterEvaluate {
+    publishing {
+        publications {
+            mavenProduction(MavenPublication) {
+                groupId = pomGroupId
+                artifactId = pomArtifactId
+                version = pomVersion
 
-            snapshotRepository(url: mavenUrlOfSnapShot) {
-                authentication(userName: mavenAccountName, password: mavenPwd)
-            }
+                project.afterEvaluate {
+                    from project.components.release
+                }
 
-            pom.groupId = pomGroupId
-            pom.artifactId = pomArtifactId
-            pom.version = pomVersion
+                artifact project.tasks.sourceJar
+//                artifact project.tasks.javadocJar
 
-            pom.project {
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                pom {
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+
+                    withXml {
+                        asNode().dependencies.'*'.findAll() {
+                            it.scope.text() == 'runtime' && project.configurations.implementation.allDependencies.find { dep ->
+                                dep.name == it.artifactId.text()
+                            }
+                        }.each {
+                            it.scope*.value = 'compile'
+                        }
                     }
                 }
+            }
+        }
+
+        repositories {
+            maven {
+                url = pomVersion.endsWith('SNAPSHOT') ? mavenUrlSnapShot : mavenUrl
+                credentials {
+                    username = mavenAccount
+                    password = mavenPwd
+                }
+                allowInsecureProtocol = true
             }
         }
     }
