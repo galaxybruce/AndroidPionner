@@ -104,12 +104,10 @@ class MavenUploadManager {
             project.afterEvaluate {
                 project.plugins.withId('com.android.library') {
                     configProjectInfo(project)
-                    applyUploadMavenScript(project)
                 }
 
                 project.plugins.withId('java') {
                     configProjectInfo(project)
-                    applyUploadMavenScript(project)
                 }
             }
         }
@@ -142,6 +140,9 @@ class MavenUploadManager {
             if(moduleInfo.version){
                 project.ext.version = moduleInfo.version
             }
+
+            // apply maven plugin
+            applyUploadMavenScript(project)
         } else {
             // todo 其他没在json配置文件中配置过的project是否要设置group和version
         }
