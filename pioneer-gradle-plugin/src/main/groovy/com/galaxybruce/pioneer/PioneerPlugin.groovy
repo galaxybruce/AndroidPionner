@@ -99,7 +99,6 @@ class PioneerPlugin implements Plugin<Project> {
                         try {
                             mavenInfo = JSONObject.parseObject(fileContents, MavenInfo.class)
                             mavenInfo?.initModuleInfo(PlatformSourceUtil.getPlatformFlag(rootProject))
-                            pomGroupId = mavenInfo.group
                         } catch (Exception e) {
                             e.printStackTrace()
                         }

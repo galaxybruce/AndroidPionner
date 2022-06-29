@@ -69,10 +69,10 @@ class MavenUploadManager {
                                     }
                                     // https://stackoverflow.com/questions/45396268/gradle-exec-how-to-print-error-output
                                     if (result.exitValue != 0) {
-                                        LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName-${subProject.version}] upload maven fail !!!!!! ")
+                                        LogUtil.log(rootProject, "PioneerPlugin", "module[${subProject.group}:$moduleName:${subProject.version}] upload maven fail !!!!!! ")
                                         println eo.toString()
                                     } else {
-                                        LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName-${subProject.version}] upload maven success !!! ")
+                                        LogUtil.log(rootProject, "PioneerPlugin", "module[${subProject.group}:$moduleName:${subProject.version}] upload maven success !!! ")
                                     }
                                 } else {
 //                                    def cmd = "./gradlew"
@@ -84,10 +84,10 @@ class MavenUploadManager {
                                     String command = String.format("./gradlew :%s:clean :%s:publish %s", moduleName, moduleName, param)
                                     ExecuteResult executeResult = RunTimeTask.executeCommand(command, Integer.MAX_VALUE)
                                     if (executeResult.exitCode != 0) {
-                                        LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName-${subProject.version}] upload maven fail !!!!!! ")
+                                        LogUtil.log(rootProject, "PioneerPlugin", "module[${subProject.group}:$moduleName:${subProject.version}] upload maven fail !!!!!! ")
                                         println executeResult.toString()
                                     } else {
-                                        LogUtil.log(rootProject, "PioneerPlugin", "module[$moduleName-${subProject.version}] upload maven success !!! ")
+                                        LogUtil.log(rootProject, "PioneerPlugin", "module[${subProject.group}:$moduleName:${subProject.version}] upload maven success !!! ")
                                     }
                                 }
                             }
@@ -120,9 +120,17 @@ class MavenUploadManager {
         final MavenInfo mavenInfo = Utils.getExtValue(project.rootProject, "mavenInfo")
         final ModuleInfo moduleInfo = mavenInfo?.getModuleInfo(project.name)
         if(moduleInfo != null) {
-            project.group = mavenInfo.group
+            if(mavenInfo.group) {
+                project.group = mavenInfo.group
+            }
             if(mavenInfo.version) {
                 project.version = mavenInfo.version
+            } else if(moduleInfo.version){
+                project.version = moduleInfo.version
+            }
+            // 在这里也可以改变pom.artifactId
+            if(moduleInfo.artifactId){
+                project.ext.artifactId = moduleInfo.artifactId
             }
 
             // 给需要多平台打包的module设置平台目录，在mavenScriptPath上传maven脚本中设置
@@ -130,15 +138,6 @@ class MavenUploadManager {
             boolean supportPlatform = moduleInfo != null ? moduleInfo.platform : false
             if(supportPlatform){
                 project.ext.platformFlag = PlatformSourceUtil.getPlatformFlag(project)
-            }
-
-            // 在这里也可以改变pom.artifactId
-            if(moduleInfo.artifactId){
-                project.ext.artifactId = moduleInfo.artifactId
-            }
-            project.ext.version = mavenInfo.version
-            if(moduleInfo.version){
-                project.ext.version = moduleInfo.version
             }
 
             // apply maven plugin
@@ -225,31 +224,19 @@ class MavenUploadManager {
             mavenPwd = properties.getProperty("MAVEN_ACCOUNT_PWD")
         }
 
-        def pomGroupId = properties.getProperty("project.groupId")
+        def pomGroupId = project.group
         def pomArtifactId = project.name
         def pomVersion = project.version
 
-        // json配置文件优先级最高，这些数据在galaxybruce-pioneer插件中读取
-        if (project.rootProject.ext.has('pomGroupId') && project.rootProject.ext.pomGroupId) {
-            pomGroupId = project.rootProject.ext.pomGroupId
-        }
         if (project.ext.has('artifactId') && project.ext.artifactId) {
             pomArtifactId = project.ext.artifactId
         }
         if (project.ext.has('platformFlag') && project.ext.platformFlag) {
             pomArtifactId += '-' + project.ext.platformFlag
         }
-        if (project.ext.has('version') && project.ext.version) {
-            pomVersion = project.ext.version
-        }
-
-        project.group = pomGroupId
-        project.version = pomVersion
 
         LogUtil.log(project, "PioneerPlugin",
-                "======maven configuration project: ${project.name} -- mavenUrl: ${mavenUrl} -- mavenName: ${mavenAccount} -- mavenPwd: ${mavenPwd}")
-        LogUtil.log(project, "PioneerPlugin",
-                "======maven configuration project: ${project.name} -- groupId: ${pomGroupId}:${pomArtifactId}:${pomVersion}")
+                "======maven configuration project: ${project.name} -- mavenAddress: ${pomGroupId}:${pomArtifactId}:${pomVersion}")
 
         project.afterEvaluate {
             publishingExt = (PublishingExtension) project.extensions.findByName('publishing')
