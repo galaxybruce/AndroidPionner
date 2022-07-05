@@ -1,6 +1,6 @@
 package com.galaxybruce.pioneer.maven
 
-import com.android.utils.FileUtils
+
 import com.galaxybruce.pioneer.manifest.PlatformSourceUtil
 import com.galaxybruce.pioneer.utils.LogUtil
 import com.galaxybruce.pioneer.utils.Utils
@@ -13,7 +13,6 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.internal.os.OperatingSystem
 
 import java.util.function.Consumer
-import java.util.regex.Pattern
 
 /**
  * @author bruce.zhang
@@ -93,8 +92,6 @@ class MavenUploadManager {
                                 }
                             }
                         })
-
-                        deleteCheckSumFile(rootProject)
                     } else {
                         LogUtil.log(rootProject, "PioneerPlugin", "no corresponding modules founded, please check json config file !!! ")
                     }
@@ -112,26 +109,6 @@ class MavenUploadManager {
                 project.plugins.withId('java') {
                     configProjectInfo(project)
                 }
-            }
-        }
-    }
-
-    private static void deleteCheckSumFile(Project project) {
-        def localMaven = project.rootProject.galaxybrucepioneer.localMaven
-        if(localMaven != true) {
-            return
-        }
-        def repoLocal = project.rootProject.projectDir.absolutePath + '/repo-local'
-        File repoLocalDir = new File(repoLocal)
-        if(repoLocalDir.isDirectory() && repoLocalDir.exists()) {
-            List<File> list = FileUtils.find(repoLocalDir, Pattern.compile(".*.(md5|xml|module|sha.*)\$"))
-            if(list != null && !list.isEmpty()) {
-                list.forEach(new Consumer<File>() {
-                    @Override
-                    void accept(File file) {
-                        file.delete()
-                    }
-                })
             }
         }
     }
@@ -250,6 +227,9 @@ class MavenUploadManager {
 
         def pomGroupId = project.group
         def pomArtifactId = project.name
+        if(project.version == Project.DEFAULT_VERSION) {
+            project.version='1.0.0'
+        }
         def pomVersion = project.version
 
         if (project.ext.has('artifactId') && project.ext.artifactId) {

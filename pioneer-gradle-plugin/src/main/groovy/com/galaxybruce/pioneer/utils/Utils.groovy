@@ -1,8 +1,12 @@
 package com.galaxybruce.pioneer.utils
 
+import com.android.utils.FileUtils
 import com.galaxybruce.pioneer.PioneerExtension
 import com.galaxybruce.pioneer.PioneerPlugin
 import org.gradle.api.Project
+
+import java.util.function.Consumer
+import java.util.regex.Pattern
 
 public class Utils {
 
@@ -134,5 +138,25 @@ public class Utils {
             value = project.getProperties().get(key)
         }
         return value
+    }
+
+    public static void deleteCheckSumFile(Project project) {
+        def localMaven = project.rootProject.galaxybrucepioneer.localMaven
+        if(localMaven != true) {
+            return
+        }
+        def repoLocal = project.rootProject.projectDir.absolutePath + '/repo-local'
+        File repoLocalDir = new File(repoLocal)
+        if(repoLocalDir.isDirectory() && repoLocalDir.exists()) {
+            List<File> list = FileUtils.find(repoLocalDir, Pattern.compile(".*.(md5|xml|module|sha.*)\$"))
+            if(list != null && !list.isEmpty()) {
+                list.forEach(new Consumer<File>() {
+                    @Override
+                    void accept(File file) {
+                        file.delete()
+                    }
+                })
+            }
+        }
     }
 }
