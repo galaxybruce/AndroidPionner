@@ -31,6 +31,9 @@ class PioneerExtension {
     def mavenUrlSnapShot
     def mavenAccount
     def mavenPwd
+    /**
+     * 为true时，maven生成到指定目录：url = project.uri(project.rootProject.projectDir.absolutePath + '/repo-local')
+     */
     def localMaven
     /*******************maven end  ************************/
 
