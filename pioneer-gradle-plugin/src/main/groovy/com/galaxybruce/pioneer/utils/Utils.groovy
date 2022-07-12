@@ -21,7 +21,7 @@ public class Utils {
      * @return
      */
     public static PioneerExtension getPioneerExtension(Project project) {
-        return project.extensions.findByName(PioneerPlugin.EXT_NAME) as PioneerExtension
+        return project.rootProject.extensions.findByName(PioneerPlugin.EXT_NAME) as PioneerExtension
     }
 
     /**

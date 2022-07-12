@@ -28,7 +28,8 @@ class PioneerPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
         boolean isRootProject = project == project.rootProject
-        LogUtil.log(project, "PioneerPlugin", "${isRootProject ? "root " : ""}project[${project.name}] apply `${PLUGIN_NAME}` plugin")
+        LogUtil.log(project, "PioneerPlugin",
+                "${isRootProject ? "root " : ""}project[${project.name}] apply `${PLUGIN_NAME}` plugin")
 
         if(isRootProject) {
             handleRootProject(project)
@@ -36,8 +37,6 @@ class PioneerPlugin implements Plugin<Project> {
             if (!project.android) {
                 throw new IllegalStateException('Must apply \'com.android.application\' or \'com.android.library\' first!')
             }
-
-            project.extensions.create(EXT_NAME, PioneerExtension, project)
 
             // 判断是否是application或者library 参考Arouter
             def isApp = project.plugins.hasPlugin(AppPlugin) // def isLibrary = project.plugins.hasPlugin(LibraryPlugin)

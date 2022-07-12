@@ -1,6 +1,6 @@
 1. 发布，参考文章：https://juejin.cn/post/6844904185754812423
-1.1 发布到local maven: ./gradlew :pioneer-gradle-plugin:publishToMavenLocal
-1.2 发布到remote maven: ./gradlew :pioneer-gradle-plugin:publish
+1.1 发布到local maven(.m2目录): ./gradlew :pioneer-gradle-plugin:publishToMavenLocal
+1.2 发布到remote maven或者指定目录: ./gradlew :pioneer-gradle-plugin:publish
 
 
 2. 发布到jcenter，在项目根目录依次输入下面两个命令

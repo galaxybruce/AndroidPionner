@@ -1,7 +1,6 @@
 package com.galaxybruce.pioneer.manifest
 
-import com.galaxybruce.pioneer.PioneerExtension
-import com.galaxybruce.pioneer.utils.Utils
+
 import org.gradle.api.Project
 
 /**
@@ -23,17 +22,13 @@ class PlatformSourceUtil {
         if(isGradleParamPlatformFlagValid()) {
             platformFlag = gradleParamPlatformFlag
         } else {
-            PioneerExtension extension = Utils.getPioneerExtension(project)
-            if(extension.platformSourceDir) {
-                platformFlag = extension.platformSourceDir
-            }
-
             Project rootProject = project.rootProject
-            if(!platformFlag) {
+            if(platformFlag == null || platformFlag.isEmpty()) {
                 platformFlag = rootProject.galaxybrucepioneer.platformSourceDir
             }
 
-            if (!platformFlag && rootProject.hasProperty("PLATFORM_FLAG") && rootProject.PLATFORM_FLAG) {
+            if ((platformFlag == null || platformFlag.isEmpty()) &&
+                    rootProject.hasProperty("PLATFORM_FLAG") && rootProject.PLATFORM_FLAG) {
                 platformFlag = rootProject.PLATFORM_FLAG
             }
         }

@@ -7,7 +7,7 @@ import com.galaxybruce.pioneer.utils.Utils
 import org.gradle.api.Project
 import org.gradle.api.Task
 
-public class ProjectCopyOutputManager {
+class ProjectCopyOutputManager {
 
     public static void copy(Project project) {
         // 监听task的创建
