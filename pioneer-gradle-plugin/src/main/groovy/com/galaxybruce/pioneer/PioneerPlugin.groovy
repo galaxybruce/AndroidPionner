@@ -108,7 +108,7 @@ class PioneerPlugin implements Plugin<Project> {
 
     private static void handleAppProject(Project project) {
         // copy mapping.txt
-        ProjectCopyOutputManager.copy(project)
+//        ProjectCopyOutputManager.copy(project)
     }
 
     private static void mergeManifest(Project project) {
