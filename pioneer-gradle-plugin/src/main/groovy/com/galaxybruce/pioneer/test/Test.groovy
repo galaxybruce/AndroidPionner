@@ -20,12 +20,8 @@ public class Test {
      * @param project
      * @param isApp
      */
-    public static void testAllandEach(Project project, boolean isApp) {
+    public static void testAllAndEach(Project project, boolean isApp) {
         if(isApp) {
-            if(!LogUtil.logEnabled()) {
-                return
-            }
-
             project.android.productFlavors.all { flavor ->
                 LogUtil.log(project,"Test.flavor", flavor.name)
             }
@@ -55,9 +51,6 @@ public class Test {
 
     public static void testApplicationVariants(Project project, boolean isApp) {
         if(isApp) {
-            if(!LogUtil.logEnabled()) {
-                return
-            }
             // 放在project.afterEvaluate之前和之后都会有
             project.android.applicationVariants.all { variant ->
                 // debug或者release

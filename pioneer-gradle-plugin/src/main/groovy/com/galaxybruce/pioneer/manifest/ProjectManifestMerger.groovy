@@ -43,7 +43,6 @@ class ProjectManifestMerger {
 
         pModuleDirs.each {
             if (it.isDirectory() && it.name.startsWith("p_")) {
-//                def dirs = ["main", "${project.PLATFORM_FLAG}"]
                 def dirs = platformDir != null && platformDir.trim().length() > 0 ? ["main", "${platformDir}"] : ["main"]
                 // 遍历main和对应平台的目录
                 dirs.each { dir ->

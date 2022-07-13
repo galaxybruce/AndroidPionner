@@ -35,7 +35,7 @@ class MavenUploadManager {
                     LogUtil.log(rootProject, "PioneerPlugin", "start upload library to maven...")
 
                     final MavenInfo mavenInfo = Utils.getExtValue(project.rootProject, "mavenInfo")
-                    final List<ModuleInfo> modules = mavenInfo?.getModules(PlatformSourceUtil.gradleParamPlatformFlag)
+                    final List<ModuleInfo> modules = mavenInfo?.getModules(PlatformSourceUtil.getPlatformFlag(rootProject))
                     if (modules != null && !modules.isEmpty()) {
                         modules.forEach(new Consumer<ModuleInfo>() {
                             @Override
@@ -54,8 +54,7 @@ class MavenUploadManager {
                                 // rootProject.project(":$moduleName").tasks['publish'].execute()
 
                                 // command命令是在另一个进程中，需要把参数透传过去
-                                final String param = PlatformSourceUtil.isGradleParamPlatformFlagValid() ?
-                                        "-PplatformFlag=" + PlatformSourceUtil.gradleParamPlatformFlag : ""
+                                final String param = "-PplatformFlag=" + PlatformSourceUtil.getPlatformFlag(project)
                                 if (OperatingSystem.current().isWindows()) {
                                     // window下用process.waitFor会出现死锁
                                     def eo = new ByteArrayOutputStream()

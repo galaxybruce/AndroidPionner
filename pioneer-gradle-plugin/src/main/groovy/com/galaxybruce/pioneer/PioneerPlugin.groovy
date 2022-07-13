@@ -53,9 +53,6 @@ class PioneerPlugin implements Plugin<Project> {
     }
 
     private static void handleRootProject(Project rootProject) {
-        // 初始化多平台打包flag
-        PlatformSourceUtil.gradleParamPlatformFlag = rootProject.getProperties()?.get("platformFlag")
-
         Utils.initLocalProperties(rootProject)
 
         rootProject.extensions.create(EXT_NAME, PioneerExtension)
