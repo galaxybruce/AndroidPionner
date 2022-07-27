@@ -12,7 +12,7 @@ galaxybrucepioneer {
 
 buildscript {
     apply from: './gradle/util.gradle'
-    def isLocalMaven = equalLocalValue(project, 'LOCAL_MAVEN', 'true')
+    def isLocalMaven = true
 
     repositories {
         if(isLocalMaven) {
