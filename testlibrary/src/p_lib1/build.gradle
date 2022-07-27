@@ -1,0 +1,9 @@
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation "com.alibaba:fastjson:1.2.33"
+
+}
+
+
+

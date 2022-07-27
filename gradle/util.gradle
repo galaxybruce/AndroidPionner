@@ -1,3 +1,5 @@
+import java.util.function.Consumer
+
 /**
  * 第一个参数可能是settings和project
  * @param project
@@ -23,8 +25,126 @@ static boolean equalLocalValue(Object project, String key, String value) {
     return value == getLocalValue(project, key)
 }
 
+/**
+ * 获取参数，参数可能在local.proerties、gradle.properties、系统环境变量中
+ * @param project
+ * @param key
+ * @return
+ */
+static String getParameterAnyWhere(Object project, String key) {
+    def value = getLocalValue(project, key)
+    if(!value) {
+        value = System.getenv(key)
+    }
+    if(!value) {
+        value = System.properties[key]
+    }
+    if(!value) {
+        value = project.getProperties().get(key)
+    }
+    return value
+}
+
+/**
+ * 任何项目都可以使用该方法
+ * @param pathKey 环境变量中的key
+ * @param jenkinsPath   打包机器上的库路径
+ * @return
+ */
+static String getLibraryPathWithKey(Object project, final String pathKey, final String jenkinsPath) {
+    if(pathKey == null || '' == pathKey.trim()) {
+        throw new IllegalStateException('pathKey must not be empty')
+    }
+
+    def libraryPath = getLocalValue(project, pathKey)
+    if (!libraryPath) {
+        libraryPath = System.getenv(pathKey)
+        if (!libraryPath && jenkinsPath) {
+            libraryPath = jenkinsPath
+        }
+        if(libraryPath) {
+            Properties localProperties = new Properties()
+            def localPropertiesFile = new File(project.rootDir, 'local.properties')
+            if (localPropertiesFile.exists()) {
+                localPropertiesFile.withReader('UTF-8') { reader ->
+                    localProperties.load(reader)
+                }
+            }
+            localProperties.put(pathKey, libraryPath)
+            localProperties.store(localPropertiesFile.newWriter(), null)
+        }
+    }
+
+    return libraryPath
+}
+
+/**
+ * 加载指定目录中的module
+ * 调用方式： includeModule(settings, [settings.getRootDir().path], ['aopstat','plugin'])
+ * @param libraryPaths module存放路径
+ * @param excludeDirs
+ * @return
+ */
+static includeModule(Settings settings, List<String> libraryPaths, List<String> excludeDirs) {
+    libraryPaths.each {
+        File f = new File(it) // file(it)
+        if (!f.exists() || !f.isDirectory()) {
+            return
+        }
+        if (isModule(f)) {
+            if(excludeDirs != null && excludeDirs.contains(f.name)) {
+                return
+            }
+            settings.include "${f.name}"
+            settings.project(":${f.name}").projectDir = f
+        } else {
+            f.eachDir { dir ->
+                if (!isModule(dir)) {
+                    return
+                }
+                if(excludeDirs != null && excludeDirs.contains(dir.name)) {
+                    return
+                }
+                settings.include "${dir.name}"
+                settings.project(":${dir.name}").projectDir = dir
+            }
+        }
+    }
+}
+
+/**
+ * 在当前工程目录下查找业务module
+ * @param settings
+ * @return
+ */
+static findBusiModule(Project project, List<String> excludeDirs, Consumer<String> consumer) {
+    def rootDir = project.rootDir
+    rootDir.eachDir { dir ->
+        if (!isModule(dir)) {
+            return
+        }
+        if(excludeDirs != null && excludeDirs.contains(dir.name)) {
+            return
+        }
+        consumer.accept(dir.name)
+    }
+}
+
+private static boolean isModule(File dir) {
+    File[] files = dir.listFiles(new FilenameFilter() {
+        @Override
+        boolean accept(File file, String name) {
+            return name == 'build.gradle' || name == 'src'
+        }
+    })
+    return files.size() == 2
+}
 
 ext{
     equalLocalValue = this.&equalLocalValue
     getLocalValue = this.&getLocalValue
+    includeModule = this.&includeModule
+    findBusiModule = this.&findBusiModule
+    getParameterAnyWhere = this.&getParameterAnyWhere
+    getLibraryPathWithKey = this.&getLibraryPathWithKey
 }

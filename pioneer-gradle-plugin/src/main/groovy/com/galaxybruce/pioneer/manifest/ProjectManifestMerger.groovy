@@ -43,6 +43,9 @@ class ProjectManifestMerger {
 
         pModuleDirs.each {
             if (it.isDirectory() && it.name.startsWith("p_")) {
+                // pin工程下可以设置独立的build.gradle，但是该build.gradle中不允许apply plugin: 'com.android.library'
+                project.apply from: "src/$it.name/build.gradle"
+
                 def dirs = platformDir != null && platformDir.trim().length() > 0 ? ["main", "${platformDir}"] : ["main"]
                 // 遍历main和对应平台的目录
                 dirs.each { dir ->
@@ -63,7 +66,8 @@ class ProjectManifestMerger {
                             project.android.sourceSets.main.res.srcDir("src/$it.name/$dir/res")
                             project.android.sourceSets.main.assets.srcDir("src/$it.name/$dir/assets")
                             project.android.sourceSets.main.jniLibs.srcDir("src/$it.name/$dir/libs")
-//                            project.dependencies.add("api", project.fileTree(include: ['*.jar'], dir: "src/$it.name/$dir/libs"))
+//                            project.dependencies.add("api",
+//                                    project.fileTree(dir: "src/$it.name/$dir/libs", include: ['*.jar']))
                         }
                     }
                 }
@@ -85,7 +89,8 @@ class ProjectManifestMerger {
                 project.android.sourceSets.main.res.srcDir("src/$it.name/res")
                 project.android.sourceSets.main.assets.srcDir("src/$it.name/assets")
                 project.android.sourceSets.main.jniLibs.srcDir("src/$it.name/libs")
-//                project.dependencies.add("api", project.fileTree(include: ['*.jar'], dir: "src/$it.name/libs"))
+//                project.dependencies.add("api",
+//                        project.fileTree(dir: "src/$it.name/libs", include: ['*.jar']))
             }
         }
 
@@ -140,7 +145,6 @@ class ProjectManifestMerger {
             def mergingReport = invoker.merge()
             def moduleAndroidManifest = mergingReport.getMergedDocument(MergingReport.MergedManifestKind.MERGED)
 
-//        println '======buildDir: ' + project.buildDir
             new File("$project.buildDir").mkdirs()
             def file = intermediateManifestFile // new File("$project.buildDir/AndroidManifest.xml")
             file.createNewFile()

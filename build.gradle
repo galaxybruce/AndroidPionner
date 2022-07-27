@@ -20,7 +20,6 @@ buildscript {
             if(repoFile.exists()) {
                 maven { url repoFile }
             }
-            mavenLocal()
         }
 
         // 阿里仓库地址 https://maven.aliyun.com/mvn/guide
@@ -31,7 +30,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.3'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.43-SNAPSHOT'
+        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.0.51'
     }
 }
 

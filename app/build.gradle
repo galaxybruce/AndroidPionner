@@ -14,7 +14,7 @@ android {
     compileSdk 31
     defaultConfig {
         applicationId "com.galaxybruce.poinner"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 31
         versionCode 1
         versionName "1.0"
