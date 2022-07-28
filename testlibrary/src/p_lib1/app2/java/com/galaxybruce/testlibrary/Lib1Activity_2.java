@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.iflytek.speech.UtilityConfig;
+
 public class Lib1Activity_2 extends AppCompatActivity {
 
     @Override
@@ -18,5 +20,7 @@ public class Lib1Activity_2 extends AppCompatActivity {
                 startActivity(new Intent(Lib1Activity_2.this, LibActivity2.class));
             }
         });
+
+        UtilityConfig a;
     }
 }
