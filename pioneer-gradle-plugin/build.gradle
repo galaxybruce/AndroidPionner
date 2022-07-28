@@ -38,7 +38,7 @@ def repoUrlAccountPwd = localProperties.getProperty('MAVEN_ACCOUNT_PWD')
 
 def artifact_group = 'com.galaxybruce.android'
 def artifact_id = 'pioneer-gradle-plugin' // 这里要和module的名称一样，不然在bintray上会生成两个目录
-def artifact_version='0.0.52'
+def artifact_version='0.0.53'
 
 // 发布到组织名称名字，必须填写
 group = artifact_group
@@ -94,12 +94,17 @@ afterEvaluate {
 
         repositories {
             maven {
-                url = artifact_version.endsWith('SNAPSHOT') ? repoUrlSnapshots : repoUrlRelease
-                credentials {
-                    username = repoUrlAccountName
-                    password = repoUrlAccountPwd
+                def isLocalMaven = equalLocalValue(project, 'LOCAL_MAVEN', 'true')
+                if(isLocalMaven) {
+                    url = project.uri(project.rootProject.projectDir.absolutePath + '/repo-local')
+                } else {
+                    url = artifact_version.endsWith('SNAPSHOT') ? repoUrlSnapshots : repoUrlRelease
+                    credentials {
+                        username = repoUrlAccountName
+                        password = repoUrlAccountPwd
+                    }
+                    allowInsecureProtocol = true
                 }
-                allowInsecureProtocol = true
             }
         }
     }
