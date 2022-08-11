@@ -17,7 +17,7 @@ import org.gradle.api.Task
 /**
  * @author bruce.zhang
  * @date 2018/5/2 11:42
- * @description 理想是把各种编译上的功能汇集到该插件
+ * @description
  * <p>
  * modification history:
  */
@@ -34,33 +34,15 @@ class PioneerPlugin implements Plugin<Project> {
         if(isRootProject) {
             handleRootProject(project)
         } else {
-            if (!project.android) {
-                throw new IllegalStateException('Must apply \'com.android.application\' or \'com.android.library\' first!')
-            }
-
-            // 判断是否是application或者library 参考Arouter
-            def isApp = project.plugins.hasPlugin(AppPlugin) // def isLibrary = project.plugins.hasPlugin(LibraryPlugin)
-            if(isApp) {
-                handleAppProject(project)
-            }
-
-            // 合并pin工程中的manifest
-            mergeManifest(project)
-
-            // 给BuildConfig.java中设置字段
-            setBuildConfigField(project)
+            handleSubProject(project)
         }
     }
 
     private static void handleRootProject(Project rootProject) {
         Utils.initLocalProperties(rootProject)
-
         rootProject.extensions.create(EXT_NAME, PioneerExtension)
-
         setRootProjectExtValues(rootProject)
-
         MavenUploadManager.setModuleUploadMaven(rootProject)
-
 //        FlutterHandler.handleRootProject(rootProject)
     }
 
@@ -106,6 +88,21 @@ class PioneerPlugin implements Plugin<Project> {
         }
     }
 
+    private static void handleSubProject(Project project) {
+        if (!project.android) {
+            throw new IllegalStateException('Must apply \'com.android.application\' or \'com.android.library\' first!')
+        }
+
+        def isApp = project.plugins.hasPlugin(AppPlugin) // def isLibrary = project.plugins.hasPlugin(LibraryPlugin)
+        if(isApp) {
+            handleAppProject(project)
+        }
+        // 合并pin工程中的manifest
+        mergeManifest(project)
+        // 给BuildConfig.java中设置字段
+        setBuildConfigField(project)
+    }
+
     private static void handleAppProject(Project project) {
         // copy mapping.txt
 //        ProjectCopyOutputManager.copy(project)
@@ -126,9 +123,8 @@ class PioneerPlugin implements Plugin<Project> {
         project.afterEvaluate {
             // 测试代码
 //            Test.testApplicationVariants(project, isApp)
-            project.android.defaultConfig.buildConfigField "String", "HOST_APP_NAME", "\"${PlatformSourceUtil.getPlatformFlag(project)}\""
+            project.android.defaultConfig.buildConfigField "String", "APP_PLATFORM_FLAG", "\"${PlatformSourceUtil.getPlatformFlag(project)}\""
         }
     }
-
 
 }
