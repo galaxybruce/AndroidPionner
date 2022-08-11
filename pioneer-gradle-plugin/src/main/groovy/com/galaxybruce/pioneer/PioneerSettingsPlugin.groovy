@@ -5,6 +5,16 @@ import com.galaxybruce.pioneer.utils.Utils
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 
+/**
+ * @depcreted 已废弃，功能已移到./gradle/util.gradle文件中
+ * 在settings.gradle中引入
+ *
+ * buildscript {
+ *      apply from: './gradle/util.gradle'
+ * }
+ *
+ */
+@Deprecated
 class PioneerSettingsPlugin implements Plugin<Settings> {
 
     Settings settings
