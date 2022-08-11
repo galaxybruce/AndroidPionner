@@ -5,7 +5,7 @@
 * 多平台复用
 
 
-* ### 批量上传library到本地maven或者私有maven服务器
+## 批量上传library到本地maven或者私有maven服务器
 根目录下的build.gradle中添加如下代码
 ```
 apply plugin: 'galaxybruce-pioneer'
@@ -65,27 +65,21 @@ name: library名称
 artifactId: 如果不设置，默认是project.name  
 version: 如果不设置，默认是android.defaultConfig.versionName
 
-简易脚本封装：
-assembleMaven.sh
+上传maven命令：
 ```
-./gradlew uploadMaven
-./gradlew uploadMaven -PplatformFlag=app1
-./gradlew uploadMaven -PplatformFlag=app2
-```
-
-配置好以后，输入命令以下即可
-```
-assembleMaven
+    ./gradlew uploadMaven
+    ./gradlew uploadMaven -PplatformFlag=app1
+    ./gradlew uploadMaven -PplatformFlag=app2
 ```
 
-* ### 处理pin工程(核心功能是合并manifest)
+## 处理pin工程(核心功能是合并manifest)
 插件默认开启pin工程支持，在需要的pin工程module的build.gradle中添加即可，pin工程约定都已p_开头。`建议多使用pin工程，少使用module`。
 ```
 apply plugin: 'galaxybruce-pioneer'
 ```
 具体使用方式参考demo。
 
-* ### 多平台复用
+## 多平台复用
 插件默认支持多平台复用，在需要开启多平台复用的module的build.gradle中添加即可。
 ```
 apply plugin: 'galaxybruce-pioneer'
