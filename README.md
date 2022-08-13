@@ -1,9 +1,9 @@
 ## 简介
-AndroidPioneer是一个汇集Android工程编译相关的gradle插件
+AndroidPioneer是一个汇集Android工程编译相关的gradle插件。
 
 ## bintray-release  [![Download](https://img.shields.io/badge/version-0.0.26-blue.svg)](https://bintray.com/galaxybruce/maven/pioneer-gradle-plugin/_latestVersion) [![](./assets/btn_apache_lisence.png)](LICENSE)
 
-## 目前有以下功能：
+### 目前有以下功能：
 * [module作为app独立运行](https://github.com/galaxybruce/AndroidPionner/blob/master/README_module%E4%BD%9C%E4%B8%BAapp%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8C.md)
 * [pin工程处理](https://github.com/galaxybruce/AndroidPionner/blob/master/README_pin%E5%B7%A5%E7%A8%8B%E5%A4%84%E7%90%86.md)
 * [代码多平台复用](https://github.com/galaxybruce/AndroidPionner/blob/master/README_%E4%BB%A3%E7%A0%81%E5%A4%9A%E5%B9%B3%E5%8F%B0%E5%A4%8D%E7%94%A8.md)
