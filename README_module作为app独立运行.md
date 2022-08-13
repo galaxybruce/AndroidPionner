@@ -17,7 +17,8 @@ apply plugin: 'galaxybruce-pioneer'
 ```
 
 #### 3. 每个module的src目录下增加 debug-test 目录
-目录结果如下，参考 `testlibrary` module
+目录结构如下，参考 `testlibrary` module
+
 ![run_as_app_for_component2.png](images/run_as_app_for_component2.png)
 
 每个文件作用:
