@@ -1,7 +1,7 @@
 ## bintray-release  [![Download](https://img.shields.io/badge/version-0.0.26-blue.svg)](https://bintray.com/galaxybruce/maven/pioneer-gradle-plugin/_latestVersion) [![](./assets/btn_apache_lisence.png)](LICENSE)
 
 ## 目前有以下功能：
-* 批量上传library到本地maven或者私有maven服务器
+* 批量发布library到maven仓库
 * 处理pin工程(核心功能时合并manifest)，pin工程概念建议参考这篇文章[微信Android模块化架构重构实践](https://www.jianshu.com/p/3990724aa7e4)
 * 多平台复用
 

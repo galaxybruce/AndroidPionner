@@ -1,13 +1,13 @@
-## 发布
+### 发布
 * 发布到local maven(.m2目录): ./gradlew :pioneer-gradle-plugin:publishToMavenLocal
 * 发布到remote maven或者指定目录: ./gradlew :pioneer-gradle-plugin:publish
 * 参考文章：https://juejin.cn/post/6844904185754812423
 
-## 发布到jcenter，在项目根目录依次输入下面两个命令
+### 发布到jcenter，在项目根目录依次输入下面两个命令
 * ./gradlew install
 * ./gradlew bintrayUpload
 
-### 参考文章
+### 发布到jcenter参考文章
 https://blog.csdn.net/linglongxin24/article/details/53415932
 
 还有一篇宣传极简文章：https://juejin.im/post/59cef9baf265da066a105f92
