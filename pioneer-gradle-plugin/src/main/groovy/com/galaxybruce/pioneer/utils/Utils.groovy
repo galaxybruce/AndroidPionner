@@ -93,7 +93,8 @@ public class Utils {
                 LOCAL_PROPERTIES = localProperties
             }
         }
-        LogUtil.log(null, "PioneerPlugin", "initLocalProperties in $project : ${LOCAL_PROPERTIES}")
+        LogUtil.log(null, "PioneerPlugin",
+                "init localProperties in [$project] :\n ${LOCAL_PROPERTIES.toMapString()}")
     }
 
     /**

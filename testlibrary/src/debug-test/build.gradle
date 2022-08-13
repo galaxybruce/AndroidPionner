@@ -1,0 +1,8 @@
+// 这里可以给debug-test设置依赖
+
+dependencies {
+    implementation "com.alibaba:fastjson:1.2.33"
+}
+
+
+

@@ -39,8 +39,6 @@ class MavenInfo {
     }
 
     void initModuleInfo(String platformFlag) {
-        LogUtil.log(null, "MavenUploadManager", "app platform flag: ${platformFlag}")
-
         if(modules != null) {
             modules.forEach(new Consumer<ModuleInfo>() {
                 @Override
@@ -51,6 +49,14 @@ class MavenInfo {
         }
 
         if(platform_modules != null && platform_modules.size() > 0) {
+            if(platformFlag == null || platformFlag.isEmpty()) {
+                LogUtil.log(null, "MavenUploadManager",
+                        "app platform flag not config.")
+            } else {
+                LogUtil.log(null, "MavenUploadManager",
+                        "app platform flag: ${platformFlag}")
+            }
+
             List<ModuleInfo> platformModules = platform_modules.get(platformFlag)
             if(platformModules != null) {
                 platformModules.forEach(new Consumer<ModuleInfo>() {

@@ -1,12 +1,17 @@
 package com.galaxybruce.pioneer.copy
 
 import com.galaxybruce.pioneer.PioneerExtension
-import com.galaxybruce.pioneer.git.GitUtil
+import com.galaxybruce.pioneer.utils.GitUtil
 import com.galaxybruce.pioneer.utils.LogUtil
 import com.galaxybruce.pioneer.utils.Utils
 import org.gradle.api.Project
 import org.gradle.api.Task
 
+/**
+ *
+ * @deprcated 该功能已废弃
+ */
+@Deprecated
 class ProjectCopyOutputManager {
 
     public static void copy(Project project) {
@@ -25,7 +30,7 @@ class ProjectCopyOutputManager {
     }
 
     /**
-     * 我只需要assembleFlavorNameRelease这个task（正式环境打包发布的情况下）才保存mapping.txt
+     * 只需要assembleFlavorNameRelease这个task（正式环境打包发布的情况下）才保存mapping.txt
      * 规则可以自己定义，我这边定义的比较宽泛
      * @param task
      */

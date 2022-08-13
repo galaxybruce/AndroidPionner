@@ -1,11 +1,12 @@
 package com.galaxybruce.pioneer.manifest
 
-import com.android.build.gradle.AppPlugin
+
 import com.android.manifmerger.ManifestMerger2
 import com.android.manifmerger.MergingReport
 import com.android.manifmerger.XmlDocument
 import com.android.utils.ILogger
 import com.android.utils.Pair
+import com.galaxybruce.pioneer.run_module.ProjectModuleManager
 import com.galaxybruce.pioneer.utils.LogUtil
 import com.google.common.collect.ImmutableList
 import org.gradle.api.Project
@@ -51,7 +52,6 @@ class ProjectManifestMerger {
                 project.dependencies.add("api",
                         project.fileTree(dir: "src/$it.name/libs", include: ['*.jar']))
 
-
                 def dirs = platformDir != null && platformDir.trim().length() > 0 ? ["main", "${platformDir}"] : ["main"]
                 // 遍历main和对应平台的目录
                 dirs.each { dir ->
@@ -77,8 +77,19 @@ class ProjectManifestMerger {
                         }
                     }
                 }
-            } else if (it.isDirectory() && (it.name == "main" || it.name == "${platformDir}"
-                || (it.name == "debug_test" && project.plugins.hasPlugin(AppPlugin)))) { // debug_test目录在module当做独立模块运行时生效
+            } else if (it.isDirectory() &&
+                    (it.name == "main" ||
+                            it.name == "${platformDir}" ||
+                            // debug-test目录在module当做独立模块运行时生效
+                            (it.name == ProjectModuleManager.DEBUG_DIR && project.ext.has('runAsApp') && project.ext.runAsApp))) {
+
+                if(it.name == ProjectModuleManager.DEBUG_DIR && project.ext.has('runAsApp') && project.ext.runAsApp){
+                    // debug-test目录下可以设置独立的build.gradle，但是该build.gradle中不允许apply plugin: 'com.android.library'
+                    if (new File("$project.projectDir/src/$it.name/build.gradle").exists()) {
+                        project.apply from: "src/$it.name/build.gradle"
+                    }
+                }
+
                 LogUtil.log(project, "ProjectManifestMerger", "valid resource dir: ${it.absolutePath}")
                 // pin工程以外的的情况，只处理main和platformDir两个目录
                 // manifest

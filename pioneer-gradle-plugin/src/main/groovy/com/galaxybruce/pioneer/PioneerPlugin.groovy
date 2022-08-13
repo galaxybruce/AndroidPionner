@@ -3,11 +3,11 @@ package com.galaxybruce.pioneer
 import com.alibaba.fastjson.JSONObject
 import com.android.build.gradle.AppPlugin
 import com.galaxybruce.pioneer.aar.AARDependency
-import com.galaxybruce.pioneer.copy.ProjectCopyOutputManager
 import com.galaxybruce.pioneer.manifest.PlatformSourceUtil
 import com.galaxybruce.pioneer.manifest.ProjectManifestMerger
 import com.galaxybruce.pioneer.maven.MavenInfo
 import com.galaxybruce.pioneer.maven.MavenUploadManager
+import com.galaxybruce.pioneer.run_module.ProjectModuleManager
 import com.galaxybruce.pioneer.utils.LogUtil
 import com.galaxybruce.pioneer.utils.Utils
 import org.gradle.api.Plugin
@@ -62,7 +62,6 @@ class PioneerPlugin implements Plugin<Project> {
 
         // 设置aar库相关依赖方法，这几个方法目前基本上没什么作用
         rootProject.ext {
-            depModuleSource = AARDependency.&depModuleSource         //是否是module依赖方式
             setAARDirs = AARDependency.&setAARDirs           //设置aar库的path
             addAARLibs = AARDependency.&addAARLibs           //添加aar依赖库
         }
@@ -89,13 +88,16 @@ class PioneerPlugin implements Plugin<Project> {
     }
 
     private static void handleSubProject(Project project) {
-        if (!project.android) {
-            throw new IllegalStateException('Must apply \'com.android.application\' or \'com.android.library\' first!')
-        }
+//        if (!project.android) {
+//            throw new IllegalStateException('Must apply \'com.android.application\' or \'com.android.library\' first!')
+//        }
 
         def isApp = project.plugins.hasPlugin(AppPlugin) // def isLibrary = project.plugins.hasPlugin(LibraryPlugin)
         if(isApp) {
             handleAppProject(project)
+        } else {
+            // 用于管理组件module以application或library方式进行编译
+            handleModuleProject(project)
         }
         // 合并pin工程中的manifest
         mergeManifest(project)
@@ -106,6 +108,10 @@ class PioneerPlugin implements Plugin<Project> {
     private static void handleAppProject(Project project) {
         // copy mapping.txt
 //        ProjectCopyOutputManager.copy(project)
+    }
+
+    private static void handleModuleProject(Project project) {
+        ProjectModuleManager.manageModule(project)
     }
 
     private static void mergeManifest(Project project) {
@@ -126,5 +132,4 @@ class PioneerPlugin implements Plugin<Project> {
             project.android.defaultConfig.buildConfigField "String", "APP_PLATFORM_FLAG", "\"${PlatformSourceUtil.getPlatformFlag(project)}\""
         }
     }
-
 }

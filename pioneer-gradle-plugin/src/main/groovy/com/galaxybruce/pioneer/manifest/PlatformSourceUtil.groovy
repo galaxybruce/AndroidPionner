@@ -14,7 +14,7 @@ class PlatformSourceUtil {
 
     static String getPlatformFlag(Project project) {
         Project rootProject = project.rootProject
-        // 通过./gradlew uploadMaven -PplatformFlag=xxx获取，多平台打包时使用
+        // 优先通过通过./gradlew uploadMaven -PplatformFlag=xxx获取参数
         String platformFlag = rootProject.getProperties()?.get("platformFlag")
         if(platformFlag == null || platformFlag.isEmpty()) {
             platformFlag = rootProject.galaxybrucepioneer.platformSourceDir
