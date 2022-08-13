@@ -1,105 +1,11 @@
+## 简介
+AndroidPioneer是一个汇集Android工程编译相关的gradle插件
+
 ## bintray-release  [![Download](https://img.shields.io/badge/version-0.0.26-blue.svg)](https://bintray.com/galaxybruce/maven/pioneer-gradle-plugin/_latestVersion) [![](./assets/btn_apache_lisence.png)](LICENSE)
 
 ## 目前有以下功能：
-* 批量上传library到本地maven或者私有maven服务器
-* 处理pin工程(核心功能时合并manifest)，pin工程概念建议参考这篇文章[微信Android模块化架构重构实践](https://www.jianshu.com/p/3990724aa7e4)
-* 多平台复用
-
-
-## 批量上传library到本地maven或者私有maven服务器
-根目录下的build.gradle中添加如下代码
-```
-apply plugin: 'galaxybruce-pioneer'
-
-galaxybrucepioneer {
-    // 这个字段可选，内部有默认的上传脚本
-    mavenScriptPath = 'maven上传脚本文件路径'
-    // 如果mavenScriptPath字段不填的话，需要填一下maven账号信息
-    // =================start==================
-    // 公司maven私服
-    mavenUrl = 'http://test.xxx.com/nexus/content/repositories/releases'
-    // 公司maven私服SnapShot
-    mavenUrlSnapShot = 'http://test.xxx.com/nexus/content/repositories/snapshots'
-    // maven账号
-    mavenAccount = 'deployment'
-    // maven密码
-    mavenPwd = '666666'
-    // true: maven生成到指定目录：url = project.uri(project.rootProject.projectDir.absolutePath + '/repo-local')
-    localMaven = false
-    // =================end==================
-
-    // 需要批量上传到maven的library配置，具体格式可参考demo中的文件
-    moduleDataPath = "${project.rootDir.path}/modulemaven.json"
-}
-
-buildscript {
-    repositories {
-        google()
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'com.galaxybruce.android:pioneer-gradle-plugin:latestversion'
-    }
-}
-```
-modulemaven.json内容：
-```
-{
-  "group": "com.galaxybruce",
-  "version": "1.0.1",
-  "modules": [
-    {"name": "testlibrary", "artifactId": "testlibrary", "version": ""}
-  ],
-  "platform_modules": {
-    "app1": [
-      {"name": "testlibrary"}
-    ],
-    "app2": [
-      {"name": "testlibrary"}
-    ]
-  }
-}
-```
-PS: 每个library支持配置三个字段，只有name是必填字段
-name: library名称
-artifactId: 如果不设置，默认是project.name  
-version: 如果不设置，默认是android.defaultConfig.versionName
-
-上传maven命令：
-```
-    ./gradlew uploadMaven
-    ./gradlew uploadMaven -PplatformFlag=app1
-    ./gradlew uploadMaven -PplatformFlag=app2
-```
-
-## 处理pin工程(核心功能是合并manifest)
-插件默认开启pin工程支持，在需要的pin工程module的build.gradle中添加即可，pin工程约定都已p_开头。`建议多使用pin工程，少使用module`。
-```
-apply plugin: 'galaxybruce-pioneer'
-```
-具体使用方式参考demo。
-
-## 多平台复用
-插件默认支持多平台复用，在需要开启多平台复用的module的build.gradle中添加即可。
-```
-apply plugin: 'galaxybruce-pioneer'
-```
-同时需要在根目录下的build.gradle指定当前平台资源所在目录
-```
-apply plugin: 'galaxybruce-pioneer'
-
-galaxybrucepioneer {
-    platformSourceDir = 'app2'
-}
-```
-
-多平台项目结构
-![多平台项目结构](./images/mutilplatform.png)
-
-
-
-
-
-
+* [module作为app独立运行](https://github.com/galaxybruce/AndroidPionner/blob/master/README_module%E4%BD%9C%E4%B8%BAapp%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8C.md)
+* [pin工程处理](https://github.com/galaxybruce/AndroidPionner/blob/master/README_pin%E5%B7%A5%E7%A8%8B%E5%A4%84%E7%90%86.md)
+* [代码多平台复用](https://github.com/galaxybruce/AndroidPionner/blob/master/README_%E4%BB%A3%E7%A0%81%E5%A4%9A%E5%B9%B3%E5%8F%B0%E5%A4%8D%E7%94%A8.md)
+* [批量发布library到maven仓库](https://github.com/galaxybruce/AndroidPionner/blob/master/README_%E6%89%B9%E9%87%8F%E5%8F%91%E5%B8%83library%E5%88%B0maven%E4%BB%93%E5%BA%93.md)
 
