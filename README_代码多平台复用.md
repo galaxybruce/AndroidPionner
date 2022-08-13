@@ -25,6 +25,7 @@ apply plugin: 'galaxybruce-pioneer'
 galaxybrucepioneer {
     // 该标识用来匹配代码目录
     platformSourceDir = 'app2'
+    ...
 }
 ```
 

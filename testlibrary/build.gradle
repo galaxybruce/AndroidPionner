@@ -31,4 +31,5 @@ dependencies {
 }
 
 
-
+//group=
+version=MAVEN_MODULE_VERSION

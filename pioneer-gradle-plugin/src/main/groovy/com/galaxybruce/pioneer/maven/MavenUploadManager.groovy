@@ -122,10 +122,10 @@ class MavenUploadManager {
             if(mavenInfo.group) {
                 project.group = mavenInfo.group
             }
-            if(mavenInfo.version) {
-                project.version = mavenInfo.version
-            } else if(moduleInfo.version){
+            if(moduleInfo.version) {
                 project.version = moduleInfo.version
+            } else if(mavenInfo.version){
+                project.version = mavenInfo.version
             }
             // 在这里也可以改变pom.artifactId
             if(moduleInfo.artifactId){
