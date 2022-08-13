@@ -26,3 +26,20 @@ apply plugin: 'galaxybruce-pioneer'
 * MainActivity - 简单的入口(一般有两个按钮，一个登录，一个进入该模块功能)
 * AndroidManifest.xml - 配置MyApp以及MainActivity
 * build.gradle - 增加module独立运行时需要的额外依赖 
+
+#### 4. 暴露给外面的属性
+* androidPluginApplied
+  androidPluginApplied属性表示插件内部已经apply application或者library插件，外层可以根据该属性做些处理，如：
+```
+if (!(project.ext.has('androidPluginApplied') && project.ext.androidPluginApplied)) {
+    apply plugin: "com.android.library"
+}
+```
+
+* runAsApp
+  runAsApp属性表示该module是否已经apply application，外层可以根据这个属性做些处理，比如添加额外依赖
+```
+if (!(project.ext.has('runAsApp') && project.ext.runAsApp)) {
+
+}
+```
