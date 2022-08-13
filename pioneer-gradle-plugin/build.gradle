@@ -38,7 +38,7 @@ def repoUrlAccountPwd = localProperties.getProperty('MAVEN_ACCOUNT_PWD')
 
 def artifact_group = 'com.galaxybruce.android'
 def artifact_id = 'pioneer-gradle-plugin' // 这里要和module的名称一样，不然在bintray上会生成两个目录
-def artifact_version='0.0.53-SNAPSHOT'
+def artifact_version='0.0.54'
 
 // 发布到组织名称名字，必须填写
 group = artifact_group

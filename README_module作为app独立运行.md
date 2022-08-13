@@ -43,3 +43,6 @@ if (!(project.ext.has('runAsApp') && project.ext.runAsApp)) {
 
 }
 ```
+
+* assembleThisModule
+  assembleThisModule表示该module正在独立运行
