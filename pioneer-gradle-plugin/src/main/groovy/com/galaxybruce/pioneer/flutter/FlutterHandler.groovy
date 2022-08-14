@@ -98,7 +98,6 @@ class FlutterHandler {
         //project.version = artVersion
 
         //true: 发布到本地maven仓库， false： 发布到maven私服
-//        def localMaven = project.rootProject.hasProperty("LOCAL_MAVEN") && project.rootProject.LOCAL_MAVEN.toBoolean()
         def localMaven = project.rootProject.galaxybrucepioneer.localMaven
         def mavenUrl = project.rootProject.galaxybrucepioneer.mavenUrl
         def mavenUrlSnapShot = project.rootProject.galaxybrucepioneer.mavenUrlSnapShot

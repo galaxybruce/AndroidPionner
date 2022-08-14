@@ -1,0 +1,87 @@
+apply plugin: "maven-publish"
+
+def localProperties = new Properties()
+def localPropertiesFile = new File(rootDir, 'local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+def repoUrlRelease = localProperties.getProperty('MAVEN_URL_RELEASE')
+def repoUrlSnapshots = localProperties.getProperty('MAVEN_URL_SNAPSHOT')
+def repoUrlAccountName = localProperties.getProperty('MAVEN_ACCOUNT_NAME')
+def repoUrlAccountPwd = localProperties.getProperty('MAVEN_ACCOUNT_PWD')
+
+def artifact_group = POM_GROUP
+def artifact_id = POM_ARTIFACT_ID // 这里要和module的名称一样，不然在bintray上会生成两个目录
+def artifact_version = VERSION_NAME
+
+// 发布到组织名称名字，必须填写
+group = artifact_group
+// 版本号，下次更新是只需要更改版本号即可
+version = artifact_version
+
+task sourceJar(type: Jar, dependsOn:classes) {
+    getArchiveClassifier().set('sources') // classifier = 'sources'
+    from sourceSets.main.allSource // project.file('src/main/groovy') and android.sourceSets.main.java.srcDirs
+}
+
+// 这个不能要，不然报Cannot add task 'javadoc' as a task with that name already exists.
+//task javadoc(type: Javadoc) {
+//    source = project.file('src/main/groovy') // android.sourceSets.main.java.srcDirs
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    getArchiveClassifier().set('javadoc') // classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourceJar
+}
+
+// 打包到本地或者Maven私服库
+afterEvaluate {
+    publishing {
+        publications {
+            mavenProduction(MavenPublication) {
+                //group,artifactId和version
+                groupId = artifact_group
+                artifactId = artifact_id
+                version = artifact_version
+
+                from components.java
+
+                artifact sourceJar
+                artifact javadocJar
+
+                pom {
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                }
+            }
+        }
+
+        repositories {
+            maven {
+                def isLocalMaven = LOCAL_MAVEN == 'true'
+                if(isLocalMaven) {
+                    url = project.uri(project.rootProject.projectDir.absolutePath + '/repo-local')
+                } else {
+                    url = artifact_version.endsWith('SNAPSHOT') ? repoUrlSnapshots : repoUrlRelease
+                    credentials {
+                        username = repoUrlAccountName
+                        password = repoUrlAccountPwd
+                    }
+                    allowInsecureProtocol = true
+                }
+            }
+        }
+    }
+}
