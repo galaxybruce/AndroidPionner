@@ -56,45 +56,48 @@ class ProjectModuleManager {
         taskIsAssemble = false
         mainModuleName = null
 
-        if (!(project.ext.has('runAsAppForComponent') && project.ext.runAsAppForComponent)) {
+        if (!project.rootProject.ext.has('runAsAppForComponent')) {
             Properties localProperties = new Properties()
             try {
                 def localFile = project.rootProject.file('local.properties')
                 if (localFile != null && localFile.exists()) {
                     localProperties.load(localFile.newDataInputStream())
                 }
-                project.ext.runAsAppForComponent = 'true' == localProperties.getProperty(RUN_AS_APP_FOR_COMPONENT)
-                project.ext.assembleAarForComponent = 'true' == localProperties.getProperty(ASSEMBLE_AAR_FOR_COMPONENT)
+                project.rootProject.ext.runAsAppForComponent = 'true' == localProperties.getProperty(RUN_AS_APP_FOR_COMPONENT)
+                project.rootProject.ext.assembleAarForComponent = 'true' == localProperties.getProperty(ASSEMBLE_AAR_FOR_COMPONENT)
             } catch (Exception ignored) {
-                println("${PLUGIN_NAME}: local.properties not found")
+                LogUtil.log(project, TAG, "local.properties not found")
             }
         }
 
         boolean runAsApp = false
-        if(project.ext.runAsAppForComponent &&
-                new File(project.projectDir.getAbsolutePath() + "/src/${DEBUG_DIR}/AndroidManifest.xml").exists()) {
-            initByTask(project)
+        if(project.rootProject.ext.runAsAppForComponent) {
+            if(new File(project.projectDir.getAbsolutePath() + "/src/${DEBUG_DIR}/AndroidManifest.xml").exists()) {
+                initByTask(project)
 
-            def mainApp = isMainApp(project)
-            def assembleFor = isAssembleFor(project)
-            def buildingAar = isBuildingAar(project)
-            def alwaysLib = isAlwaysLib(project)
+                def mainApp = isMainApp(project)
+                def assembleFor = isAssembleFor(project)
+                def buildingAar = isBuildingAar(project)
+                def alwaysLib = isAlwaysLib(project)
 
-            if (mainApp) {
-                runAsApp = true
-            } else if (alwaysLib || buildingAar) {
-                runAsApp = false
-            } else if (assembleFor) {
-                // 这是真正的判断是否独立运行module的变量
-                runAsApp = true
-                project.ext.assembleThisModule = true
-            } else if (!taskIsAssemble) {
-                // 点击"sync now"时，给apply plugin: 'com.android.application'，可以时module显示在运行列表中
-                runAsApp = true
+                if (mainApp) {
+                    runAsApp = true
+                } else if (alwaysLib || buildingAar) {
+                    runAsApp = false
+                } else if (assembleFor) {
+                    // 这是真正的判断是否独立运行module的变量
+                    runAsApp = true
+                    project.ext.assembleThisModule = true
+                } else if (!taskIsAssemble) {
+                    // 点击"sync now"时，给apply plugin: 'com.android.application'，可以时module显示在运行列表中
+                    runAsApp = true
+                }
+                LogUtil.log(project, TAG,
+                        "mainModuleName=${mainModuleName}, project=${project.name}, runAsApp=${runAsApp} . taskIsAssemble:${taskIsAssemble}. " +
+                                "settings(mainApp:${mainApp}, alwaysLib:${alwaysLib}, assembleThisModule:${assembleFor}, buildingAar:${buildingAar})")
             }
-            LogUtil.log(project, TAG,
-                    "mainModuleName=${mainModuleName}, project=${project.name}, runAsApp=${runAsApp} . taskIsAssemble:${taskIsAssemble}. " +
-                    "settings(mainApp:${mainApp}, alwaysLib:${alwaysLib}, assembleThisModule:${assembleFor}, buildingAar:${buildingAar})")
+        } else {
+            LogUtil.log(project, TAG, "[runAsAppForComponent] feature not open.")
         }
         project.ext.runAsApp = runAsApp
         // 这个属性给外面判断，避免重复apply application或者library
@@ -154,7 +157,7 @@ class ProjectModuleManager {
 
     //判断当前设置的环境是否为组件打aar包（比如将组件打包上传maven库）
     static boolean isBuildingAar(Project project) {
-        return project.ext.assembleAarForComponent
+        return project.rootProject.ext.assembleAarForComponent
     }
 
     private static void performBuildTypeCache(Project project, boolean isApp) {

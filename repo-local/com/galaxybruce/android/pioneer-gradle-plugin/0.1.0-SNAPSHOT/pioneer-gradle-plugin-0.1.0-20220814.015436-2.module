@@ -1,0 +1,83 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.galaxybruce.android",
+    "module": "pioneer-gradle-plugin",
+    "version": "0.1.0-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.0.2"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "pioneer-gradle-plugin-0.1.0-SNAPSHOT.jar",
+          "url": "pioneer-gradle-plugin-0.1.0-SNAPSHOT.jar",
+          "size": 193274,
+          "sha512": "6c4df251d5f6120a2085d1b557abf136fd7e88119d052b718bbf0d1dbb65937848d093f18ebb1980074ccb737e1737bb6a5dcc5bfc98ea61a027a44941f127c5",
+          "sha256": "2badc113d4dfb3460f0686916370da827e6e68f321453865ae5d0f3ad4e5d040",
+          "sha1": "eb96a16a7db46217cd0cb56a06cb7f4bacd7794b",
+          "md5": "9b98e99da80cb3bd59b5169101072fd1"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.android.tools",
+          "module": "common",
+          "version": {
+            "requires": "30.0.3"
+          }
+        },
+        {
+          "group": "com.android.tools.build",
+          "module": "gradle",
+          "version": {
+            "requires": "7.0.3"
+          }
+        },
+        {
+          "group": "com.alibaba",
+          "module": "fastjson",
+          "version": {
+            "requires": "1.2.51"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "pioneer-gradle-plugin-0.1.0-SNAPSHOT.jar",
+          "url": "pioneer-gradle-plugin-0.1.0-SNAPSHOT.jar",
+          "size": 193274,
+          "sha512": "6c4df251d5f6120a2085d1b557abf136fd7e88119d052b718bbf0d1dbb65937848d093f18ebb1980074ccb737e1737bb6a5dcc5bfc98ea61a027a44941f127c5",
+          "sha256": "2badc113d4dfb3460f0686916370da827e6e68f321453865ae5d0f3ad4e5d040",
+          "sha1": "eb96a16a7db46217cd0cb56a06cb7f4bacd7794b",
+          "md5": "9b98e99da80cb3bd59b5169101072fd1"
+        }
+      ]
+    }
+  ]
+}
