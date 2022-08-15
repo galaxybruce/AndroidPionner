@@ -1,4 +1,13 @@
+/**
+ * 参考文章：[Android库发布到Maven Central全攻略](https://juejin.cn/post/6932485276124233735)
+ */
+
 apply plugin: "maven-publish"
+
+def publishChannel = PUBLISH_CHANNEL
+if(publishChannel == '1') {
+    apply plugin: 'signing'
+}
 
 def localProperties = new Properties()
 def localPropertiesFile = new File(rootDir, 'local.properties')
@@ -58,10 +67,38 @@ afterEvaluate {
                 artifact javadocJar
 
                 pom {
+                    name = artifact_id
+                    description = POM_DESCRIPTION
+                    url = POM_URL
+
                     licenses {
                         license {
                             name = 'The Apache License, Version 2.0'
                             url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id POM_DEVELOPER_ID // 开发者的id。
+                            name POM_DEVELOPER_NAME // 开发者名字。
+                            email POM_DEVELOPER_EMAIL // 开发者邮箱。
+                        }
+                    }
+
+                    scm {
+                        connection POM_SCM_CONNECTION // Git仓库地址。
+                        developerConnection POM_SCM_DEV_CONNECTION // Git仓库地址。
+                        url POM_SCM_URL // 项目主页。
+                    }
+
+                    withXml {
+                        asNode().dependencies.'*'.findAll() {
+                            it.scope.text() == 'runtime' && project.configurations.implementation.allDependencies.find { dep ->
+                                dep.name == it.artifactId.text()
+                            }
+                        }.each {
+                            it.scope*.value = 'compile'
                         }
                     }
                 }
@@ -70,18 +107,38 @@ afterEvaluate {
 
         repositories {
             maven {
-                def isLocalMaven = LOCAL_MAVEN == 'true'
-                if(isLocalMaven) {
-                    url = project.uri(project.rootProject.projectDir.absolutePath + '/repo-local')
-                } else {
+                //  1:发布到MavenCentral 2:发布到内网maven 其他值:发布到repo-local
+                if(publishChannel == '1'){
                     url = artifact_version.endsWith('SNAPSHOT') ? repoUrlSnapshots : repoUrlRelease
                     credentials {
                         username = repoUrlAccountName
                         password = repoUrlAccountPwd
                     }
                     allowInsecureProtocol = true
+                } else if(publishChannel == '2'){
+                    url = artifact_version.endsWith('SNAPSHOT') ? repoUrlSnapshots : repoUrlRelease
+                    credentials {
+                        username = repoUrlAccountName
+                        password = repoUrlAccountPwd
+                    }
+                    allowInsecureProtocol = true
+                } else {
+                    url = project.uri(project.rootProject.projectDir.absolutePath + '/repo-local')
                 }
             }
+        }
+    }
+
+    if(publishChannel == '1') {
+        // GPG签名需要我们在gradle.properties里面增加几个属性值 或者 放在local.properties中，然后读取到ext中
+        ext["signing.keyId"] = localProperties.getProperty("signing.keyId", '')
+        ext["signing.password"] = localProperties.getProperty("signing.password", '')
+        ext["signing.secretKeyRingFile"] = localProperties.getProperty("secretKeyRingFile.keyId", '')
+        ext["ossrhUsername"] = localProperties.getProperty("ossrhUsername", '')
+        ext["ossrhPassword"] = localProperties.getProperty("ossrhPassword", '')
+
+        signing {
+            sign publishing.publications
         }
     }
 }
