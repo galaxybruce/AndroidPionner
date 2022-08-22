@@ -4,11 +4,6 @@
 
 apply plugin: "maven-publish"
 
-def publishChannel = PUBLISH_CHANNEL
-if(publishChannel == '1') {
-    apply plugin: 'signing'
-}
-
 def localProperties = new Properties()
 def localPropertiesFile = new File(rootDir, 'local.properties')
 if (localPropertiesFile.exists()) {
@@ -16,14 +11,29 @@ if (localPropertiesFile.exists()) {
         localProperties.load(reader)
     }
 }
-def repoUrlRelease = localProperties.getProperty('MAVEN_URL_RELEASE')
-def repoUrlSnapshots = localProperties.getProperty('MAVEN_URL_SNAPSHOT')
-def repoUrlAccountName = localProperties.getProperty('MAVEN_ACCOUNT_NAME')
-def repoUrlAccountPwd = localProperties.getProperty('MAVEN_ACCOUNT_PWD')
+
+def publishChannel = PUBLISH_CHANNEL
+if(publishChannel == '1') {
+    apply plugin: 'signing'
+
+    // GPG签名需要我们在gradle.properties里面增加几个属性值 或者 放在local.properties中，然后读取到ext中
+    ext["signing.keyId"] = localProperties.getProperty("signing.keyId", '')
+    ext["signing.password"] = localProperties.getProperty("signing.password", '')
+    ext["signing.secretKeyRingFile"] = localProperties.getProperty("secretKeyRingFile.keyId", '')
+    ext["ossrhUsername"] = localProperties.getProperty("ossrhUsername", '')
+    ext["ossrhPassword"] = localProperties.getProperty("ossrhPassword", '')
+    ext["releasesUrl"] = "https://s01.oss.sonatype.org/content/repositories/releases/"
+    ext["snapshotUrl"] = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+} else if(publishChannel == '2') {
+    ext["ossrhUsername"] = localProperties.getProperty('MAVEN_ACCOUNT_NAME')
+    ext["ossrhPassword"] = localProperties.getProperty('MAVEN_ACCOUNT_PWD')
+    ext["releasesUrl"] = localProperties.getProperty('MAVEN_URL_RELEASE')
+    ext["snapshotUrl"] = localProperties.getProperty('MAVEN_URL_SNAPSHOT')
+}
 
 def artifact_group = POM_GROUP
 def artifact_id = POM_ARTIFACT_ID // 这里要和module的名称一样，不然在bintray上会生成两个目录
-def artifact_version = VERSION_NAME
+def artifact_version = POM_VERSION_NAME
 
 // 发布到组织名称名字，必须填写
 group = artifact_group
@@ -56,7 +66,6 @@ afterEvaluate {
     publishing {
         publications {
             mavenProduction(MavenPublication) {
-                //group,artifactId和version
                 groupId = artifact_group
                 artifactId = artifact_id
                 version = artifact_version
@@ -67,29 +76,31 @@ afterEvaluate {
                 artifact javadocJar
 
                 pom {
-                    name = artifact_id
-                    description = POM_DESCRIPTION
-                    url = POM_URL
+                    if(publishChannel == '1') {
+                        name = artifact_id
+                        description = POM_DESCRIPTION
+                        url = POM_URL
+
+                        developers {
+                            developer {
+                                id POM_DEVELOPER_ID // 开发者的id。
+                                name POM_DEVELOPER_NAME // 开发者名字。
+                                email POM_DEVELOPER_EMAIL // 开发者邮箱。
+                            }
+                        }
+
+                        scm {
+                            connection POM_SCM_CONNECTION // Git仓库地址。
+                            developerConnection POM_SCM_DEV_CONNECTION // Git仓库地址。
+                            url POM_SCM_URL // 项目主页。
+                        }
+                    }
 
                     licenses {
                         license {
                             name = 'The Apache License, Version 2.0'
                             url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                         }
-                    }
-
-                    developers {
-                        developer {
-                            id POM_DEVELOPER_ID // 开发者的id。
-                            name POM_DEVELOPER_NAME // 开发者名字。
-                            email POM_DEVELOPER_EMAIL // 开发者邮箱。
-                        }
-                    }
-
-                    scm {
-                        connection POM_SCM_CONNECTION // Git仓库地址。
-                        developerConnection POM_SCM_DEV_CONNECTION // Git仓库地址。
-                        url POM_SCM_URL // 项目主页。
                     }
 
                     withXml {
@@ -108,18 +119,11 @@ afterEvaluate {
         repositories {
             maven {
                 //  1:发布到MavenCentral 2:发布到内网maven 其他值:发布到repo-local
-                if(publishChannel == '1'){
-                    url = artifact_version.endsWith('SNAPSHOT') ? repoUrlSnapshots : repoUrlRelease
+                if(publishChannel == '1' || publishChannel == '2'){
+                    url = artifact_version.endsWith('SNAPSHOT') ? ext.snapshotUrl : ext.releasesUrl
                     credentials {
-                        username = repoUrlAccountName
-                        password = repoUrlAccountPwd
-                    }
-                    allowInsecureProtocol = true
-                } else if(publishChannel == '2'){
-                    url = artifact_version.endsWith('SNAPSHOT') ? repoUrlSnapshots : repoUrlRelease
-                    credentials {
-                        username = repoUrlAccountName
-                        password = repoUrlAccountPwd
+                        username = ext.ossrhUsername
+                        password = ext.ossrhPassword
                     }
                     allowInsecureProtocol = true
                 } else {
@@ -130,13 +134,6 @@ afterEvaluate {
     }
 
     if(publishChannel == '1') {
-        // GPG签名需要我们在gradle.properties里面增加几个属性值 或者 放在local.properties中，然后读取到ext中
-        ext["signing.keyId"] = localProperties.getProperty("signing.keyId", '')
-        ext["signing.password"] = localProperties.getProperty("signing.password", '')
-        ext["signing.secretKeyRingFile"] = localProperties.getProperty("secretKeyRingFile.keyId", '')
-        ext["ossrhUsername"] = localProperties.getProperty("ossrhUsername", '')
-        ext["ossrhPassword"] = localProperties.getProperty("ossrhPassword", '')
-
         signing {
             sign publishing.publications
         }
