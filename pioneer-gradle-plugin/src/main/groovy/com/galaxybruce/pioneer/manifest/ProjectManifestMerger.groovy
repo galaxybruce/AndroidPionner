@@ -48,9 +48,9 @@ class ProjectManifestMerger {
                 if(new File("$project.projectDir/src/$it.name/build.gradle").exists()) {
                     project.apply from: "src/$it.name/build.gradle"
                 }
-                // 添加pin工程下的libs依赖，pin/build.gradle中无需再添加 implementation fileTree(dir: 'src/p_lib1/libs', include: ['*.jar'])
-                project.dependencies.add("api",
-                        project.fileTree(dir: "src/$it.name/libs", include: ['*.jar']))
+//                // 添加pin工程下的libs依赖，pin/build.gradle中无需再添加 implementation fileTree(dir: 'src/p_lib1/libs', include: ['*.jar'])
+//                project.dependencies.add("api",
+//                        project.fileTree(dir: "src/$it.name/libs", include: ['*.jar']))
 
                 def dirs = platformDir != null && platformDir.trim().length() > 0 ? ["main", "${platformDir}"] : ["main"]
                 // 遍历main和对应平台的目录
