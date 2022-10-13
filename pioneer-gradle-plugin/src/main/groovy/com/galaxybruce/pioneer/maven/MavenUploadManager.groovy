@@ -1,6 +1,6 @@
 package com.galaxybruce.pioneer.maven
 
-
+import com.android.Version
 import com.galaxybruce.pioneer.manifest.PlatformSourceUtil
 import com.galaxybruce.pioneer.utils.LogUtil
 import com.galaxybruce.pioneer.utils.Utils
@@ -10,7 +10,9 @@ import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.internal.os.OperatingSystem
+import org.gradle.util.GradleVersion
 
 import java.util.function.Consumer
 
@@ -66,12 +68,17 @@ class MavenUploadManager {
                                         // Gradle will by default throw an exception and terminate when receiving non-zero result codes from commands
                                         ignoreExitValue true
                                     }
+
+                                    def pomArtifactId = moduleName
+                                    if (subProject.ext.has('platformFlag') && subProject.ext.platformFlag) {
+                                        pomArtifactId += '-' + subProject.ext.platformFlag
+                                    }
                                     // https://stackoverflow.com/questions/45396268/gradle-exec-how-to-print-error-output
                                     if (result.exitValue != 0) {
-                                        LogUtil.log(rootProject, "PioneerPlugin", "module[${subProject.group}:$moduleName:${subProject.version}] upload maven fail !!!!!! ")
+                                        LogUtil.log(rootProject, "PioneerPlugin", "module[${subProject.group}:$pomArtifactId:${subProject.version}] upload maven fail !!!!!! ")
                                         println eo.toString()
                                     } else {
-                                        LogUtil.log(rootProject, "PioneerPlugin", "module[${subProject.group}:$moduleName:${subProject.version}] upload maven success !!! ")
+                                        LogUtil.log(rootProject, "PioneerPlugin", "module[${subProject.group}:$pomArtifactId:${subProject.version}] upload maven success !!! ")
                                     }
                                 } else {
 //                                    def cmd = "./gradlew"
@@ -82,11 +89,16 @@ class MavenUploadManager {
 
                                     String command = String.format("./gradlew :%s:clean :%s:publish %s", moduleName, moduleName, param)
                                     ExecuteResult executeResult = RunTimeTask.executeCommand(command, Integer.MAX_VALUE)
+
+                                    def pomArtifactId = moduleName
+                                    if (subProject.ext.has('platformFlag') && subProject.ext.platformFlag) {
+                                        pomArtifactId += '-' + subProject.ext.platformFlag
+                                    }
                                     if (executeResult.exitCode != 0) {
-                                        LogUtil.log(rootProject, "PioneerPlugin", "module[${subProject.group}:$moduleName:${subProject.version}] upload maven fail !!!!!! ")
+                                        LogUtil.log(rootProject, "PioneerPlugin", "module[${subProject.group}:$pomArtifactId:${subProject.version}] upload maven fail !!!!!! ")
                                         println executeResult.toString()
                                     } else {
-                                        LogUtil.log(rootProject, "PioneerPlugin", "module[${subProject.group}:$moduleName:${subProject.version}] upload maven success !!! ")
+                                        LogUtil.log(rootProject, "PioneerPlugin", "module[${subProject.group}:$pomArtifactId:${subProject.version}] upload maven success !!! ")
                                     }
                                 }
                             }
@@ -164,39 +176,50 @@ class MavenUploadManager {
         // 参考 https://github.com/alibaba/ARouter/blob/develop/gradle/publish.gradle
         // 注意：app中不能设置多渠道，否则上传maven中没有aar!!!
         project.apply plugin: 'maven-publish'
-        if (project.hasProperty("android") ||
+        def isAndroid = project.hasProperty("android") ||
                 project.getPlugins().hasPlugin('com.android.application') ||
-                project.getPlugins().hasPlugin('com.android.library')) { // Android libraries
+                project.getPlugins().hasPlugin('com.android.library')
+        if (isAndroid) { // Android libraries
+            if(GradleVersion.version(Version.ANDROID_GRADLE_PLUGIN_VERSION) >= GradleVersion.version('7.1.2')) {
+                android {
+                    publishing {
+                        singleVariant('release') {
+                            withSourcesJar()
+                            withJavadocJar()
+                        }
+                    }
+                }
+            }
 
-//            project.task('javadocs', type: Javadoc) {
+//            project.task('androidJavadocs', type: Javadoc) {
 //                source = project.android.sourceSets.main.java.srcDirs
 //                classpath += project.files(project.android.getBootClasspath().join(File.pathSeparator))
 //            }
 //
-//            project.task('javadocJar', type: Jar, dependsOn: project.javadocs) {
+//            project.task('androidJavadocsJar', type: Jar, dependsOn: project.androidJavadocs) {
 //                getArchiveClassifier().set('javadoc')
-//                from project.javadocs.destinationDir
+//                from project.androidJavadocs.destinationDir
 //            }
 
-            project.task('sourceJar', type: Jar) {
+            project.task('androidSourcesJar', type: Jar) {
                 getArchiveClassifier().set('sources')
                 from project.android.sourceSets.main.java.srcDirs
             }
 
             project.artifacts {
-                archives project.tasks.sourceJar
-//                archives project.tasks.javadocJar
+                archives project.tasks.androidSourcesJar
+//                archives project.tasks.androidJavadocsJar
             }
         } else { // Java libraries
 //            project.task('javadocJar', type: Jar, dependsOn: project.javadoc) {
 //                getArchiveClassifier().set('javadoc')
 //                from project.javadoc.destinationDir
 //            }
-//
-//            project.task('sourceJar', type: Jar, dependsOn: project.classes) {
-//                getArchiveClassifier().set('sources')
-//                from project.android.sourceSets.main.allSource
-//            }
+
+            project.task('sourceJar', type: Jar, dependsOn: project.classes) {
+                getArchiveClassifier().set('sources')
+                from project.android.sourceSets.main.allSource
+            }
 
             project.artifacts {
                 archives project.tasks.sourceJar
@@ -249,12 +272,19 @@ class MavenUploadManager {
                     artifactId = pomArtifactId
                     version = pomVersion
 
-                    project.afterEvaluate {
-                        from project.components.release
+                    if (isAndroid) {
+                        project.afterEvaluate {
+                            from project.components.release
+                        }
+                        artifact project.tasks.androidSourcesJar
+//                        artifact project.tasks.androidJavadocsJar
+                    } else {
+                        project.afterEvaluate {
+                            from project.components.java
+                        }
+                        artifact project.tasks.sourceJar
+//                        artifact project.tasks.javadocJar
                     }
-
-                    artifact project.tasks.sourceJar
-//                artifact project.tasks.javadocJar
 
                     pom {
                         licenses {
