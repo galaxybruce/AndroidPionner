@@ -152,10 +152,10 @@ afterEvaluate {
             maven {
                 //  1:发布到MavenCentral 2:发布到内网maven 其他值:发布到repo-local
                 if(publishChannel == '1' || publishChannel == '2'){
-                    url = artifact_version.endsWith('SNAPSHOT') ? ext.snapshotUrl : ext.releasesUrl
+                    url = artifact_version.endsWith('SNAPSHOT') ? project.ext.snapshotUrl : project.ext.releasesUrl
                     credentials {
-                        username = ext.ossrhUsername
-                        password = ext.ossrhPassword
+                        username = project.ext.ossrhUsername
+                        password = project.ext.ossrhPassword
                     }
                     allowInsecureProtocol = true
                 } else {
