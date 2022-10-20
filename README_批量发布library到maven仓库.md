@@ -73,8 +73,8 @@ modulemaven.json内容：
 
 #### 5. 上传maven命令：
 ```
-./gradlew uploadMaven -PplatformFlag=app1
-./gradlew uploadMaven -PplatformFlag=app2
+./gradlew uploadMaven -PplatformSourceDir=app1
+./gradlew uploadMaven -PplatformSourceDir=app2
 ```
 
 

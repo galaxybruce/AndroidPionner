@@ -14,15 +14,15 @@ class PlatformSourceUtil {
 
     static String getPlatformFlag(Project project) {
         Project rootProject = project.rootProject
-        // 优先通过通过./gradlew uploadMaven -PplatformFlag=xxx获取参数
-        String platformFlag = rootProject.getProperties()?.get("platformFlag")
-        if(platformFlag == null || platformFlag.isEmpty()) {
-            platformFlag = rootProject.galaxybrucepioneer.platformSourceDir
+        // 优先通过通过./gradlew uploadMaven -PplatformSourceDir=xxx获取参数
+        String platformSourceDir = rootProject.getProperties()?.get("platformSourceDir")
+        if(platformSourceDir == null || platformSourceDir.isEmpty()) {
+            platformSourceDir = rootProject.galaxybrucepioneer.platformSourceDir
         }
 
-        if(platformFlag == null) {
-            platformFlag = ''
+        if(platformSourceDir == null) {
+            platformSourceDir = ''
         }
-        return platformFlag
+        return platformSourceDir
     }
 }

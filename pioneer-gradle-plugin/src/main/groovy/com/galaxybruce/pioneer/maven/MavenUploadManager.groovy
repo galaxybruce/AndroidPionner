@@ -56,7 +56,7 @@ class MavenUploadManager {
                                 // rootProject.project(":$moduleName").tasks['publish'].execute()
 
                                 // command命令是在另一个进程中，需要把参数透传过去
-                                final String param = "-PplatformFlag=" + PlatformSourceUtil.getPlatformFlag(subProject)
+                                final String param = "-PplatformSourceDir=" + PlatformSourceUtil.getPlatformFlag(subProject)
                                 if (OperatingSystem.current().isWindows()) {
                                     // window下用process.waitFor会出现死锁
                                     def eo = new ByteArrayOutputStream()
@@ -70,8 +70,8 @@ class MavenUploadManager {
                                     }
 
                                     def pomArtifactId = moduleName
-                                    if (subProject.ext.has('platformFlag') && subProject.ext.platformFlag) {
-                                        pomArtifactId += '-' + subProject.ext.platformFlag
+                                    if (subProject.ext.has('platformSourceDir') && subProject.ext.platformSourceDir) {
+                                        pomArtifactId += '-' + subProject.ext.platformSourceDir
                                     }
                                     // https://stackoverflow.com/questions/45396268/gradle-exec-how-to-print-error-output
                                     if (result.exitValue != 0) {
@@ -91,8 +91,8 @@ class MavenUploadManager {
                                     ExecuteResult executeResult = RunTimeTask.executeCommand(command, Integer.MAX_VALUE)
 
                                     def pomArtifactId = moduleName
-                                    if (subProject.ext.has('platformFlag') && subProject.ext.platformFlag) {
-                                        pomArtifactId += '-' + subProject.ext.platformFlag
+                                    if (subProject.ext.has('platformSourceDir') && subProject.ext.platformSourceDir) {
+                                        pomArtifactId += '-' + subProject.ext.platformSourceDir
                                     }
                                     if (executeResult.exitCode != 0) {
                                         LogUtil.log(rootProject, "PioneerPlugin", "module[${subProject.group}:$pomArtifactId:${subProject.version}] upload maven fail !!!!!! ")
@@ -145,10 +145,10 @@ class MavenUploadManager {
             }
 
             // 给需要多平台打包的module设置平台目录，在mavenScriptPath上传maven脚本中设置
-            // pom.artifactId时用到project.ext.platformFlag
+            // pom.artifactId时用到project.ext.platformSourceDir
             boolean supportPlatform = moduleInfo != null ? moduleInfo.platform : false
             if(supportPlatform){
-                project.ext.platformFlag = PlatformSourceUtil.getPlatformFlag(project)
+                project.ext.platformSourceDir = PlatformSourceUtil.getPlatformFlag(project)
             }
 
             // apply maven plugin
@@ -256,8 +256,8 @@ class MavenUploadManager {
         if (project.ext.has('artifactId') && project.ext.artifactId) {
             pomArtifactId = project.ext.artifactId
         }
-        if (project.ext.has('platformFlag') && project.ext.platformFlag) {
-            pomArtifactId += '-' + project.ext.platformFlag
+        if (project.ext.has('platformSourceDir') && project.ext.platformSourceDir) {
+            pomArtifactId += '-' + project.ext.platformSourceDir
         }
 
         LogUtil.log(project, "PioneerPlugin",
