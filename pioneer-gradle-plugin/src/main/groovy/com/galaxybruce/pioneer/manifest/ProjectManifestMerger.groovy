@@ -62,7 +62,6 @@ class ProjectManifestMerger {
                             def manifestPath = it.absolutePath + "/$dir/AndroidManifest.xml"
                             def manifestSrcFile = new File(manifestPath)
                             if (manifestSrcFile.exists() && !manifestSrcFiles.contains(manifestPath)) {
-//                              println '======manifestPath: ' + manifestPath
                                 manifestSrcFiles << manifestPath
                             }
 
@@ -96,7 +95,6 @@ class ProjectManifestMerger {
                 def manifestPath = it.absolutePath + "/AndroidManifest.xml"
                 def manifestSrcFile = new File(manifestPath)
                 if (manifestSrcFile.exists() && !manifestSrcFiles.contains(manifestPath)) {
-//                    println '======manifestPath: ' + manifestPath
                     manifestSrcFiles << manifestPath
                 }
 

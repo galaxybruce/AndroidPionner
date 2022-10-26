@@ -1,5 +1,6 @@
 package com.galaxybruce.pioneer.maven
 
+import com.alibaba.fastjson.JSONObject
 import com.android.Version
 import com.galaxybruce.pioneer.manifest.PlatformSourceUtil
 import com.galaxybruce.pioneer.utils.LogUtil
@@ -10,7 +11,6 @@ import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.util.GradleVersion
 
@@ -30,6 +30,27 @@ class MavenUploadManager {
      * @param rootProject
      */
     static void setModuleUploadMaven(Project rootProject) {
+        rootProject.afterEvaluate {
+            LogUtil.log(rootProject, "PioneerPlugin", "moduleDataPath: ${rootProject.galaxybrucepioneer.moduleDataPath}")
+            // 读取module maven配置
+            if (rootProject.galaxybrucepioneer.moduleDataPath) {
+                File file = new File(rootProject.galaxybrucepioneer.moduleDataPath)
+                if (file.exists()) {
+                    String fileContents = file.getText('UTF-8')
+                    LogUtil.log(rootProject, "PioneerPlugin", "moduleData: \n" + fileContents)
+                    try {
+                        var mavenInfo = JSONObject.parseObject(fileContents, MavenInfo.class)
+                        mavenInfo?.initModuleInfo(PlatformSourceUtil.getPlatformFlag(rootProject))
+                        rootProject.ext.mavenInfo = mavenInfo
+                    } catch (Exception e) {
+                        e.printStackTrace()
+                    }
+
+                    // todo 如果mavenInfo是空，可以考虑把所有的module都上传到maven
+                }
+            }
+        }
+
         rootProject.afterEvaluate {
             // 创建批量上传maven task
             rootProject.tasks.create(name: "uploadMaven") {
@@ -261,7 +282,7 @@ class MavenUploadManager {
         }
 
         LogUtil.log(project, "PioneerPlugin",
-                "======maven configuration project: ${project.name} -- mavenAddress: ${pomGroupId}:${pomArtifactId}:${pomVersion}")
+                "maven configuration project: ${project.name} -- mavenAddress: ${pomGroupId}:${pomArtifactId}:${pomVersion}")
 
         project.afterEvaluate {
             publishingExt = (PublishingExtension) project.extensions.findByName('publishing')

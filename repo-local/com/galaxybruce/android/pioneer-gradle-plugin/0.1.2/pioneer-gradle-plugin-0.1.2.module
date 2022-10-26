@@ -1,0 +1,83 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.galaxybruce.android",
+    "module": "pioneer-gradle-plugin",
+    "version": "0.1.2",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.0.2"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "pioneer-gradle-plugin-0.1.2.jar",
+          "url": "pioneer-gradle-plugin-0.1.2.jar",
+          "size": 200752,
+          "sha512": "2620b199b9e03f175cf055b94c806d381cc48abb3a2b4fac6493c867831865443d20eccc2b68dbce01f12ba4972c0a514dbe7cfcfdaa800b6b8210b09c55651b",
+          "sha256": "5578093a00a2300c7c9c60d2496522c69606926331da1c037eabc9add9b4af3b",
+          "sha1": "42e2c0990bb1c429ae488f99579e652c8834f80e",
+          "md5": "ca9056692d96dd6204bb20d66187b7f2"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.android.tools",
+          "module": "common",
+          "version": {
+            "requires": "30.0.3"
+          }
+        },
+        {
+          "group": "com.android.tools.build",
+          "module": "gradle",
+          "version": {
+            "requires": "7.0.3"
+          }
+        },
+        {
+          "group": "com.alibaba",
+          "module": "fastjson",
+          "version": {
+            "requires": "1.2.51"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "pioneer-gradle-plugin-0.1.2.jar",
+          "url": "pioneer-gradle-plugin-0.1.2.jar",
+          "size": 200752,
+          "sha512": "2620b199b9e03f175cf055b94c806d381cc48abb3a2b4fac6493c867831865443d20eccc2b68dbce01f12ba4972c0a514dbe7cfcfdaa800b6b8210b09c55651b",
+          "sha256": "5578093a00a2300c7c9c60d2496522c69606926331da1c037eabc9add9b4af3b",
+          "sha1": "42e2c0990bb1c429ae488f99579e652c8834f80e",
+          "md5": "ca9056692d96dd6204bb20d66187b7f2"
+        }
+      ]
+    }
+  ]
+}

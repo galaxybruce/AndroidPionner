@@ -68,7 +68,7 @@ class PioneerSettingsPlugin implements Plugin<Settings> {
                 }
                 settings.include "${f.name}"
                 settings.project(":${f.name}").projectDir = f
-                LogUtil.log(null, "PioneerSettingsPlugin", "include: " + f.name)
+                LogUtil.log("PioneerSettingsPlugin", "include: " + f.name)
             } else {
                 f.eachDir { dir ->
                     if (!isModule(dir)) {
@@ -79,7 +79,7 @@ class PioneerSettingsPlugin implements Plugin<Settings> {
                     }
                     settings.include "${dir.name}"
                     settings.project(":${dir.name}").projectDir = dir
-                    LogUtil.log(null, "PioneerSettingsPlugin", "include: " + dir.name)
+                    LogUtil.log("PioneerSettingsPlugin", "include: " + dir.name)
                 }
             }
         }

@@ -39,7 +39,7 @@ class MavenInfo {
     }
 
     void initModuleInfo(String platformSourceDir) {
-        if(modules != null) {
+        if(modules != null && !modules.isEmpty()) {
             modules.forEach(new Consumer<ModuleInfo>() {
                 @Override
                 void accept(ModuleInfo moduleInfo) {
@@ -48,17 +48,15 @@ class MavenInfo {
             })
         }
 
-        if(platform_modules != null && platform_modules.size() > 0) {
+        if(platform_modules != null && !platform_modules.isEmpty()) {
             if(platformSourceDir == null || platformSourceDir.isEmpty()) {
-                LogUtil.log(null, "MavenUploadManager",
-                        "app platform flag not config.")
+                LogUtil.log("MavenUploadManager", "app platform flag is empty")
             } else {
-                LogUtil.log(null, "MavenUploadManager",
-                        "app platform flag: ${platformSourceDir}")
+                LogUtil.log("MavenUploadManager", "app platform flag: ${platformSourceDir}")
             }
 
             List<ModuleInfo> platformModules = platform_modules.get(platformSourceDir)
-            if(platformModules != null) {
+            if(platformModules != null && !platformModules.isEmpty()) {
                 platformModules.forEach(new Consumer<ModuleInfo>() {
                     @Override
                     void accept(ModuleInfo moduleInfo) {

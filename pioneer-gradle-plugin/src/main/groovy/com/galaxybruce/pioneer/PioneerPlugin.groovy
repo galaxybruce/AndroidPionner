@@ -1,11 +1,10 @@
 package com.galaxybruce.pioneer
 
-import com.alibaba.fastjson.JSONObject
+
 import com.android.build.gradle.AppPlugin
 import com.galaxybruce.pioneer.aar.AARDependency
 import com.galaxybruce.pioneer.manifest.PlatformSourceUtil
 import com.galaxybruce.pioneer.manifest.ProjectManifestMerger
-import com.galaxybruce.pioneer.maven.MavenInfo
 import com.galaxybruce.pioneer.maven.MavenUploadManager
 import com.galaxybruce.pioneer.run_module.ProjectModuleManager
 import com.galaxybruce.pioneer.utils.LogUtil
@@ -39,10 +38,10 @@ class PioneerPlugin implements Plugin<Project> {
     }
 
     private static void handleRootProject(Project rootProject) {
+        rootProject.extensions.create(EXT_NAME, PioneerExtension, rootProject)
         Utils.initLocalProperties(rootProject)
-        rootProject.extensions.create(EXT_NAME, PioneerExtension)
         setRootProjectExtValues(rootProject)
-        MavenUploadManager.setModuleUploadMaven(rootProject)
+        setModuleUploadMaven(rootProject)
 //        FlutterHandler.handleRootProject(rootProject)
     }
 
@@ -65,26 +64,10 @@ class PioneerPlugin implements Plugin<Project> {
             setAARDirs = AARDependency.&setAARDirs           //设置aar库的path
             addAARLibs = AARDependency.&addAARLibs           //添加aar依赖库
         }
+    }
 
-        rootProject.afterEvaluate {
-            rootProject.ext {
-                // 读取module maven配置
-                if (rootProject.galaxybrucepioneer.moduleDataPath) {
-                    File file = new File(rootProject.galaxybrucepioneer.moduleDataPath)
-                    if (file.exists()) {
-                        String fileContents = file.getText('UTF-8')
-                        try {
-                            mavenInfo = JSONObject.parseObject(fileContents, MavenInfo.class)
-                            mavenInfo?.initModuleInfo(PlatformSourceUtil.getPlatformFlag(rootProject))
-                        } catch (Exception e) {
-                            e.printStackTrace()
-                        }
-
-                        // todo 如果mavenInfo是空，可以考虑把所有的module都上传到maven
-                    }
-                }
-            }
-        }
+    private static void setModuleUploadMaven(Project rootProject) {
+        MavenUploadManager.setModuleUploadMaven(rootProject)
     }
 
     private static void handleSubProject(Project project) {
@@ -127,7 +110,6 @@ class PioneerPlugin implements Plugin<Project> {
 
     private static void setBuildConfigField(Project project) {
         project.afterEvaluate {
-            // 测试代码
 //            Test.testApplicationVariants(project, isApp)
             project.android.defaultConfig.buildConfigField "String", "APP_PLATFORM_FLAG", "\"${PlatformSourceUtil.getPlatformFlag(project)}\""
         }

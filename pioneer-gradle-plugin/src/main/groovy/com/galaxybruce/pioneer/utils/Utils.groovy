@@ -92,9 +92,11 @@ public class Utils {
                 localProperties.load(reader)
                 LOCAL_PROPERTIES = localProperties
             }
+            LogUtil.log("PioneerPlugin",
+                    "read local.properties in [$project] :\n ${LOCAL_PROPERTIES.toMapString()}")
+        } else {
+            LogUtil.log("PioneerPlugin", "local.properties doesn't exist !!!")
         }
-        LogUtil.log(null, "PioneerPlugin",
-                "init localProperties in [$project] :\n ${LOCAL_PROPERTIES.toMapString()}")
     }
 
     /**
