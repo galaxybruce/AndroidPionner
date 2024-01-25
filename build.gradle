@@ -28,7 +28,7 @@ buildscript {
         maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.3'
+        classpath 'com.android.tools.build:gradle:7.4.2'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
         classpath 'com.galaxybruce.android:pioneer-gradle-plugin:0.1.2'
     }

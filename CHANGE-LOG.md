@@ -7,4 +7,6 @@
   * [1] 增加feature: pin工程处理
   * [2] 增加feature: 代码多平台复用
   * [3] 增加feature: 批量发布library到maven仓库
-  
+
+* 0.1.3 `2024/01/25`
+  * [1] AGP升级到到7.4.2

@@ -202,7 +202,7 @@ class MavenUploadManager {
                 project.getPlugins().hasPlugin('com.android.library')
         if (isAndroid) { // Android libraries
             if(GradleVersion.version(Version.ANDROID_GRADLE_PLUGIN_VERSION) >= GradleVersion.version('7.1.2')) {
-                android {
+                project.android {
                     publishing {
                         singleVariant('release') {
                             withSourcesJar()

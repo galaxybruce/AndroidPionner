@@ -1,7 +1,7 @@
 apply plugin: "groovy"
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 buildscript {
     repositories {
@@ -19,7 +19,7 @@ dependencies {
     compileOnly gradleApi()
     compileOnly localGroovy()
     implementation 'com.android.tools:common:30.0.3'
-    implementation 'com.android.tools.build:gradle:7.0.3'
+    implementation 'com.android.tools.build:gradle:7.4.2'
     implementation "com.alibaba:fastjson:1.2.51"
 }
 
