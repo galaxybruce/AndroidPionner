@@ -20,29 +20,33 @@ class ProjectManifestMerger {
 
     static boolean mergeManifest(Project project) {
         project.buildscript.repositories {
-            google()
-            jcenter()
+            maven { url 'https://maven.aliyun.com/repository/public'}
+            maven { url "https://maven.aliyun.com/repository/google" }
+            maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
         }
         //history version: 25.3.0
-        project.buildscript.dependencies.add("classpath", "com.android.tools.build:manifest-merger:30.0.3")
+        project.buildscript.dependencies.add("classpath", "com.android.tools.build:manifest-merger:31.2.2")
 
-        mergeManifest(project, true)
+        mergeManifest(project, true, true)
     }
 
-    static void mergeManifest(Project project, boolean needMerge) {
+    static void mergeManifest(Project project, boolean mergeAfterClean, boolean firstMerge) {
         def manifestSrcFiles = []
 
         File moduleDir = new File("$project.projectDir/src")
-        File[] pModuleDirs = moduleDir.listFiles()
-        if (pModuleDirs == null || pModuleDirs.length == 0) {
+        File[] moduleDirs = moduleDir.listFiles()
+        if (moduleDirs == null || moduleDirs.length == 0) {
             return
         }
 
         def platformDir = PlatformSourceUtil.getPlatformFlag(project)
         LogUtil.log(project, "ProjectManifestMerger", "app platform source Dir: ${platformDir}")
-        project.android.sourceSets.main.jniLibs.srcDir("libs")
 
-        pModuleDirs.each {
+        if(firstMerge) {
+            project.android.sourceSets.main.jniLibs.srcDir("libs")
+        }
+
+        moduleDirs.each {
             if (it.isDirectory() && it.name.startsWith("p_")) {
                 // pin工程下可以设置独立的build.gradle，但是该build.gradle中不允许apply plugin: 'com.android.library'
                 if(new File("$project.projectDir/src/$it.name/build.gradle").exists()) {
@@ -66,13 +70,15 @@ class ProjectManifestMerger {
                             }
 
                             // 其他资源
-                            project.android.sourceSets.main.java.srcDir("src/$it.name/$dir/java")
-                            project.android.sourceSets.main.resources.srcDir("src/$it.name/$dir/resources")
-                            project.android.sourceSets.main.res.srcDir("src/$it.name/$dir/res")
-                            project.android.sourceSets.main.assets.srcDir("src/$it.name/$dir/assets")
-                            project.android.sourceSets.main.jniLibs.srcDir("src/$it.name/$dir/libs")
+                            if(firstMerge) {
+                                project.android.sourceSets.main.java.srcDir("src/$it.name/$dir/java")
+                                project.android.sourceSets.main.resources.srcDir("src/$it.name/$dir/resources")
+                                project.android.sourceSets.main.res.srcDir("src/$it.name/$dir/res")
+                                project.android.sourceSets.main.assets.srcDir("src/$it.name/$dir/assets")
+                                project.android.sourceSets.main.jniLibs.srcDir("src/$it.name/$dir/libs")
 //                            project.dependencies.add("api",
 //                                    project.fileTree(dir: "src/$it.name/$dir/libs", include: ['*.jar']))
+                            }
                         }
                     }
                 }
@@ -99,13 +105,15 @@ class ProjectManifestMerger {
                 }
 
                 // 其他资源
-                project.android.sourceSets.main.java.srcDir("src/$it.name/java")
-                project.android.sourceSets.main.resources.srcDir("src/$it.name/resources")
-                project.android.sourceSets.main.res.srcDir("src/$it.name/res")
-                project.android.sourceSets.main.assets.srcDir("src/$it.name/assets")
-                project.android.sourceSets.main.jniLibs.srcDir("src/$it.name/libs")
+                if(firstMerge) {
+                    project.android.sourceSets.main.java.srcDir("src/$it.name/java")
+                    project.android.sourceSets.main.resources.srcDir("src/$it.name/resources")
+                    project.android.sourceSets.main.res.srcDir("src/$it.name/res")
+                    project.android.sourceSets.main.assets.srcDir("src/$it.name/assets")
+                    project.android.sourceSets.main.jniLibs.srcDir("src/$it.name/libs")
 //                project.dependencies.add("api",
 //                        project.fileTree(dir: "src/$it.name/libs", include: ['*.jar']))
+                }
             }
         }
 
@@ -127,7 +135,7 @@ class ProjectManifestMerger {
             project.android.sourceSets.main.manifest.srcFile "${manifestSrcFiles[0]}"
         } else {
             def intermediateManifestFile = new File("$project.buildDir/AndroidManifest.xml")
-            if(intermediateManifestFile.exists() && !needMerge) {
+            if(intermediateManifestFile.exists() && !mergeAfterClean) {
                 project.android.sourceSets.main.manifest.srcFile intermediateManifestFile.absolutePath
                 LogUtil.log(project, "ProjectManifestMerger", "merged manifest exists!!!: ${intermediateManifestFile.absolutePath}")
                 return
