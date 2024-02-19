@@ -60,7 +60,7 @@ class ProjectManifestMerger {
                 dirs.each { dir ->
                     if(dir != null && !dir.isEmpty()) {
                         if(project.file("${it.absolutePath}/$dir").exists()) {
-                            LogUtil.log(project, "ProjectManifestMerger", "valid pin project resource dir: ${it.absolutePath}/$dir")
+//                            LogUtil.log(project, "ProjectManifestMerger", "valid pin project resource dir: ${it.absolutePath}/$dir")
                             // manifest
                             def manifestPath = it.absolutePath + "/$dir/AndroidManifest.xml"
                             def manifestSrcFile = new File(manifestPath)
@@ -94,7 +94,7 @@ class ProjectManifestMerger {
                     }
                 }
 
-                LogUtil.log(project, "ProjectManifestMerger", "valid resource dir: ${it.absolutePath}")
+//                LogUtil.log(project, "ProjectManifestMerger", "valid resource dir: ${it.absolutePath}")
                 // pin工程以外的的情况，只处理main和platformDir两个目录
                 // manifest
                 def manifestPath = it.absolutePath + "/AndroidManifest.xml"
@@ -121,16 +121,15 @@ class ProjectManifestMerger {
         def manifestSrcFile = new File(manifestPath)
         if (manifestSrcFile.exists() && !manifestSrcFiles.contains(manifestPath)) {
             manifestSrcFiles << manifestPath
-            LogUtil.log(project, "ProjectManifestMerger", "valid root manifest: ${manifestPath}")
+//            LogUtil.log(project, "ProjectManifestMerger", "valid root manifest: ${manifestPath}")
         }
 
         if (manifestSrcFiles == null || manifestSrcFiles.isEmpty()) {
             return
         }
 
-        int size = manifestSrcFiles.size()
-        LogUtil.log(project, "ProjectManifestMerger", "manifestSrcFiles.size: ${size}")
-        if(size == 1) {
+        LogUtil.log(project, "ProjectManifestMerger", "manifestSrcFile list: ${manifestSrcFiles.toListString()}")
+        if(manifestSrcFiles.size() == 1) {
             project.android.sourceSets.main.manifest.srcFile "${manifestSrcFiles[0]}"
         } else {
             def intermediateManifestFile = new File("$project.buildDir/AndroidManifest.xml")
@@ -175,7 +174,8 @@ class ProjectManifestMerger {
                 for (manifest in finalManifestSrcFiles) {
                     File microManifestFile = new File(manifest)
                     if (microManifestFile.exists()) {
-                        manifestInvoker.addLibraryManifest(microManifestFile)
+                        manifestInvoker.addFlavorAndBuildTypeManifest(microManifestFile)
+                        // manifestInvoker.addLibraryManifest(microManifestFile)
 //                        libraryFilesBuilder.add(Pair.of(microManifestFile.getName(), microManifestFile))
                     }
                 }
