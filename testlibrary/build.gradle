@@ -1,10 +1,12 @@
-apply plugin: 'galaxybruce-pioneer'
+apply plugin: 'com.android.library'
 
 android {
-    compileSdk 31
+    namespace "com.galaxybruce.testlibrary"
+
+    compileSdk 33
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
 
@@ -17,8 +19,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
 }
+apply plugin: 'galaxybruce-pioneer'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])

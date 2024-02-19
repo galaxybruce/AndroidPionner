@@ -3,6 +3,7 @@ package com.galaxybruce.pioneer.manifest
 
 import com.android.manifmerger.ManifestMerger2
 import com.android.manifmerger.MergingReport
+import com.android.manifmerger.PlaceholderHandler
 import com.android.manifmerger.XmlDocument
 import com.android.utils.ILogger
 import com.android.utils.Pair
@@ -24,9 +25,7 @@ class ProjectManifestMerger {
             maven { url "https://maven.aliyun.com/repository/google" }
             maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
         }
-        //history version: 25.3.0
-        project.buildscript.dependencies.add("classpath", "com.android.tools.build:manifest-merger:31.2.2")
-
+//        project.buildscript.dependencies.add("classpath", "com.android.tools.build:manifest-merger:31.2.2")
         mergeManifest(project, true, true)
     }
 
@@ -49,7 +48,7 @@ class ProjectManifestMerger {
         moduleDirs.each {
             if (it.isDirectory() && it.name.startsWith("p_")) {
                 // pin工程下可以设置独立的build.gradle，但是该build.gradle中不允许apply plugin: 'com.android.library'
-                if(new File("$project.projectDir/src/$it.name/build.gradle").exists()) {
+                if(firstMerge && new File("$project.projectDir/src/$it.name/build.gradle").exists()) {
                     project.apply from: "src/$it.name/build.gradle"
                 }
 //                // 添加pin工程下的libs依赖，pin/build.gradle中无需再添加 implementation fileTree(dir: 'src/p_lib1/libs', include: ['*.jar'])
@@ -90,7 +89,7 @@ class ProjectManifestMerger {
 
                 if(it.name == ProjectModuleManager.DEBUG_DIR && project.ext.has('runAsApp') && project.ext.runAsApp){
                     // debug-test目录下可以设置独立的build.gradle，但是该build.gradle中不允许apply plugin: 'com.android.library'
-                    if (new File("$project.projectDir/src/$it.name/build.gradle").exists()) {
+                    if (firstMerge && new File("$project.projectDir/src/$it.name/build.gradle").exists()) {
                         project.apply from: "src/$it.name/build.gradle"
                     }
                 }
@@ -141,62 +140,74 @@ class ProjectManifestMerger {
                 return
             }
 
+            LogUtil.log(project, "ProjectManifestMerger", "namespace: ${project.android.namespace}, applicationId: ${project.rootProject.applicationId}")
             File mainManifestFile = new File(manifestSrcFiles[size - 1])
-            ManifestMerger2.MergeType mergeType = ManifestMerger2.MergeType.LIBRARY
-            ManifestMerger2.Invoker invoker = ManifestMerger2.newMerger(mainManifestFile, logger, mergeType)
-            invoker.asType(XmlDocument.Type.LIBRARY)
+            ManifestMerger2.MergeType mergeType = ManifestMerger2.MergeType.FUSED_LIBRARY
+            ManifestMerger2.Invoker manifestInvoker = ManifestMerger2.newMerger(mainManifestFile, logger, mergeType)
+            // 设置必要参数
+            manifestInvoker.namespace = project.android.namespace
+            manifestInvoker.setPlaceHolderValue(PlaceholderHandler.PACKAGE_NAME, project.rootProject.applicationId)
+            manifestInvoker.asType(XmlDocument.Type.LIBRARY)
 
             try {
-                Class c = invoker.getClass()
-                Field f = c.getDeclaredField("mLibraryFilesBuilder")
-                f.setAccessible(true)
+//                Class c = manifestInvoker.getClass()
+//                Field f = c.getDeclaredField("mLibraryFilesBuilder")
+//                f.setAccessible(true)
 
                 ImmutableList.Builder<Pair<String, File>> libraryFilesBuilder = new ImmutableList.Builder()
                 for (int i = 0; i < size - 1; i++) {
                     File microManifestFile = new File(manifestSrcFiles[i])
                     if (microManifestFile.exists()) {
-//                        invoker.addLibraryManifest(microManifestFile)
-                        libraryFilesBuilder.add(Pair.of(microManifestFile.getName(), microManifestFile))
+                        manifestInvoker.addLibraryManifest(microManifestFile)
+//                        libraryFilesBuilder.add(Pair.of(microManifestFile.getName(), microManifestFile))
                     }
                 }
 
-                f.set(invoker, libraryFilesBuilder)
+//                f.set(manifestInvoker, libraryFilesBuilder)
             } catch (Exception e) {
                 LogUtil.log(project, "ProjectManifestMerger", "add library manifest error: ${e.toString()}")
             }
 
-            def mergingReport = invoker.merge()
-            def moduleAndroidManifest = mergingReport.getMergedDocument(MergingReport.MergedManifestKind.MERGED)
+            MergingReport mergingReport = manifestInvoker.merge()
+            MergingReport.Result result = mergingReport.getResult()
+            if(result.isSuccess()) {
+                if(result.isWarning()) {
+                    mergingReport.log(logger)
+                }
+                def moduleAndroidManifest = mergingReport.getMergedDocument(MergingReport.MergedManifestKind.MERGED)
+                new File("$project.buildDir").mkdirs()
+                def file = intermediateManifestFile // new File("$project.buildDir/AndroidManifest.xml")
+                file.createNewFile()
+                file.write(moduleAndroidManifest, "UTF-8")
 
-            new File("$project.buildDir").mkdirs()
-            def file = intermediateManifestFile // new File("$project.buildDir/AndroidManifest.xml")
-            file.createNewFile()
-            file.write(moduleAndroidManifest, "UTF-8")
-
-            project.android.sourceSets.main.manifest.srcFile file.absolutePath
-            LogUtil.log(project, "ProjectManifestMerger", "merged manifest success!!!: ${intermediateManifestFile.absolutePath}")
+                project.android.sourceSets.main.manifest.srcFile file.absolutePath
+                LogUtil.log(project, "ProjectManifestMerger", "merged manifest success!!!: ${intermediateManifestFile.absolutePath}")
+            } else {
+                mergingReport.log(logger)
+                throw new RuntimeException(mergingReport.getReportString());
+            }
         }
     }
 
     private static ILogger logger = new ILogger() {
         @Override
         void error(Throwable t, String msgFormat, Object... args) {
-
+            LogUtil.log("ProjectManifestMerger", "merge error: ${String.format(msgFormat, args)}")
         }
 
         @Override
         void warning(String msgFormat, Object... args) {
-
+            LogUtil.log("ProjectManifestMerger", "merge warning: ${String.format(msgFormat, args)}")
         }
 
         @Override
         void info(String msgFormat, Object... args) {
-
+            LogUtil.log("ProjectManifestMerger", "merge info: ${String.format(msgFormat, args)}")
         }
 
         @Override
         void verbose(String msgFormat, Object... args) {
-
+//            LogUtil.log("ProjectManifestMerger", "merge verbose: ${String.format(msgFormat, args)}")
         }
     }
 }

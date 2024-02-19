@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.alibaba.fastjson.JSON;
+
 /**
  * @date 2020/11/15 17:42
  * @author bruce.zhang
@@ -22,6 +24,7 @@ public class Lib1Activity_1 extends AppCompatActivity {
         findViewById(R.id.btn_lib1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                JSON a;
                 startActivity(new Intent(Lib1Activity_1.this, Lib1Activity_2.class));
             }
         });
