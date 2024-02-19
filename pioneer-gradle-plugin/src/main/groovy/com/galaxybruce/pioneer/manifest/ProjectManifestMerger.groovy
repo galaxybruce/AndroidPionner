@@ -30,7 +30,7 @@ class ProjectManifestMerger {
     }
 
     static void mergeManifest(Project project, boolean mergeAfterClean, boolean firstMerge) {
-        def manifestSrcFiles = []
+        List<String> manifestSrcFiles = new ArrayList<>()
 
         File moduleDir = new File("$project.projectDir/src")
         File[] moduleDirs = moduleDir.listFiles()
@@ -140,23 +140,40 @@ class ProjectManifestMerger {
                 return
             }
 
-            LogUtil.log(project, "ProjectManifestMerger", "namespace: ${project.android.namespace}, applicationId: ${project.rootProject.applicationId}")
-            File mainManifestFile = new File(manifestSrcFiles[size - 1])
+            // 查找main manifest，其他的都是library manifest，只有main manifest中可以没有package，library的manifest中必须有package
+            // 我们认为src/AndroidManifest.xml 或者 src/main/AndroidManifest.xml是main manifest
+            final List<String> finalManifestSrcFiles = new ArrayList<>()
+            String mainManifestFile = null
+            for (manifest in manifestSrcFiles) {
+                if(mainManifestFile == null && manifest.endsWith("src/AndroidManifest.xml")) {
+                    mainManifestFile = manifest
+                } else if(mainManifestFile == null && manifest.endsWith("src/main/AndroidManifest.xml")) {
+                    mainManifestFile = manifest
+                } else {
+                    finalManifestSrcFiles.add(manifest)
+                }
+            }
+            LogUtil.log(project, "ProjectManifestMerger", "mainManifestFile: ${mainManifestFile}")
+            if(mainManifestFile == null) {
+                throw new Exception("module[${project.name}] 缺少main AndroidManifest.xml，请添加下列任意一个文件src/AndroidManifest.xml 或者 src/main/AndroidManifest.xml")
+            }
+
             ManifestMerger2.MergeType mergeType = ManifestMerger2.MergeType.FUSED_LIBRARY
-            ManifestMerger2.Invoker manifestInvoker = ManifestMerger2.newMerger(mainManifestFile, logger, mergeType)
+            ManifestMerger2.Invoker manifestInvoker = ManifestMerger2.newMerger(new File(mainManifestFile), logger, mergeType)
+            LogUtil.log(project, "ProjectManifestMerger", "namespace: ${project.android.namespace}, applicationId: ${project.rootProject.applicationId}")
             // 设置必要参数
             manifestInvoker.namespace = project.android.namespace
             manifestInvoker.setPlaceHolderValue(PlaceholderHandler.PACKAGE_NAME, project.rootProject.applicationId)
-            manifestInvoker.asType(XmlDocument.Type.LIBRARY)
+            manifestInvoker.asType(XmlDocument.Type.OVERLAY)
 
             try {
 //                Class c = manifestInvoker.getClass()
 //                Field f = c.getDeclaredField("mLibraryFilesBuilder")
 //                f.setAccessible(true)
 
-                ImmutableList.Builder<Pair<String, File>> libraryFilesBuilder = new ImmutableList.Builder()
-                for (int i = 0; i < size - 1; i++) {
-                    File microManifestFile = new File(manifestSrcFiles[i])
+//                ImmutableList.Builder<Pair<String, File>> libraryFilesBuilder = new ImmutableList.Builder()
+                for (manifest in finalManifestSrcFiles) {
+                    File microManifestFile = new File(manifest)
                     if (microManifestFile.exists()) {
                         manifestInvoker.addLibraryManifest(microManifestFile)
 //                        libraryFilesBuilder.add(Pair.of(microManifestFile.getName(), microManifestFile))

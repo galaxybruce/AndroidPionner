@@ -27,11 +27,11 @@
         {
           "name": "pioneer-gradle-plugin-0.1.5.jar",
           "url": "pioneer-gradle-plugin-0.1.5.jar",
-          "size": 206867,
-          "sha512": "97d7c9f6a75379b4e95ac48fdb06939764b9b3b1c32d694ce30e5d0d99e8e9c9c7744364487bd6a403ed62b009d45b2a0d6ca360f7415a01420baae168c54a81",
-          "sha256": "17cc15b871b94e790be183c86e82ac17072ad59387ffd2795645c70c4eea1f1e",
-          "sha1": "193c329f21a99eb6c238486b3f9221c1ecd20c28",
-          "md5": "b1a96ec16a59ba4ca3bdcf221ff7a3fd"
+          "size": 207392,
+          "sha512": "125e78985c426c6497558d7b819d59e6f7a06360b8f76f6125ed94aff8b62cf8716843e633314400a4889c5cad5c085e62f707790459b89194128fe01196ef1e",
+          "sha256": "28ff545d1bd159958e836e350d15865add135cbda4c1cb3cae2cf360dfd1feac",
+          "sha1": "09ab91db87794c2d886678f4f14b387d66c32479",
+          "md5": "5f8dc0aee2bc8f33246afcea85d379e6"
         }
       ]
     },
@@ -71,11 +71,11 @@
         {
           "name": "pioneer-gradle-plugin-0.1.5.jar",
           "url": "pioneer-gradle-plugin-0.1.5.jar",
-          "size": 206867,
-          "sha512": "97d7c9f6a75379b4e95ac48fdb06939764b9b3b1c32d694ce30e5d0d99e8e9c9c7744364487bd6a403ed62b009d45b2a0d6ca360f7415a01420baae168c54a81",
-          "sha256": "17cc15b871b94e790be183c86e82ac17072ad59387ffd2795645c70c4eea1f1e",
-          "sha1": "193c329f21a99eb6c238486b3f9221c1ecd20c28",
-          "md5": "b1a96ec16a59ba4ca3bdcf221ff7a3fd"
+          "size": 207392,
+          "sha512": "125e78985c426c6497558d7b819d59e6f7a06360b8f76f6125ed94aff8b62cf8716843e633314400a4889c5cad5c085e62f707790459b89194128fe01196ef1e",
+          "sha256": "28ff545d1bd159958e836e350d15865add135cbda4c1cb3cae2cf360dfd1feac",
+          "sha1": "09ab91db87794c2d886678f4f14b387d66c32479",
+          "md5": "5f8dc0aee2bc8f33246afcea85d379e6"
         }
       ]
     }
