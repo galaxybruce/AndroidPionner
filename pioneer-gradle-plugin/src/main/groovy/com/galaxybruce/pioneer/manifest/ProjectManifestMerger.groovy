@@ -157,6 +157,7 @@ class ProjectManifestMerger {
                 throw new Exception("module[${project.name}] 缺少main AndroidManifest.xml，请添加下列任意一个文件src/AndroidManifest.xml 或者 src/main/AndroidManifest.xml")
             }
 
+            // manifest中不能写package，否则${applicationId}会被当前package替换
             ManifestMerger2.MergeType mergeType = ManifestMerger2.MergeType.FUSED_LIBRARY
             ManifestMerger2.Invoker manifestInvoker = ManifestMerger2.newMerger(new File(mainManifestFile), logger, mergeType)
             // 设置必要参数
