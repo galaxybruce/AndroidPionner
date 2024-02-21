@@ -159,10 +159,10 @@ class ProjectManifestMerger {
 
             ManifestMerger2.MergeType mergeType = ManifestMerger2.MergeType.FUSED_LIBRARY
             ManifestMerger2.Invoker manifestInvoker = ManifestMerger2.newMerger(new File(mainManifestFile), logger, mergeType)
-            LogUtil.log(project, "ProjectManifestMerger", "namespace: ${project.android.namespace}, applicationId: ${project.rootProject.applicationId}")
             // 设置必要参数
-            manifestInvoker.namespace = project.android.namespace
-            manifestInvoker.setPlaceHolderValue(PlaceholderHandler.PACKAGE_NAME, project.rootProject.applicationId)
+//            LogUtil.log(project, "ProjectManifestMerger", "namespace: ${project.android.namespace}, applicationId: ${project.rootProject.applicationId}")
+//            manifestInvoker.namespace = project.android.namespace
+//            manifestInvoker.setPlaceHolderValue(PlaceholderHandler.PACKAGE_NAME, project.rootProject.applicationId)
             manifestInvoker.asType(XmlDocument.Type.OVERLAY)
 
             try {
