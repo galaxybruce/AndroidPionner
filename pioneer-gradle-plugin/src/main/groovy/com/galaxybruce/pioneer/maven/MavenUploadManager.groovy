@@ -287,23 +287,19 @@ class MavenUploadManager {
         project.afterEvaluate {
             publishingExt = (PublishingExtension) project.extensions.findByName('publishing')
             publishingExt.publications() {
-                mavenProduction(MavenPublication) {
+                release(MavenPublication) {
                     //group,artifactId和version
                     groupId = pomGroupId
                     artifactId = pomArtifactId
                     version = pomVersion
 
                     if (isAndroid) {
-                        project.afterEvaluate {
-                            from project.components.release
-                        }
-                        artifact project.tasks.androidSourcesJar
+                        from project.components.release
+//                        artifact project.tasks.androidSourcesJar
 //                        artifact project.tasks.androidJavadocsJar
                     } else {
-                        project.afterEvaluate {
-                            from project.components.java
-                        }
-                        artifact project.tasks.sourceJar
+                        from project.components.java
+//                        artifact project.tasks.sourceJar
 //                        artifact project.tasks.javadocJar
                     }
 
