@@ -205,8 +205,8 @@ class MavenUploadManager {
                 project.android {
                     publishing {
                         singleVariant('release') {
-                            withSourcesJar()
-                            withJavadocJar()
+//                            withSourcesJar()
+//                            withJavadocJar()
                         }
                     }
                 }
@@ -295,7 +295,7 @@ class MavenUploadManager {
 
                     if (isAndroid) {
                         from project.components.release
-//                        artifact project.tasks.androidSourcesJar
+                        artifact project.tasks.androidSourcesJar
 //                        artifact project.tasks.androidJavadocsJar
                     } else {
                         from project.components.java
