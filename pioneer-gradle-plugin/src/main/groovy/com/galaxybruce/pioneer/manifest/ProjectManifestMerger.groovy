@@ -62,7 +62,7 @@ class ProjectManifestMerger {
                         if(project.file("${it.absolutePath}/$dir").exists()) {
 //                            LogUtil.log(project, "ProjectManifestMerger", "valid pin project resource dir: ${it.absolutePath}/$dir")
                             // manifest
-                            def manifestPath = it.absolutePath + "/$dir/AndroidManifest.xml"
+                            def manifestPath = it.absolutePath + "${File.separator}$dir${File.separator}AndroidManifest.xml"
                             def manifestSrcFile = new File(manifestPath)
                             if (manifestSrcFile.exists() && !manifestSrcFiles.contains(manifestPath)) {
                                 manifestSrcFiles << manifestPath
@@ -97,7 +97,7 @@ class ProjectManifestMerger {
 //                LogUtil.log(project, "ProjectManifestMerger", "valid resource dir: ${it.absolutePath}")
                 // pin工程以外的的情况，只处理main和platformDir两个目录
                 // manifest
-                def manifestPath = it.absolutePath + "/AndroidManifest.xml"
+                def manifestPath = it.absolutePath + "${File.separator}AndroidManifest.xml"
                 def manifestSrcFile = new File(manifestPath)
                 if (manifestSrcFile.exists() && !manifestSrcFiles.contains(manifestPath)) {
                     manifestSrcFiles << manifestPath
@@ -117,7 +117,7 @@ class ProjectManifestMerger {
         }
 
         // src目录下的manifest
-        def manifestPath = "$project.projectDir/src/AndroidManifest.xml"
+        def manifestPath = "$project.projectDir${File.separator}src${File.separator}AndroidManifest.xml"
         def manifestSrcFile = new File(manifestPath)
         if (manifestSrcFile.exists() && !manifestSrcFiles.contains(manifestPath)) {
             manifestSrcFiles << manifestPath
@@ -144,9 +144,9 @@ class ProjectManifestMerger {
             final List<String> finalManifestSrcFiles = new ArrayList<>()
             String mainManifestFile = null
             for (manifest in manifestSrcFiles) {
-                if(mainManifestFile == null && manifest.endsWith("src/AndroidManifest.xml")) {
+                if(mainManifestFile == null && manifest.endsWith("src${File.separator}AndroidManifest.xml")) {
                     mainManifestFile = manifest
-                } else if(mainManifestFile == null && manifest.endsWith("src/main/AndroidManifest.xml")) {
+                } else if(mainManifestFile == null && manifest.endsWith("src${File.separator}main${File.separator}AndroidManifest.xml")) {
                     mainManifestFile = manifest
                 } else {
                     finalManifestSrcFiles.add(manifest)
