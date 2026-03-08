@@ -1,4 +1,7 @@
-apply plugin: 'com.android.library'
+apply plugin: 'galaxybruce-pioneer'
+if (!(project.ext.has('androidPluginApplied') && project.ext.androidPluginApplied)) {
+    apply plugin: "com.android.library"
+}
 
 android {
     namespace "com.galaxybruce.testlibrary"
@@ -20,7 +23,7 @@ android {
         }
     }
 }
-apply plugin: 'galaxybruce-pioneer'
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])

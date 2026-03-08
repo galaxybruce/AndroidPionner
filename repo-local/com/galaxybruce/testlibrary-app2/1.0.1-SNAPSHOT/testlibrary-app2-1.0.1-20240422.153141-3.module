@@ -1,0 +1,81 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.galaxybruce",
+    "module": "testlibrary-app2",
+    "version": "1.0.1-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.5"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseVariantReleaseApiPublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "testlibrary-app2-1.0.1-SNAPSHOT.aar",
+          "url": "testlibrary-app2-1.0.1-SNAPSHOT.aar",
+          "size": 20703,
+          "sha512": "d9e09b1948ee4fe43b522302d3b71ec77906b805830d5dca5d280f773acb619d3d881eca7ce5bc8da3204d3363963e71da707e1b4c9daf2f75a8793d831f9840",
+          "sha256": "6a0a8a778c798297c277853f4d8ab38e9e41f85eeb66be46aaf0794286fcf003",
+          "sha1": "1ffacb2e44db9912657b147652ac7600c7b70c7b",
+          "md5": "82d66f54d7f6c977f1f289e3cb92028d"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseRuntimePublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.alibaba",
+          "module": "fastjson",
+          "version": {
+            "requires": "1.2.33"
+          }
+        },
+        {
+          "group": "androidx.appcompat",
+          "module": "appcompat",
+          "version": {
+            "requires": "1.0.0"
+          }
+        },
+        {
+          "group": "androidx.constraintlayout",
+          "module": "constraintlayout",
+          "version": {
+            "requires": "1.1.3"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "testlibrary-app2-1.0.1-SNAPSHOT.aar",
+          "url": "testlibrary-app2-1.0.1-SNAPSHOT.aar",
+          "size": 20703,
+          "sha512": "d9e09b1948ee4fe43b522302d3b71ec77906b805830d5dca5d280f773acb619d3d881eca7ce5bc8da3204d3363963e71da707e1b4c9daf2f75a8793d831f9840",
+          "sha256": "6a0a8a778c798297c277853f4d8ab38e9e41f85eeb66be46aaf0794286fcf003",
+          "sha1": "1ffacb2e44db9912657b147652ac7600c7b70c7b",
+          "md5": "82d66f54d7f6c977f1f289e3cb92028d"
+        }
+      ]
+    }
+  ]
+}

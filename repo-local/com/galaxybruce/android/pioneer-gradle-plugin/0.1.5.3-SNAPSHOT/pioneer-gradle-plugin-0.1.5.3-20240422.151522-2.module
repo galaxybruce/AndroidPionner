@@ -1,0 +1,83 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.galaxybruce.android",
+    "module": "pioneer-gradle-plugin",
+    "version": "0.1.5.3-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.5"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "pioneer-gradle-plugin-0.1.5.3-SNAPSHOT.jar",
+          "url": "pioneer-gradle-plugin-0.1.5.3-SNAPSHOT.jar",
+          "size": 201989,
+          "sha512": "e13b2cdcfa7c51cbd755e6576814ab6f7d5fedf3cbcc9c889d33a20cdb8f6c3901e84f6cfa635bd04a6661385c12df70a5aebc8f4284153dbb8e65b987908944",
+          "sha256": "78d22a18aeb315beb9d4d1632a015dacd6c5124e058e03655e1bee1ec73056b1",
+          "sha1": "fb97b00f42e1a8b3d2aa6ef5d0ca0a49f9c6984e",
+          "md5": "a8946e4f16afc33e94f4279e3c4c7dea"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.android.tools",
+          "module": "common",
+          "version": {
+            "requires": "30.0.3"
+          }
+        },
+        {
+          "group": "com.android.tools.build",
+          "module": "gradle",
+          "version": {
+            "requires": "7.4.2"
+          }
+        },
+        {
+          "group": "com.alibaba",
+          "module": "fastjson",
+          "version": {
+            "requires": "1.2.51"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "pioneer-gradle-plugin-0.1.5.3-SNAPSHOT.jar",
+          "url": "pioneer-gradle-plugin-0.1.5.3-SNAPSHOT.jar",
+          "size": 201989,
+          "sha512": "e13b2cdcfa7c51cbd755e6576814ab6f7d5fedf3cbcc9c889d33a20cdb8f6c3901e84f6cfa635bd04a6661385c12df70a5aebc8f4284153dbb8e65b987908944",
+          "sha256": "78d22a18aeb315beb9d4d1632a015dacd6c5124e058e03655e1bee1ec73056b1",
+          "sha1": "fb97b00f42e1a8b3d2aa6ef5d0ca0a49f9c6984e",
+          "md5": "a8946e4f16afc33e94f4279e3c4c7dea"
+        }
+      ]
+    }
+  ]
+}
